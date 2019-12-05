@@ -11,7 +11,8 @@ def conv_rep(in_planes, out_planes, kernel_size=3, stride=1, dilation=1, isReLU=
     for i in range(num):
         arr.append(nn.Conv2d(in_planes, out_planes, kernel_size=kernel_size, stride=stride, dilation=dilation,
                              padding=((kernel_size - 1) * dilation) // 2, bias=True))
-        arr.append(nn.LeakyReLU(0.1, inplace=True))
+        if isReLU:
+            arr.append(nn.LeakyReLU(0.1, inplace=True))
     return nn.Sequential(*arr)
 
 

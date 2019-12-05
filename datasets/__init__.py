@@ -3,6 +3,7 @@ from . import sintel
 from . import flyingThings3D
 from . import kitti_combined
 from . import sintel
+from . import monkaa
 from . import pwcInterfaceDataset
 
 ## FlyingChairs
@@ -33,6 +34,9 @@ SintelTrainingFinalFull = sintel.SintelTrainingFinalFull
 SintelTrainingFinalTrain = sintel.SintelTrainingFinalTrain
 SintelTrainingFinalValid = sintel.SintelTrainingFinalValid
 
+## Monkaa
+MonkaaFinalTrain = monkaa.MonkaaFinalTrain
+MonkaaFinalValid = monkaa.MonkaaFinalValid
 
 ## KITTI Optical Flow 2012 + 2015
 KittiCombTrain = kitti_combined.KittiCombTrain

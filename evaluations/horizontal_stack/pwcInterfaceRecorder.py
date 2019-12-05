@@ -6,8 +6,8 @@ from models.pwcnetRecordable import PWCNetRecordable
 import numpy as np
 import torch
 
-model_path = "/visinf/home/vimb01/projects/models/things_PWCNet-20191122-152857_incomplete/checkpoint_best.ckpt"
-sample_interface_path = "/data/vimb01/evaluations/things_PWCNet-20191122-152857_incomplete_onThings_interface/"
+model_path = "/visinf/home/vimb01/projects/models/C_chairs_PWCNet-20191126-113818/checkpoint_best.ckpt"
+sample_interface_path = "/data/vimb01/evaluations/C_chairs_PWCNet-20191126-113818_onThings_interface/"
 dataset = FlyingThings3d({},
                          "/data/vimb01/FlyingThings3D_subset/train/image_clean/left",
                          "/data/vimb01/FlyingThings3D_subset/train/flow/left", "", reduce_every_nth=40,

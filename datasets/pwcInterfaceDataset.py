@@ -4,7 +4,7 @@ import torch.utils.data as data
 from glob import glob
 
 from datasets import common
-from evaluations.horizontal_stack.tools import load_sample_level
+from evaluations.horizontal_stack.tools import load_sample
 
 
 class PWCInterfaceDataset(data.Dataset):
@@ -12,14 +12,13 @@ class PWCInterfaceDataset(data.Dataset):
                  args,
                  rootA,
                  rootB,
-                 level,
                  reduce_every_nth=None,
                  inverse_reduce=False):
 
         self._args = args
-        self.level = level
         self._reduce_every_nth = reduce_every_nth
         self._inverse_reduce = inverse_reduce
+        self.num_levels = 5
 
         # -------------------------------------------------------------
         # filenames for all input images and target flows
@@ -42,33 +41,23 @@ class PWCInterfaceDataset(data.Dataset):
     def __getitem__(self, index):
         index = index % self._size
 
-        sA_filename = self._filenamesA[index]
-        sB_filename = self._filenamesB[index]
-
-        out_corr_reluA, x1A, flowA, lA = load_sample_level(sA_filename[index], self.level)
-        out_corr_reluB, x1B, flowB, lB = load_sample_level(sB_filename[index], self.level)
-
-        # convert flow to FloatTensor
-        out_corr_reluA = common.numpy2torch(out_corr_reluA)
-        x1A = common.numpy2torch(x1A)
-        flowA = common.numpy2torch(flowA)
-        #lA = common.numpy2torch(lA)
-
-        out_corr_reluB = common.numpy2torch(out_corr_reluB)
-        x1B = common.numpy2torch(x1B)
-        flowB = common.numpy2torch(flowB)
-        #lB = common.numpy2torch(lB)
-
         example_dict = {
-            "input_out_corr_relu": out_corr_reluA,
-            "input_x1": x1A,
-            "input_flow": flowA,
-            "target_out_corr_relu": out_corr_reluB,
-            "target_x1": x1B,
-            "target_flow": flowB,
             "index": index
         }
 
+        sA_filename = self._filenamesA[index]
+        sB_filename = self._filenamesB[index]
+
+        out_corr_reluA, x1A, flowA, lA = load_sample(sA_filename[index])
+        out_corr_reluB, x1B, flowB, lB = load_sample(sB_filename[index])
+
+        for i in range(self.num_levels):
+            # read level and convert flow to FloatTensor
+            x1Al = common.numpy2torch(x1A[i])
+            x1Bl = common.numpy2torch(x1B[i])
+
+            example_dict[f"input_x1_{i}"] = x1Al
+            example_dict[f"target_x1_{i}"] = x1Bl
         return example_dict
 
     def __len__(self):
@@ -84,7 +73,7 @@ class PWCInterfaceDatasetTrain(PWCInterfaceDataset):
             args,
             rootA=rootA,
             rootB=rootB,
-            reduce_every_nth=10,
+            reduce_every_nth=20,
             inverse_reduce=False)
 
 
@@ -97,5 +86,5 @@ class PWCInterfaceDatasetValid(PWCInterfaceDataset):
             args,
             rootA=rootA,
             rootB=rootB,
-            reduce_every_nth=10,
+            reduce_every_nth=20,
             inverse_reduce=True)

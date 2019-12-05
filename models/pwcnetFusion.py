@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function
 import torch
 import torch.nn as nn
 
+from .pwcnetConnector import PWCConvAppliedConnector, PWCLinCombAppliedConnector
 from .pwc_modules import upsample2d_as, initialize_msra, conv_rep
 from .pwc_modules import WarpingLayer, FeatureExtractor, ContextNetwork, FlowEstimatorDense
 from .correlation_package.correlation import Correlation
@@ -13,7 +14,7 @@ class PWCNetFusion(nn.Module):
     Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
     """
 
-    def __init__(self, connector_kernel_size, connector_layers, args, div_flow=0.05):
+    def __init__(self, connector, args, div_flow=0.05):
         super(PWCNetFusion, self).__init__()
         self.args = args
         self._div_flow = div_flow
@@ -27,7 +28,6 @@ class PWCNetFusion(nn.Module):
         self.warping_layer = WarpingLayer()
 
         self.flow_estimators = nn.ModuleList()
-        self.fusing = nn.ModuleList()
         self.dim_corr = (self.search_range * 2 + 1) ** 2
         for l, ch in enumerate(self.num_chs[::-1]):
             if l > self.output_level:
@@ -41,7 +41,7 @@ class PWCNetFusion(nn.Module):
             layer = FlowEstimatorDense(num_ch_in)
             self.flow_estimators.append(layer)
 
-            self.fusing.append(conv_rep(num_ch_in, num_ch_in, connector_kernel_size, 1, 1, True, connector_layers))
+        self.connector = connector
 
         self.context_networks = ContextNetwork(self.dim_corr + 32 + 2 + 448 + 2)
 
@@ -82,10 +82,10 @@ class PWCNetFusion(nn.Module):
 
             # fusing and flow estimator
             if l == 0:
-                x_fused = self.fusing[l](out_corr_relu)
+                x_intm, flow = self.flow_estimators[l](out_corr_relu)
             else:
-                x_fused = self.fusing[l](torch.cat([out_corr_relu, x1, flow], dim=1))
-            x_intm, flow = self.flow_estimators[l](x_fused)
+                x1 = self.connector(x1, l)
+                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, x1, flow], dim=1))
 
             # upsampling or post-processing
             if l != self.output_level:
@@ -105,3 +105,21 @@ class PWCNetFusion(nn.Module):
             out_flow = upsample2d_as(flow, x1_raw, mode="bilinear") * (1.0 / self._div_flow)
             output_dict_eval['flow'] = out_flow
             return output_dict_eval
+
+
+class PWCNetConvFusion(PWCNetFusion):
+    """
+    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
+    """
+
+    def __init__(self, connector_kernel_size, args, div_flow=0.05):
+        super(PWCNetConvFusion, self).__init__(PWCConvAppliedConnector(connector_kernel_size, {}), args, div_flow=div_flow)
+
+
+class PWCNetLinCombFusion(PWCNetFusion):
+    """
+    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
+    """
+
+    def __init__(self, args, div_flow=0.05):
+        super(PWCNetLinCombFusion, self).__init__(PWCLinCombAppliedConnector({}), args, div_flow=div_flow)

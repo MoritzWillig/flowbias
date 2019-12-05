@@ -37,36 +37,6 @@ flow_layers = demo_flow.shape[0]
 total_layers = out_corr_layers + x1_layers + flow_layers
 
 
-class PWCConnectorNet(nn.Module):
-
-    def __init__(self, args):
-        super(PWCConnectorNet, self).__init__()
-        self.args = args
-
-        self.convA = conv(total_layers, out_corr_layers, connector_kernel_size, 1, 1, connector_layers)
-        self.convB = conv(total_layers, x1_layers, connector_kernel_size, 1, 0, connector_layers)
-        self.convC = conv(total_layers, flow_layers, connector_kernel_size, 1, 0, connector_layers)
-        initialize_msra(self.modules())
-
-    def forward(self, input_dict):
-        out_corr_relu = input_dict['input_out_corr_relu']
-        x1 = input_dict['input_x1']
-        flow = input_dict['input_flow']
-
-        # stack features
-        features = out_corr_relu + x1 + flow
-
-        out_corr_relu_out = self.convA(features)
-        x1_out = self.convB(features)
-        flow_out = self.convC(features)
-
-        # outputs
-        output_dict = {
-            'target_out_corr_relu': out_corr_relu_out,
-            'target_x1': x1_out,
-            'target_flow': flow_out
-        }
-        return output_dict
 
 
 # train

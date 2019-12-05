@@ -6,9 +6,10 @@ EXPERIMENTS_HOME=/data/vimb01/experiments
 # datasets
 FLYINGCHAIRS_HOME=/data/vimb01/FlyingChairs_release/data/
 
+
 # model and checkpoint
-MODEL=PWCNet
-EVAL_LOSS=MultiScaleEPE_PWC
+MODEL=FlowNet1S
+EVAL_LOSS=MultiScaleEPE_FlowNet
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
@@ -26,6 +27,7 @@ python ../main.py \
 --lr_scheduler_milestones="[108, 144, 180]" \
 --model=$MODEL \
 --num_workers=4 \
+--num_iters=1 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \

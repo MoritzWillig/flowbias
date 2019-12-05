@@ -7,6 +7,8 @@ from . import IRR_FlowNet
 
 from . import pwcnet
 from . import pwcnetRecordable
+from . import pwcnetFusion
+from . import pwcnetConnector
 from . import pwcnet_bi
 from . import pwcnet_occ
 from . import pwcnet_occ_bi
@@ -25,6 +27,13 @@ FlowNet1S_irr_occ_bi = flownet1s_irr_occ_bi.FlowNet1S
 
 PWCNet               = pwcnet.PWCNet
 PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
+PWCNetFusion         = pwcnetFusion.PWCNetFusion
+PWCNetConvFusion     = pwcnetFusion.PWCNetConvFusion
+PWCNetLinCombFusion  = pwcnetFusion.PWCNetLinCombFusion
+PWCConnector1        = pwcnetConnector.PWCConvConnector1
+PWCConnector3        = pwcnetConnector.PWCConvConnector3
+PWCConvAppliedConnector = pwcnetConnector.PWCConvAppliedConnector
+PWCLinCombAppliedConnector = pwcnetConnector.PWCLinCombAppliedConnector
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet

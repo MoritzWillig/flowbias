@@ -712,15 +712,19 @@ class L1ConnectorLoss(nn.Module):
         self.l1loss = nn.L1Loss()
 
     def forward(self, output_dict, target_dict):
-        out_corr_relu = self.l1loss(output_dict['target_out_corr_relu'], target_dict["target_out_corr_relu"])
-        target_x1 = self.l1loss(output_dict['target_x1'], target_dict["target_x1"])
-        flow_loss = self.l1loss(output_dict['target_flow'], target_dict["target_flow"])
+        target_x1_0 = self.l1loss(output_dict['target_x1_0'], target_dict["target_x1_0"])
+        target_x1_1 = self.l1loss(output_dict['target_x1_1'], target_dict["target_x1_1"])
+        target_x1_2 = self.l1loss(output_dict['target_x1_2'], target_dict["target_x1_2"])
+        target_x1_3 = self.l1loss(output_dict['target_x1_3'], target_dict["target_x1_3"])
+        target_x1_4 = self.l1loss(output_dict['target_x1_4'], target_dict["target_x1_4"])
 
         loss_dict = {
-            "out_corr_relu": out_corr_relu / self._batch_size,
-            "target_x1": target_x1 / self._batch_size,
-            "flow_loss": flow_loss / self._batch_size,
-            "total_loss": (flow_loss + target_x1 + flow_loss) / self._batch_size
+            "target_x1_0": target_x1_0 / self._batch_size,
+            "target_x1_1": target_x1_1 / self._batch_size,
+            "target_x1_2": target_x1_2 / self._batch_size,
+            "target_x1_3": target_x1_3 / self._batch_size,
+            "target_x1_4": target_x1_4 / self._batch_size,
+            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / self._batch_size
         }
         return loss_dict
 
