@@ -79,13 +79,17 @@ class Monkaa(data.Dataset):
 
             flo_f = flow_f_filenames[ii]
 
-            idx_f = re.search(r"\d+", os.path.basename(flo_f)).group(0)
+            idx_f = re.search(r"(\d+)", os.path.basename(flo_f)).group(1)
             idx_b = str(int(idx_f) + 1).zfill(len(idx_f))
 
-            scene_name = os.path.dirname(os.path.dirname(os.path.dirname(flo_f)))
+            scene_name = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(flo_f))))
 
-            im1 = os.path.join(images_root, scene_name, side, f"{idx_f}_{side_char}.png")
-            im2 = os.path.join(images_root, scene_name, side, f"{idx_b}_{side_char}.png")
+            im1 = os.path.join(images_root, scene_name, side, f"{idx_f}.png")
+            im2 = os.path.join(images_root, scene_name, side, f"{idx_b}.png")
+
+            #print(">>", images_root, scene_name, side, f"{idx_f}_{side_char}.png")
+            #/data/vimb01/monkaa_finalpass/frames_finalpass
+            #/data/vimb01/monkaa_finalpass/optical_flow/treeflight_x2/left/0494_L.png
 
             if not os.path.isfile(flo_f) or not os.path.isfile(im1) or not os.path.isfile(im2):
                 continue

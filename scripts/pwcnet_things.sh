@@ -16,6 +16,9 @@ SIZE_OF_BATCH=8
 TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/things_$MODEL-$TIME"
 
+# set cuda GPU ids
+export CUDA_VISIBLE_DEVICES=1
+
 # training configuration
 python ../main.py \
 --batch_size=$SIZE_OF_BATCH \
@@ -30,7 +33,7 @@ python ../main.py \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
---total_epochs=220 \
+--total_epochs=216 \
 --training_augmentation=RandomAffineFlow \
 --training_dataset=FlyingThings3dCleanTrain \
 --training_dataset_photometric_augmentations=True \

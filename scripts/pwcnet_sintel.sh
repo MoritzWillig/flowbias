@@ -4,7 +4,7 @@
 EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # datasets
-FLYINGTHINGS_HOME=/data/vimb01/FlyingThings3D_subset/train/
+SINTEL_HOME=/data/vimb01/MPI-Sintel-complete/
 
 # model and checkpoint
 MODEL=PWCNet
@@ -14,7 +14,7 @@ SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/things_$MODEL-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-sintel-$TIME"
 
 # training configuration
 python ../main.py \
@@ -23,22 +23,22 @@ python ../main.py \
 --checkpoint=$CHECKPOINT \
 --lr_scheduler=MultiStepLR \
 --lr_scheduler_gamma=0.5 \
---lr_scheduler_milestones="[108, 144, 180]" \
+--lr_scheduler_milestones="[2255, 3008, 3759]" \
 --model=$MODEL \
 --num_workers=4 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
---total_epochs=216 \
+--total_epochs=4511 \
 --training_augmentation=RandomAffineFlow \
---training_dataset=FlyingThingsTrain \
+--training_dataset=SintelTrainingCleanTrain \
 --training_dataset_photometric_augmentations=True \
---training_dataset_root=$FLYINGTHINGS_HOME \
+--training_dataset_root=$SINTEL_HOME \
 --training_key=total_loss \
 --training_loss=$EVAL_LOSS \
---validation_dataset=FlyingThingsValid  \
+--validation_dataset=SintelTrainingCleanValid  \
 --validation_dataset_photometric_augmentations=False \
---validation_dataset_root=$FLYINGTHINGS_HOME \
+--validation_dataset_root=$SINTEL_HOME \
 --validation_key=epe \
 --validation_loss=$EVAL_LOSS
