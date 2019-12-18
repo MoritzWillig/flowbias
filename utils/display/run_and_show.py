@@ -4,41 +4,21 @@ import torch
 
 from models import PWCNet
 from datasets import FlyingChairsFull
+from utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
 from utils.flow import flow_to_png
 
-model_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
-
+checkpoint_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
 data_path = "/data/vimb01/FlyingChairs_sample402/FlyingChairs_sample402/data/"
 
 
-def transform_state_dict(state_dict, transform):
-    new_state_dict = OrderedDict()
-
-    for key, value in state_dict.items():
-        new_state_dict[transform(key)] = value
-    return new_state_dict
-
 model = PWCNet({})
-stats = torch.load(model_path)
-print("data keys:", stats.keys(), stats["state_dict"].keys())
-# remove "_model" from name
-model_params = transform_state_dict(stats["state_dict"], lambda name: name[7:])
-model.load_state_dict(model_params)
+load_model_parameters(model, checkpoint_path)
 model.eval().cuda()
 
 
 dataset = FlyingChairsFull({}, data_path, photometric_augmentations=False)
-
-def prepare_sample(sample):
-    for key, value in sample.items():
-        if key.startswith("input") or key.startswith("target"):
-            sample[key] = value.unsqueeze(0).cuda()
-    return sample
-
-batch = prepare_sample(dataset[0])
-
+batch = sample_to_torch_batch(dataset[0])
 results = model(batch)["flow"].detach().cpu().numpy()
-
 
 
 fig = plt.figure()

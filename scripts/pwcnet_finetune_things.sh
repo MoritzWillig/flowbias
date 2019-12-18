@@ -17,7 +17,7 @@ TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-A_fine_things-$TIME"
 
 # set cuda GPU ids
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=3
 
 # training configuration
 python ../main.py \

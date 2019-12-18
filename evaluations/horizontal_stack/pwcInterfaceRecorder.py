@@ -1,16 +1,18 @@
 import sys, os
+
+from utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from datasets.flyingThings3D import FlyingThings3d
 from models.pwcnetRecordable import PWCNetRecordable
 import numpy as np
-import torch
 
-model_path = "/visinf/home/vimb01/projects/models/C_chairs_PWCNet-20191126-113818/checkpoint_best.ckpt"
-sample_interface_path = "/data/vimb01/evaluations/C_chairs_PWCNet-20191126-113818_onThings_interface/"
+model_path = "/visinf/home/vimb01/projects/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt"
+sample_interface_path = "/data/vimb01/evaluations/C_onThings_interface/"
 dataset = FlyingThings3d({},
-                         "/data/vimb01/FlyingThings3D_subset/train/image_clean/left",
-                         "/data/vimb01/FlyingThings3D_subset/train/flow/left", "", reduce_every_nth=40,
+                         "/data/vimb01/FlyingThings3D_sample401_subset/train/image_clean/left",
+                         "/data/vimb01/FlyingThings3D_sample401_subset/train/flow/left", "",
                          photometric_augmentations=False)
 
 layer_id = 0
@@ -54,20 +56,14 @@ def save_sample():
 
 
 model = PWCNetRecordable(recorder_func, {})
-model.load_state_dict(torch.load(model_path), strict=False)
-model.eval()
-model.cuda()
+load_model_parameters(model, model_path, strict=False)
+model.eval().cuda()
 
 for ii in range(len(dataset)):
     if ii % 10 == 0:
         print(ii)
+
     clear_sample()
-
-    dp = dataset[ii]
-    # add batch dimension
-    dp['input1'] = dp['input1'].unsqueeze(0).cuda()
-    dp['input2'] = dp['input2'].unsqueeze(0).cuda()
-
-    model(dp)
+    model(sample_to_torch_batch(dataset[ii]))
     save_sample()
 print("done")

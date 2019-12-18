@@ -6,7 +6,6 @@ EXPERIMENTS_HOME=/data/vimb01/experiments
 # datasets
 FLYINGCHAIRS_HOME=/data/vimb01/FlyingChairs_release/data/
 
-
 # model and checkpoint
 MODEL=FlowNet1S
 EVAL_LOSS=MultiScaleEPE_FlowNet

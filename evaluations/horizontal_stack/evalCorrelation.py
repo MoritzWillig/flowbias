@@ -1,16 +1,11 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-
-import os
 from glob import glob
 import numpy as np
 from evaluations.horizontal_stack.tools import load_sample
 
-sample_interface_pathA = "/data/vimb01/evaluations/chairs_PWCNet-20191121-171532_onThings_interface/*"
-sample_interface_pathB = "/data/vimb01/evaluations/things_PWCNet-20191122-152857_incomplete_onThings_interface/*"
+sample_interface_pathA = "/data/vimb01/evaluations/A_onThings_interface/*"
+sample_interface_pathB = "/data/vimb01/evaluations/C_onThings_interface/*"
 
-resulting = "/data/vimb01/evaluations/corr_chairs_thingsInc/"
+resulting = "/data/vimb01/evaluations/corr_Athings_Cthings/"
 
 all_sample_filenamesA = sorted(glob(sample_interface_pathA))
 all_sample_filenamesB = sorted(glob(sample_interface_pathB))

@@ -6,7 +6,6 @@ EXPERIMENTS_HOME=/data/vimb01/experiments
 # datasets
 FLYINGTHINGS_HOME=/data/vimb01/FlyingThings3D_subset/
 
-
 # model and checkpoint
 MODEL=FlowNet1S
 EVAL_LOSS=MultiScaleEPE_FlowNet
@@ -30,7 +29,6 @@ python ../main.py \
 --lr_scheduler_milestones="[110, 147, 183]" \
 --model=$MODEL \
 --num_workers=4 \
---num_iters=1 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \

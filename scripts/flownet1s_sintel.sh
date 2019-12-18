@@ -8,7 +8,7 @@ SINTEL_HOME=/data/vimb01/MPI-Sintel-complete/
 
 # model and checkpoint
 MODEL=PWCNet
-EVAL_LOSS=MultiScaleEPE_PWC
+EVAL_LOSS=MultiScaleEPE_FlowNet
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
