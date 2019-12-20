@@ -1,43 +1,56 @@
-from __future__ import absolute_import, division, print_function
+#from __future__ import absolute_import, division, print_function
 
 import torch
-import torch.nn as nn
 
 from models import PWCNet, PWCNetFusion, PWCConvAppliedConnector, PWCNetLinCombFusion, PWCNetConvFusion
+from utils.eval.model_loading import load_model_parameters, save_model
 
-encoder_path = "/visinf/home/vimb01/projects/models/A_chairs_PWCNet-20191121-171532/checkpoint_best.ckpt"
-decoder_path = "/visinf/home/vimb01/projects/models/C_chairs_PWCNet-20191126-113818/checkpoint_best.ckpt"
+encoder_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
+decoder_path = "/visinf/home/vimb01/projects/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt"
 
+resulting_model_path = "/visinf/home/vimb01/projects/fusedModels/A_I_blind/"
 
-correlation_path = ""
+# fusing type: "blind", "correlation", "trained"
+# blind:        no fusing
+# correlation:  weighted fusing
+# trained:      trained
+fusing = "blind"
 
-connector_path = ""
+correlation_path = None
+
+connector_path = None
 connector_kernel_size = 1
-
-resultingModelPath = ""
 
 
 encoderModel = PWCNet({})
-encoderModel.load_state_dict(torch.load(encoder_path))
+load_model_parameters(encoderModel, encoder_path)
 
 decoderModel = PWCNet({})
-decoderModel.load_state_dict(torch.load(decoder_path))
+load_model_parameters(decoderModel, decoder_path)
 
-if correlation_path is not None:
+
+if fusing == "blind":
+    resultingModel = PWCNet({})
+elif fusing == "correlation":
+    assert(correlation_path is not None)
     connector = PWCNetLinCombFusion({})
-else:
+    raise RuntimeError("TODO")
+    resultingModel = PWCNetFusion(-1, {}, connector)
+    resultingModel.connector = connector
+elif fusing == "trained":
+    assert (connector_path is not None)
     connector = PWCNetConvFusion(connector_kernel_size, {})
-connector.load_state_dict(torch.load(connector_path))
+    connector.load_state_dict(torch.load(connector_path))
+    resultingModel = PWCNetFusion(-1, {}, connector)
+    resultingModel.connector = connector
 
 
-resultingModel = PWCNetFusion(-1, {}, connector)
 # encoder
-resultingModel.feature_pyramid_extractor = encoderModel.feature_pyramid_extractor
-# feature mapping
-resultingModel.connector = connector
+resulting_model = encoderModel.feature_pyramid_extractor
 # decoder
-resultingModel.flow_estimators = decoderModel.flow_estimators
-resultingModel.context_networks = decoderModel.context_networks
+resulting_model.flow_estimators = decoderModel.flow_estimators
+resulting_model.context_networks = decoderModel.context_networks
+
+save_model(resulting_model, resulting_model_path)
 
 
-torch.save(resultingModel.state_dict(), resultingModelPath)

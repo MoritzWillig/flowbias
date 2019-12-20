@@ -4,7 +4,7 @@
 EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # datasets
-KITTI_HOME=/data02/vimb01/KITTI_scene_flow/
+KITTI_HOME=/data/vimb01/KITTI_scene_flow/
 
 # model and checkpoint
 MODEL=FlowNet1S
