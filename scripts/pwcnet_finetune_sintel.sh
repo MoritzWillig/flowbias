@@ -4,20 +4,20 @@
 EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # datasets
-SINTEL_HOME=/data/vimb01/MPI-Sintel-complete
+SINTEL_HOME=/data02/vimb01/MPI-Sintel-complete
 
 # model and checkpoint
 MODEL=PWCNet
 EVAL_LOSS=MultiScaleEPE_PWC
-CHECKPOINT=/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532
+CHECKPOINT=/visinf/home/vimb01/projects/fusedModels/I_A_blind/
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-A_fine_sintel-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-IA_fine_sintel-$TIME"
 
 # set cuda GPU ids
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=2
 
 # training configuration
 python ../main.py \

@@ -2,13 +2,13 @@
 
 import torch
 
-from models import PWCNet, PWCNetFusion, PWCConvAppliedConnector, PWCNetLinCombFusion, PWCNetConvFusion
-from utils.eval.model_loading import load_model_parameters, save_model
+from flowbias.models import PWCNet, PWCNetFusion, PWCConvAppliedConnector, PWCNetLinCombFusion, PWCNetConvFusion
+from flowbias.utils.eval.model_loading import load_model_parameters, save_model
 
-encoder_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
-decoder_path = "/visinf/home/vimb01/projects/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt"
+encoder_path = "/visinf/home/vimb01/projects/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt"
+decoder_path = "/visinf/home/vimb01/projects/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt"
 
-resulting_model_path = "/visinf/home/vimb01/projects/fusedModels/A_I_blind/"
+resulting_model_path = "/visinf/home/vimb01/projects/fusedModels/I_H_blind/"
 
 # fusing type: "blind", "correlation", "trained"
 # blind:        no fusing
@@ -30,26 +30,28 @@ load_model_parameters(decoderModel, decoder_path)
 
 
 if fusing == "blind":
-    resultingModel = PWCNet({})
+    resulting_model = PWCNet({})
 elif fusing == "correlation":
     assert(correlation_path is not None)
     connector = PWCNetLinCombFusion({})
     raise RuntimeError("TODO")
-    resultingModel = PWCNetFusion(-1, {}, connector)
-    resultingModel.connector = connector
+    resulting_model = PWCNetFusion(-1, {}, connector)
+    resulting_model.connector = connector
 elif fusing == "trained":
     assert (connector_path is not None)
     connector = PWCNetConvFusion(connector_kernel_size, {})
     connector.load_state_dict(torch.load(connector_path))
-    resultingModel = PWCNetFusion(-1, {}, connector)
-    resultingModel.connector = connector
+    resulting_model = PWCNetFusion(-1, {}, connector)
+    resulting_model.connector = connector
 
 
 # encoder
-resulting_model = encoderModel.feature_pyramid_extractor
+resulting_model.feature_pyramid_extractor = encoderModel.feature_pyramid_extractor
 # decoder
 resulting_model.flow_estimators = decoderModel.flow_estimators
 resulting_model.context_networks = decoderModel.context_networks
+
+resulting_model.cuda()
 
 save_model(resulting_model, resulting_model_path)
 

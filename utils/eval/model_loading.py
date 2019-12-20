@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import torch
 
-from configuration import ModelAndLoss, CheckpointSaver
+from flowbias.configuration import ModelAndLoss, CheckpointSaver
 
 
 def transform_state_dict(state_dict, transform):
