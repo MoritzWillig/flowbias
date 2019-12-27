@@ -1,4 +1,4 @@
-from datasets import KittiComb2015Train, KittiComb2015Val
+from flowbias.datasets import KittiComb2015Train, KittiComb2015Val
 
 
 

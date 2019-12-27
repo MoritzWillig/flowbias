@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-from models import PWCLinCombAppliedConnector
+from flowbias.models import PWCLinCombAppliedConnector
 
 correlation_path = "/visinf/home/vimb01/projects/evals/results_A_B"
 resultingModelPath = "/visinf/home/vimb01/projects/evals/results_A_B/connector.pt"

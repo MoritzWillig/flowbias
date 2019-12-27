@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function
 import torch.utils.data as data
 from glob import glob
 
-from datasets import common
-from evaluations.horizontal_stack.tools import load_sample
+from flowbias.datasets import common
+from flowbias.evaluations.horizontal_stack.tools import load_sample
 
 
 class PWCInterfaceDataset(data.Dataset):

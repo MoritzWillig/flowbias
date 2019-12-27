@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from .pwc_modules import upsample2d_as, initialize_msra, conv_rep
-from torchHelpers.ListModule import ListModule
+from flowbias.torchHelpers.ListModule import ListModule
 
 class PWCConvConnector(nn.Module):
 

@@ -1,11 +1,10 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+import os
 
 
 import pathlib
 from shutil import copyfile
 
-from datasets.monkaa import MonkaaFinalTrain
+from flowbias.datasets.monkaa import MonkaaFinalTrain
 
 monkaa_root = "/data/vimb01/monkaa_finalpass/"
 monkaa_sample_root = "/data/vimb01/monkaa_finalpass_sample411/"

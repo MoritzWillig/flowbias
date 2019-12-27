@@ -1,11 +1,8 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-
+import os
 import pathlib
 from shutil import copyfile
 
-from datasets.flyingThings3D import FlyingThings3dCleanTrain
+from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain
 
 things_root = "/data/vimb01/FlyingThings3D_subset/"
 things_sample_root = "/data/vimb01/FlyingThings3D_sample401_subset/"

@@ -5,9 +5,8 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import colorama
 import logging
-import logger
-import tools
-from tools import MovingAverage
+import flowbias.logger as logger
+import flowbias.tools as tools
 import collections
 
 import scipy.misc
@@ -16,8 +15,8 @@ import torch.nn as nn
 import os
 
 # for evaluation
-from utils.flow import flow_to_png, flow_to_png_middlebury
-from utils.flow import write_flow, write_flow_png
+from flowbias.utils.flow import flow_to_png, flow_to_png_middlebury
+from flowbias.utils.flow import write_flow, write_flow_png
 
 # --------------------------------------------------------------------------------
 # Exponential moving average smoothing factor for speed estimates
@@ -232,7 +231,7 @@ class TrainingEpoch:
                 # --------------------------------------------------------
                 if moving_averages_dict is None:
                     moving_averages_dict = {
-                        key: MovingAverage() for key in loss_dict_per_step.keys()
+                        key: tools.MovingAverage() for key in loss_dict_per_step.keys()
                     }
 
                 # --------------------------------------------------------
@@ -442,7 +441,7 @@ class EvaluationEpoch:
                     # --------------------------------------------------------
                     if moving_averages_dict is None:
                         moving_averages_dict = {
-                            key: MovingAverage() for key in loss_dict_per_step.keys()
+                            key: tools.MovingAverage() for key in loss_dict_per_step.keys()
                         }
 
                     # --------------------------------------------------------

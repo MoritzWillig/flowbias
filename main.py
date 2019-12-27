@@ -2,12 +2,12 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import subprocess
-import commandline
-import configuration as config
-import runtime
-import logger
+import flowbias.commandline as commandline
+import flowbias.configuration as config
+import flowbias.runtime as runtime
+import flowbias.logger as logger
+import flowbias.tools as tools
 import logging
-import tools
 import torch
 
 

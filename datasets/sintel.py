@@ -9,7 +9,7 @@ from torchvision import transforms as vision_transforms
 from . import transforms
 from . import common
 
-import tools
+import flowbias.tools
 
 
 VALIDATE_INDICES = [

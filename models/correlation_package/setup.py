@@ -13,7 +13,7 @@ nvcc_args = [
     '-gencode', 'arch=compute_60,code=sm_60',
     '-gencode', 'arch=compute_61,code=sm_61',
     '-gencode', 'arch=compute_61,code=compute_61',
-    '-ccbin', '/usr/bin/gcc-4.9'
+    '-ccbin', '/usr/bin/gcc-7'
 ]
 
 setup(

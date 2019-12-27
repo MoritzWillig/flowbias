@@ -1,6 +1,6 @@
 import torch
 import sys
-from tools import module_classes_to_dict
+from flowbias.tools import module_classes_to_dict
 
 # ------------------------------------------------------------------------------------
 # Export PyTorch optimizer

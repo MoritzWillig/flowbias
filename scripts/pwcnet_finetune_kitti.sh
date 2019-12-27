@@ -1,23 +1,25 @@
 #!/bin/bash
 
 # experiments and datasets meta
-EXPERIMENTS_HOME=/data/vimb01/experiments
+EXPERIMENTS_HOME=/data/dataA/experiments
 
 # datasets
-KITTI_HOME=/data/vimb01/KITTI_scene_flow/
+#KITTI_HOME=/data/vimb01/KITTI_scene_flow/
+KITTI_HOME=/data/dataB/datasets/KITTI_data_scene_flow/
 
 # model and checkpoint
 MODEL=PWCNet
 EVAL_LOSS=MultiScaleEPE_PWC
-CHECKPOINT=/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532
+#CHECKPOINT=/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532
+CHECKPOINT=/data/dataB/models/I_PWCNet-things_20191209-131019
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-A_fine_sintel-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-I_fine_kitti-$TIME"
 
 # set cuda GPU ids
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
 
 # training configuration
 python ../main.py \

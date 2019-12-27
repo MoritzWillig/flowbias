@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # experiments and datasets meta
-EXPERIMENTS_HOME=/data/vimb01/experiments
+EXPERIMENTS_HOME=/data/dataA/experiments
 
 # datasets
-FLYINGTHINGS_HOME=/data/vimb01/FlyingThings3D_subset/
+FLYINGTHINGS_HOME=/data/dataB/datasets/FlyingThings3D_subset/
 
 # model and checkpoint
 MODEL=PWCNet
@@ -17,7 +17,7 @@ TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/things_$MODEL-$TIME"
 
 # set cuda GPU ids
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
 
 # training configuration
 python ../main.py \

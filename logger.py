@@ -6,7 +6,7 @@ import colorama
 import logging
 import os
 import re
-import tools
+import flowbias.tools as tools
 import sys
 
 
@@ -51,7 +51,7 @@ class ConsoleFormatter(logging.Formatter):
         super(ConsoleFormatter, self).__init__(fmt=fmt, datefmt=datefmt)
 
     def format(self, record=None):
-        indent = sys.modules[__name__].global_indent
+        indent = LoggingBlock.global_indent
         record.msg = " " * indent + record.msg
         return super(ConsoleFormatter, self).format(record)
 
@@ -63,7 +63,7 @@ class SkipLogbookFilter(logging.Filter):
 
 def configure_logging(filename=None):
     # set global indent level
-    sys.modules[__name__].global_indent = 0
+    LoggingBlock.global_indent = 0
 
     # add custom tqdm logger
     tools.addLoggingLevel("LOGBOOK", 1000)
@@ -106,6 +106,8 @@ def configure_logging(filename=None):
 
 
 class LoggingBlock:
+    global_indent = 0
+
     def __init__(self, title, emph=False):
         self._emph = emph
         bright = colorama.Style.BRIGHT
@@ -117,8 +119,8 @@ class LoggingBlock:
             logging.info(title)
 
     def __enter__(self):
-        sys.modules[__name__].global_indent += 2
+        LoggingBlock.global_indent += 2
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        sys.modules[__name__].global_indent -= 2
+        LoggingBlock.global_indent -= 2

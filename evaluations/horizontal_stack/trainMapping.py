@@ -2,9 +2,9 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
-from configuration import _generate_trainable_params
-from datasets.pwcInterfaceDataset import PWCInterfaceDataset
-from models.pwc_modules import initialize_msra
+from flowbias.configuration import _generate_trainable_params
+from flowbias.datasets.pwcInterfaceDataset import PWCInterfaceDataset
+from flowbias.models.pwc_modules import initialize_msra
 
 sample_interface_pathA = "/data/vimb01/experiments/pwcinterfaceA/*"
 sample_interface_pathB = "/data/vimb01/experiments/pwcinterfaceB/*"

@@ -1,11 +1,9 @@
-import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
+import os
 
 import pathlib
 from shutil import copyfile
 
-from datasets.flyingchairs import FlyingChairsTrain
+from flowbias.datasets.flyingchairs import FlyingChairsTrain
 
 chairs_root = "/data/vimb01/FlyingChairs_release/data/"
 chairs_sample_root = "/data/vimb01/FlyingChairs_sample402/data/"

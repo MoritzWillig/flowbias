@@ -72,7 +72,7 @@ class Kitti_comb_test(data.Dataset):
         if images_root_2015 is not None:
 
             if not os.path.isdir(images_root_2015):
-                raise ValueError("Image directory '%s' not found!")
+                raise ValueError(f"Image directory '{images_root_2015}' not found!")
 
             all_img1_2015_filenames = sorted(glob(os.path.join(images_root_2015, "*_10.png")))
             all_img2_2015_filenames = sorted(glob(os.path.join(images_root_2015, "*_11.png")))
@@ -86,7 +86,7 @@ class Kitti_comb_test(data.Dataset):
         if images_root_2012 is not None:
 
             if not os.path.isdir(images_root_2012):
-                raise ValueError("Image directory '%s' not found!")
+                raise ValueError(f"Image directory '{images_root_2012}' not found!")
 
             all_img1_2012_filenames = sorted(glob(os.path.join(images_root_2012, "*_10.png")))
             all_img2_2012_filenames = sorted(glob(os.path.join(images_root_2012, "*_11.png")))
@@ -205,9 +205,9 @@ class Kitti_comb(data.Dataset):
         if images_root_2015 is not None and flow_root_2015 is not None:
 
             if not os.path.isdir(images_root_2015):
-                raise ValueError("Image directory '%s' not found!")
+                raise ValueError(f"Image directory '{images_root_2015}' not found!")
             if not os.path.isdir(flow_root_2015):
-                raise ValueError("Flow directory '%s' not found!")
+                raise ValueError(f"Flow directory '{flow_root_2015}' not found!")
 
             all_img1_2015_filenames = sorted(glob(os.path.join(images_root_2015, "*_10.png")))
             all_img2_2015_filenames = sorted(glob(os.path.join(images_root_2015, "*_11.png")))            

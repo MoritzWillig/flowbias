@@ -7,9 +7,8 @@ import torch
 from torch import nn
 import numpy as np
 from torch.utils.data import DataLoader
-import logger
-#from flowbias.tools import *
-from flowbias import tools
+import flowbias.logger as logger
+import flowbias.tools as tools
 import logging
 import shutil
 import random

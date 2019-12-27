@@ -1,11 +1,11 @@
 import sys, os
 
-from utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
+from flowbias.utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
-from datasets.flyingThings3D import FlyingThings3d
-from models.pwcnetRecordable import PWCNetRecordable
+from flowbias.datasets.flyingThings3D import FlyingThings3d
+from flowbias.models.pwcnetRecordable import PWCNetRecordable
 import numpy as np
 
 model_path = "/visinf/home/vimb01/projects/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt"
