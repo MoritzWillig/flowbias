@@ -2,8 +2,8 @@
 
 import torch
 
-from flowbias.models import PWCNet, PWCNetFusion, PWCConvAppliedConnector, PWCNetLinCombFusion, PWCNetConvFusion
-from flowbias.utils.eval.model_loading import load_model_parameters, save_model
+from flowbias.models import PWCNet, PWCNetFusion, PWCNetLinCombFusion, PWCNetConvFusion
+from flowbias.utils.model_loading import load_model_parameters, save_model
 
 encoder_path = "/visinf/home/vimb01/projects/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt"
 decoder_path = "/visinf/home/vimb01/projects/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt"

@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 import torch
 import torch.nn as nn
 
-from .pwcnetConnector import PWCConvAppliedConnector, PWCLinCombAppliedConnector
+from .pwcnetConvConnector import PWCConvAppliedConnector, PWCLinCombAppliedConnector, PWCAppliedConvConnector13, PWCAppliedConvConnector33
 from .pwc_modules import upsample2d_as, initialize_msra, conv_rep
 from .pwc_modules import WarpingLayer, FeatureExtractor, ContextNetwork, FlowEstimatorDense
 from .correlation_package.correlation import Correlation
@@ -11,10 +11,10 @@ from .correlation_package.correlation import Correlation
 
 class PWCNetFusion(nn.Module):
     """
-    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
+    Modified pwcNet with additional connector between, encoder and decoder, to allow feature mapping
     """
 
-    def __init__(self, connector, args, div_flow=0.05):
+    def __init__(self, args, connector, div_flow=0.05):
         super(PWCNetFusion, self).__init__()
         self.args = args
         self._div_flow = div_flow
@@ -107,18 +107,29 @@ class PWCNetFusion(nn.Module):
             return output_dict_eval
 
 
-class PWCNetConvFusion(PWCNetFusion):
+class PWCNetConv13Fusion(PWCNetFusion):
     """
     Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
     """
 
-    def __init__(self, connector_kernel_size, args, div_flow=0.05):
-        super(PWCNetConvFusion, self).__init__(PWCConvAppliedConnector(connector_kernel_size, {}), args, div_flow=div_flow)
+    def __init__(self, args, div_flow=0.05):
+        super(PWCNetConv13Fusion, self).__init__(args, PWCAppliedConvConnector13(args), div_flow=div_flow)
+
+
+class PWCNetConv33Fusion(PWCNetFusion):
+    """
+    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
+    """
+
+    def __init__(self, args, div_flow=0.05):
+        super(PWCNetConv33Fusion, self).__init__(args, PWCAppliedConvConnector33(args), div_flow=div_flow)
+
+
 
 
 class PWCNetLinCombFusion(PWCNetFusion):
     """
-    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
+    Modified pwcNet with additional linear feature mapping
     """
 
     def __init__(self, args, div_flow=0.05):

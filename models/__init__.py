@@ -8,7 +8,7 @@ from . import IRR_FlowNet
 from . import pwcnet
 from . import pwcnetRecordable
 from . import pwcnetFusion
-from . import pwcnetConnector
+from . import pwcnetConvConnector
 from . import pwcnet_bi
 from . import pwcnet_occ
 from . import pwcnet_occ_bi
@@ -28,12 +28,20 @@ FlowNet1S_irr_occ_bi = flownet1s_irr_occ_bi.FlowNet1S
 PWCNet               = pwcnet.PWCNet
 PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
 PWCNetFusion         = pwcnetFusion.PWCNetFusion
-PWCNetConvFusion     = pwcnetFusion.PWCNetConvFusion
+PWCNetConv11Fusion     = pwcnetFusion.PWCNetConv11Fusion  # 1 conv layer - kernel size 1
+PWCNetConv12Fusion     = pwcnetFusion.PWCNetConv12Fusion  # 2 conv layers - kernel size 1
+PWCNetConv13Fusion     = pwcnetFusion.PWCNetConv13Fusion  # 3 conv layers - kernel size 1
+PWCTrainableConvConnector11 = pwcnetConvConnector.PWCTrainableConvConnector11  # 1 conv layer - kernel size 1
+PWCTrainableConvConnector12 = pwcnetConvConnector.PWCTrainableConvConnector12  # 2 conv layers - kernel size 1
+PWCTrainableConvConnector13 = pwcnetConvConnector.PWCTrainableConvConnector13  # 3 conv layers - kernel size 1
+PWCTrainableConvConnector31 = pwcnetConvConnector.PWCTrainableConvConnector31  # 1 conv layer - kernel size 3
+PWCTrainableConvConnector32 = pwcnetConvConnector.PWCTrainableConvConnector32  # 2 conv layers - kernel size 3
+PWCTrainableConvConnector33 = pwcnetConvConnector.PWCTrainableConvConnector33  # 3 conv layers - kernel size 3
 PWCNetLinCombFusion  = pwcnetFusion.PWCNetLinCombFusion
-PWCConnector1        = pwcnetConnector.PWCConvConnector1
-PWCConnector3        = pwcnetConnector.PWCConvConnector3
-PWCConvAppliedConnector = pwcnetConnector.PWCConvAppliedConnector
-PWCLinCombAppliedConnector = pwcnetConnector.PWCLinCombAppliedConnector
+PWCConnector1        = pwcnetConvConnector.PWCConvConnector1
+PWCConnector3        = pwcnetConvConnector.PWCConvConnector3
+PWCConvAppliedConnector = pwcnetConvConnector.PWCConvAppliedConnector
+PWCLinCombAppliedConnector = pwcnetConvConnector.PWCLinCombAppliedConnector
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet

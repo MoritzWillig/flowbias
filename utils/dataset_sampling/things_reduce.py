@@ -4,8 +4,8 @@ from shutil import copyfile
 
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain
 
-things_root = "/data/vimb01/FlyingThings3D_subset/"
-things_sample_root = "/data/vimb01/FlyingThings3D_sample401_subset/"
+things_root = "/data/dataB/datasets/FlyingThings3D_subset/"
+things_sample_root = "/data/dataB/datasets/FlyingThings3D_sample401_subset/"
 
 things_sample_im = os.path.join(things_sample_root, "train/image_clean/left/")
 things_sample_flow_future = os.path.join(things_sample_root, "train/flow/left/into_future/")
@@ -32,3 +32,5 @@ for i in range(len(dataset._image_list)):
     copyfile(flow[1], os.path.join(things_sample_flow_past, os.path.basename(flow[1])))
 
 print('done')
+subdataset = FlyingThings3dCleanTrain({}, things_sample_root)
+print(f"created subdataset with {len(subdataset)} samples")

@@ -4,8 +4,8 @@ from __future__ import absolute_import, division, print_function
 
 import torch
 import torch.nn as nn
-from utils.interpolation import Interp2, Interp2MaskBinary
-from utils.interpolation import Meshgrid
+from flowbias.utils.interpolation import Interp2, Interp2MaskBinary
+from flowbias.utils.interpolation import Meshgrid
 import numpy as np
 
 

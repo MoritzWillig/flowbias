@@ -1,19 +1,29 @@
-import sys, os
-
-from flowbias.utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 
 from flowbias.datasets.flyingThings3D import FlyingThings3d
+from flowbias.datasets.flyingchairs import FlyingChairsFull
+from flowbias.datasets.subsampledDataset import SubsampledDataset
+from flowbias.datasets.kitti_combined import KittiComb2015Train
 from flowbias.models.pwcnetRecordable import PWCNetRecordable
 import numpy as np
 
-model_path = "/visinf/home/vimb01/projects/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt"
-sample_interface_path = "/data/vimb01/evaluations/C_onThings_interface/"
-dataset = FlyingThings3d({},
-                         "/data/vimb01/FlyingThings3D_sample401_subset/train/image_clean/left",
-                         "/data/vimb01/FlyingThings3D_sample401_subset/train/flow/left", "",
-                         photometric_augmentations=False)
+#model_path = "/data/dataB/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
+#sample_interface_path = "/data/dataA/model_interfaces/A_sintel/"
+#model_path = "/data/dataB/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt"
+#sample_interface_path = "/data/dataA/model_interfaces/I_sintel/"
+model_path = "/data/dataB/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt"
+sample_interface_path = "/data/dataA/model_interfaces/H_sintel/"
+
+#dataset = FlyingThings3d({},
+#                         "/data/dataB/datasets/FlyingThings3D_sample401_subset/train/image_clean/left",
+#                         "/data/dataB/datasets/FlyingThings3D_sample401_subset/train/flow/left", "",
+#                         photometric_augmentations=False)
+#dataset = FlyingChairsFull({}, "/data/dataB/datasets/FlyingChairs_sample402/data/", photometric_augmentations=False)
+dataset = SubsampledDataset({}, "/data/dataB/datasets/MPI-Sintel_subset400/", photometric_augmentations=False)
+#dataset = KittiComb2015Train({},
+#                             "/data/dataB/datasets/KITTI_data_scene_flow",
+#                             photometric_augmentations=False,
+#                             preprocessing_crop=True)
 
 layer_id = 0
 out_corr_relu_s = {}
@@ -37,9 +47,9 @@ def recorder_func(out_corr_relu, x1, flow, l):
     ct_str = str(layer_id)
 
     out_corr_relu_s["out_corr_relu_"+ct_str] = out_corr_relu.cpu().data.numpy()
-    x1_s["x1_"+ct_str] = x1.data.cpu().numpy(),
-    flow_s["flow_"+ct_str] = flow.data.cpu().numpy(),
-    l_s["l_"+ct_str] = np.array(l),
+    x1_s["x1_"+ct_str] = x1.data.cpu().numpy()
+    flow_s["flow_"+ct_str] = flow.data.cpu().numpy()
+    l_s["l_"+ct_str] = np.array(l)
     layer_id += 1
 
 

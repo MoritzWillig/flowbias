@@ -1,6 +1,6 @@
 from glob import glob
 import numpy as np
-from flowbias.evaluations.horizontal_stack.tools import load_sample
+from flowbias.utils.data_loading import load_sample
 
 sample_interface_pathA = "/data/vimb01/evaluations/A_onThings_interface/*"
 sample_interface_pathB = "/data/vimb01/evaluations/C_onThings_interface/*"

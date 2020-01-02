@@ -9,7 +9,7 @@ from torchvision import transforms as vision_transforms
 from . import transforms
 from . import common
 
-import flowbias.tools
+import flowbias.tools as tools
 
 
 VALIDATE_INDICES = [
@@ -41,17 +41,17 @@ class _Sintel(data.Dataset):
         if imgtype is "comb":
             images_root = os.path.join(dir_root, "clean")
         flow_root = os.path.join(dir_root, "flow")
-        occ_root = os.path.join(dir_root, "occlusions_rev")
+        #occ_root = os.path.join(dir_root, "occlusions_rev")
 
         if not os.path.isdir(images_root):
             raise ValueError("Image directory '%s' not found!")
         if flow_root is not None and not os.path.isdir(flow_root):
             raise ValueError("Flow directory '%s' not found!")
-        if occ_root is not None and not os.path.isdir(occ_root):
-            raise ValueError("Occ directory '%s' not found!")
+        #if occ_root is not None and not os.path.isdir(occ_root):
+        #    raise ValueError("Occ directory '%s' not found!")
         
         all_flo_filenames = sorted(glob(os.path.join(flow_root, "*/*.flo")))
-        all_occ_filenames = sorted(glob(os.path.join(occ_root, "*/*.png")))
+        #all_occ_filenames = sorted(glob(os.path.join(occ_root, "*/*.png")))
         all_img_filenames = sorted(glob(os.path.join(images_root, "*/*.png")))
 
         # Remember base for substraction at runtime
@@ -69,29 +69,29 @@ class _Sintel(data.Dataset):
 
         self._image_list = []
         self._flow_list = []
-        self._occ_list = []
+        #self._occ_list = []
 
         for base_folder in base_folders:            
             img_filenames = [x for x in all_img_filenames if base_folder in x]
             flo_filenames = [x for x in all_flo_filenames if base_folder in x]
-            occ_filenames = [x for x in all_occ_filenames if base_folder in x]
+            #occ_filenames = [x for x in all_occ_filenames if base_folder in x]
 
             for i in range(len(img_filenames) - 1):
 
                 im1 = img_filenames[i]
                 im2 = img_filenames[i + 1]
                 flo = flo_filenames[i]
-                occ = occ_filenames[i]
+                #occ = occ_filenames[i]
 
                 self._image_list += [[im1, im2]]
                 self._flow_list += [flo]
-                self._occ_list += [occ]
+                #self._occ_list += [occ]
 
                 # Sanity check
                 im1_base_filename = os.path.splitext(os.path.basename(im1))[0]
                 im2_base_filename = os.path.splitext(os.path.basename(im2))[0]
                 flo_base_filename = os.path.splitext(os.path.basename(flo))[0]
-                occ_base_filename = os.path.splitext(os.path.basename(occ))[0]
+                #occ_base_filename = os.path.splitext(os.path.basename(occ))[0]
                 im1_frame, im1_no = im1_base_filename.split("_")
                 im2_frame, im2_no = im2_base_filename.split("_")
                 assert(im1_frame == im2_frame)
@@ -101,12 +101,12 @@ class _Sintel(data.Dataset):
                 assert(im1_frame == flo_frame)
                 assert(int(im1_no) == int(flo_no))
                 
-                occ_frame, occ_no = occ_base_filename.split("_")
-                assert(im1_frame == occ_frame)
-                assert(int(im1_no) == int(occ_no))
+                #occ_frame, occ_no = occ_base_filename.split("_")
+                #assert(im1_frame == occ_frame)
+                #assert(int(im1_no) == int(occ_no))
         
         assert len(self._image_list) == len(self._flow_list)        
-        assert len(self._image_list) == len(self._occ_list)
+        #assert len(self._image_list) == len(self._occ_list)
 
         # -------------------------------------------------------------
         # Remove invalid validation indices
@@ -132,16 +132,16 @@ class _Sintel(data.Dataset):
         # ----------------------------------------------------------
         self._image_list = [self._image_list[i] for i in list_of_indices]
         self._flow_list = [self._flow_list[i] for i in list_of_indices]
-        self._occ_list = [self._occ_list[i] for i in list_of_indices]
+        #self._occ_list = [self._occ_list[i] for i in list_of_indices]
 
         if imgtype is "comb":
             image_list_final = [[val[0].replace("clean", "final"), val[1].replace("clean", "final")] for idx, val in enumerate(self._image_list)]
             self._image_list += image_list_final
             self._flow_list += self._flow_list
-            self._occ_list += self._occ_list
+            #self._occ_list += self._occ_list
 
         assert len(self._image_list) == len(self._flow_list)
-        assert len(self._image_list) == len(self._occ_list)
+        #assert len(self._image_list) == len(self._occ_list)
 
         # ----------------------------------------------------------
         # photometric_augmentations
@@ -171,18 +171,18 @@ class _Sintel(data.Dataset):
         im1_filename = self._image_list[index][0]
         im2_filename = self._image_list[index][1]
         flo_filename = self._flow_list[index]
-        occ_filename = self._occ_list[index]
+        #occ_filename = self._occ_list[index]
 
         # read float32 images and flow
         im1_np0 = common.read_image_as_byte(im1_filename)
         im2_np0 = common.read_image_as_byte(im2_filename)
         flo_np0 = common.read_flo_as_float32(flo_filename)
-        occ_np0 = common.read_occ_image_as_float32(occ_filename)
+        #occ_np0 = common.read_occ_image_as_float32(occ_filename)
 
         # possibly apply photometric transformations
         im1, im2 = self._photometric_transform(im1_np0, im2_np0)
         flo = common.numpy2torch(flo_np0)
-        occ = common.numpy2torch(occ_np0)
+        #occ = common.numpy2torch(occ_np0)
 
         # e.g. "clean/alley_1/"
         basedir = os.path.splitext(os.path.dirname(im1_filename).replace(self._substract_base, "")[1:])[0]
@@ -197,7 +197,7 @@ class _Sintel(data.Dataset):
             "basedir": basedir,
             "basename": basename,
             "target1": flo,
-            "target_occ1": occ
+            #"target_occ1": occ
         }
 
         return example_dict

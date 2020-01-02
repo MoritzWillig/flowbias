@@ -9,14 +9,14 @@ import os
 import sys
 import torch
 
-import datasets
-import losses
-import models
-import augmentations
-import tools
-import logger
+import flowbias.datasets as datasets
+import flowbias.losses as losses
+import flowbias.models as models
+import flowbias.augmentations as augmentations
+import flowbias.tools as tools
+import flowbias.logger as logger
+import flowbias.optim as optim
 import logging
-import optim
 
 
 def _get_type_from_arg(arg):
@@ -269,7 +269,7 @@ def _parse_arguments():
         default_class=None,
         exclude_params=["self", "args", "is_cropped"],
         exclude_classes=["_*"],
-        unknown_default_types={"root": str})
+        unknown_default_types={"root": str, "rootA": str, "rootB": str})
 
     # -------------------------------------------------------------------------
     # Arguments inferred from datasets for validation
@@ -281,7 +281,7 @@ def _parse_arguments():
         default_class=None,
         exclude_params=["self", "args", "is_cropped"],
         exclude_classes=["_*"],
-        unknown_default_types={"root": str})
+        unknown_default_types={"root": str, "rootA": str, "rootB": str})
 
     # -------------------------------------------------------------------------
     # Arguments inferred from PyTorch optimizers

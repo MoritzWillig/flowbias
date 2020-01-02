@@ -1,6 +1,6 @@
-from flowbias.datasets import KittiComb2015Train, KittiComb2015Val
+from flowbias.datasets import KittiComb2015Train, KittiComb2015Val, PWCInterfaceDatasetTrain
 
 
-
-dataset = KittiComb2015Val({}, "/data/vimb01/KITTI_scene_flow/")
+dataset = PWCInterfaceDatasetTrain({}, "/data/dataA/model_interfaces/A_things", "/data/dataA/model_interfaces/A_things")
+#dataset = KittiComb2015Train({}, "/data/dataB/datasets/KITTI_data_scene_flow/")
 print(">>", len(dataset))

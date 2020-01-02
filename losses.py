@@ -712,18 +712,45 @@ class L1ConnectorLoss(nn.Module):
         self.l1loss = nn.L1Loss()
 
     def forward(self, output_dict, target_dict):
-        target_x1_0 = self.l1loss(output_dict['target_x1_0'], target_dict["target_x1_0"])
-        target_x1_1 = self.l1loss(output_dict['target_x1_1'], target_dict["target_x1_1"])
-        target_x1_2 = self.l1loss(output_dict['target_x1_2'], target_dict["target_x1_2"])
-        target_x1_3 = self.l1loss(output_dict['target_x1_3'], target_dict["target_x1_3"])
-        target_x1_4 = self.l1loss(output_dict['target_x1_4'], target_dict["target_x1_4"])
+        target_x1_0 = self.l1loss(output_dict['x1_0'], target_dict["target_x1_0"])
+        target_x1_1 = self.l1loss(output_dict['x1_1'], target_dict["target_x1_1"])
+        target_x1_2 = self.l1loss(output_dict['x1_2'], target_dict["target_x1_2"])
+        target_x1_3 = self.l1loss(output_dict['x1_3'], target_dict["target_x1_3"])
+        target_x1_4 = self.l1loss(output_dict['x1_4'], target_dict["target_x1_4"])
 
         loss_dict = {
-            "target_x1_0": target_x1_0 / self._batch_size,
-            "target_x1_1": target_x1_1 / self._batch_size,
-            "target_x1_2": target_x1_2 / self._batch_size,
-            "target_x1_3": target_x1_3 / self._batch_size,
-            "target_x1_4": target_x1_4 / self._batch_size,
+            "x1_0": target_x1_0 / self._batch_size,
+            "x1_1": target_x1_1 / self._batch_size,
+            "x1_2": target_x1_2 / self._batch_size,
+            "x1_3": target_x1_3 / self._batch_size,
+            "x1_4": target_x1_4 / self._batch_size,
+            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / self._batch_size
+        }
+        return loss_dict
+
+
+class MSEConnectorLoss(nn.Module):
+    def __init__(self, args):
+
+        super(MSEConnectorLoss, self).__init__()
+        self._args = args
+        self._batch_size = args.batch_size
+
+        self.MSEloss = nn.MSELoss()
+
+    def forward(self, output_dict, target_dict):
+        target_x1_0 = self.MSEloss(output_dict['x1_0'], target_dict["target_x1_0"])
+        target_x1_1 = self.MSEloss(output_dict['x1_1'], target_dict["target_x1_1"])
+        target_x1_2 = self.MSEloss(output_dict['x1_2'], target_dict["target_x1_2"])
+        target_x1_3 = self.MSEloss(output_dict['x1_3'], target_dict["target_x1_3"])
+        target_x1_4 = self.MSEloss(output_dict['x1_4'], target_dict["target_x1_4"])
+
+        loss_dict = {
+            "x1_0": target_x1_0 / self._batch_size,
+            "x1_1": target_x1_1 / self._batch_size,
+            "x1_2": target_x1_2 / self._batch_size,
+            "x1_3": target_x1_3 / self._batch_size,
+            "x1_4": target_x1_4 / self._batch_size,
             "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / self._batch_size
         }
         return loss_dict

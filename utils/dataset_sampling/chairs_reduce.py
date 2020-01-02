@@ -3,10 +3,10 @@ import os
 import pathlib
 from shutil import copyfile
 
-from flowbias.datasets.flyingchairs import FlyingChairsTrain
+from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsFull
 
-chairs_root = "/data/vimb01/FlyingChairs_release/data/"
-chairs_sample_root = "/data/vimb01/FlyingChairs_sample402/data/"
+chairs_root = "/data/dataB/datasets/FlyingChairs_release/data/"
+chairs_sample_root = "/data/dataB/datasets/FlyingChairs_sample402/data/"
 
 #create sample dir path
 pathlib.Path(chairs_sample_root).mkdir(parents=True, exist_ok=True)
@@ -24,4 +24,6 @@ for i in range(len(dataset._image_list)):
     copyfile(im[1], os.path.join(chairs_sample_root, os.path.basename(im[1])))
     copyfile(flow, os.path.join(chairs_sample_root, os.path.basename(flow)))
 
-print('done')
+print('done copying')
+subdataset = FlyingChairsFull({}, chairs_sample_root)
+print(f"created subdataset with {len(subdataset)} samples")

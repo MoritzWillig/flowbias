@@ -1,10 +1,13 @@
 from __future__ import absolute_import, division, print_function
 
 import torch.utils.data as data
+import os
 from glob import glob
 
 from flowbias.datasets import common
-from flowbias.evaluations.horizontal_stack.tools import load_sample
+from flowbias.utils.data_loading import load_sample
+
+import torch
 
 
 class PWCInterfaceDataset(data.Dataset):
@@ -23,8 +26,12 @@ class PWCInterfaceDataset(data.Dataset):
         # -------------------------------------------------------------
         # filenames for all input images and target flows
         # -------------------------------------------------------------
-        filenamesA = sorted(glob(rootA))
-        filenamesB = sorted(glob(rootB))
+
+
+        filenamesA = sorted(glob(os.path.join(rootA, "*")))
+        filenamesB = sorted(glob(os.path.join(rootB, "*")))
+        assert(len(filenamesA) != 0)
+        assert(len(filenamesA) == len(filenamesB))
         self._filenamesA = []
         self._filenamesB = []
 
@@ -48,13 +55,13 @@ class PWCInterfaceDataset(data.Dataset):
         sA_filename = self._filenamesA[index]
         sB_filename = self._filenamesB[index]
 
-        out_corr_reluA, x1A, flowA, lA = load_sample(sA_filename[index])
-        out_corr_reluB, x1B, flowB, lB = load_sample(sB_filename[index])
+        out_corr_reluA, x1A, flowA, lA = load_sample(sA_filename)
+        out_corr_reluB, x1B, flowB, lB = load_sample(sB_filename)
 
         for i in range(self.num_levels):
             # read level and convert flow to FloatTensor
-            x1Al = common.numpy2torch(x1A[i])
-            x1Bl = common.numpy2torch(x1B[i])
+            x1Al = torch.squeeze(common.numpy2torch(x1A[i]))
+            x1Bl = torch.squeeze(common.numpy2torch(x1B[i]))
 
             example_dict[f"input_x1_{i}"] = x1Al
             example_dict[f"target_x1_{i}"] = x1Bl
@@ -65,16 +72,20 @@ class PWCInterfaceDataset(data.Dataset):
 
 
 class PWCInterfaceDatasetTrain(PWCInterfaceDataset):
+    """
+    skips every 20th sample to use for validation
+    """
+
     def __init__(self,
                  args,
                  rootA,
                  rootB):
-        super(PWCInterfaceDataset, self).__init__(
+        super(PWCInterfaceDatasetTrain, self).__init__(
             args,
             rootA=rootA,
             rootB=rootB,
-            reduce_every_nth=20,
-            inverse_reduce=False)
+            reduce_every_nth=16,
+            inverse_reduce=True)
 
 
 class PWCInterfaceDatasetValid(PWCInterfaceDataset):
@@ -82,9 +93,9 @@ class PWCInterfaceDatasetValid(PWCInterfaceDataset):
                  args,
                  rootA,
                  rootB):
-        super(PWCInterfaceDataset, self).__init__(
+        super(PWCInterfaceDatasetValid, self).__init__(
             args,
-            rootA=rootA,
-            rootB=rootB,
-            reduce_every_nth=20,
-            inverse_reduce=True)
+            rootA,
+            rootB,
+            reduce_every_nth=16,
+            inverse_reduce=False)

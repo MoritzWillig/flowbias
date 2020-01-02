@@ -163,7 +163,8 @@ class TrainingEpoch:
         # -------------------------------------------------------------
         # Extract batch size from first input
         # -------------------------------------------------------------
-        batch_size = example_dict["input1"].size()[0]
+        example_input_key = next(input_key for input_key in example_dict.keys() if "input" in input_key)
+        batch_size = example_dict[example_input_key].size()[0]
 
         # -------------------------------------------------------------
         # Reset gradients
@@ -375,7 +376,8 @@ class EvaluationEpoch:
         # -------------------------------------------------------------
         # Extract batch size from first input
         # -------------------------------------------------------------
-        batch_size = example_dict["input1"].size()[0]
+        example_input_key = next(input_key for input_key in example_dict.keys() if "input" in input_key)
+        batch_size = example_dict[example_input_key].size()[0]
 
         # -------------------------------------------------------------
         # Run forward pass to get losses and outputs.
@@ -534,7 +536,11 @@ def exec_runtime(args,
             if lr_scheduler is None:
                 logging.info("lr: %s" % format_learning_rate(args.optimizer_lr))
             else:
-                logging.info("lr: %s" % format_learning_rate(lr_scheduler.get_lr()))
+                if not validation_scheduler:
+                    logging.info("lr: %s" % format_learning_rate(lr_scheduler.get_lr()))
+                else:
+                    # ReduceLROnPlateau has no get_lr() function - read lr directly from optimizer ...
+                    logging.info("lr: %s" % format_learning_rate([param_group['lr'] for param_group in optimizer.param_groups]))
 
             # -------------------------------------------
             # Create and run a training epoch

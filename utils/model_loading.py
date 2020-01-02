@@ -12,13 +12,6 @@ def transform_state_dict(state_dict, transform):
     return new_state_dict
 
 
-def prepare_sample(sample):
-    for key, value in sample.items():
-        if key.startswith("input") or key.startswith("target"):
-            sample[key] = value.unsqueeze(0).cuda()
-    return sample
-
-
 def load_model_parameters(model_instance, checkpoint_path, strict=True):
     stats = torch.load(checkpoint_path)
     # remove "_model." from name

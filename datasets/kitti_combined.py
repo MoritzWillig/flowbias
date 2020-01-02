@@ -152,7 +152,6 @@ class Kitti_comb_test(data.Dataset):
                 vision_transforms.transforms.ToTensor(),
             ], from_numpy=True, to_numpy=False)
 
-
     def __getitem__(self, index):
         index = index % self._size
 

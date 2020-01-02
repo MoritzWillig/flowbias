@@ -5,6 +5,7 @@ from . import kitti_combined
 from . import sintel
 from . import monkaa
 from . import pwcInterfaceDataset
+from . import subsampledDataset
 
 ## FlyingChairs
 FlyingChairsTrain = flyingchairs.FlyingChairsTrain
@@ -55,5 +56,8 @@ KittiComb2015Test = kitti_combined.KittiComb2015Test
 
 
 ## PWCInterfaceDataset
-PWCInterfaceTrain = pwcInterfaceDataset.PWCInterfaceDatasetTrain
-PWCInterfaceValid = pwcInterfaceDataset.PWCInterfaceDatasetValid
+PWCInterfaceDatasetTrain = pwcInterfaceDataset.PWCInterfaceDatasetTrain
+PWCInterfaceDatasetValid = pwcInterfaceDataset.PWCInterfaceDatasetValid
+
+## SubsampledDataset
+SubsampledDataset = subsampledDataset.SubsampledDataset

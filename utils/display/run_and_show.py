@@ -1,10 +1,8 @@
-from collections import OrderedDict
 import matplotlib.pyplot as plt
-import torch
 
 from flowbias.models import PWCNet
 from flowbias.datasets import FlyingChairsFull
-from flowbias.utils.eval.model_loading import load_model_parameters, sample_to_torch_batch
+from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.utils.flow import flow_to_png
 
 checkpoint_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
