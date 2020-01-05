@@ -724,7 +724,7 @@ class L1ConnectorLoss(nn.Module):
             "x1_2": target_x1_2 / self._batch_size,
             "x1_3": target_x1_3 / self._batch_size,
             "x1_4": target_x1_4 / self._batch_size,
-            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / self._batch_size
+            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / 5
         }
         return loss_dict
 
@@ -751,11 +751,7 @@ class MSEConnectorLoss(nn.Module):
             "x1_2": target_x1_2 / self._batch_size,
             "x1_3": target_x1_3 / self._batch_size,
             "x1_4": target_x1_4 / self._batch_size,
-            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / self._batch_size
+            "total_loss": (target_x1_0 + target_x1_1 + target_x1_2 + target_x1_3 + target_x1_4) / 5
         }
         return loss_dict
-
-
-
-
 

@@ -9,12 +9,12 @@ SINTEL_HOME=/data02/vimb01/MPI-Sintel-complete
 # model and checkpoint
 MODEL=PWCNet
 EVAL_LOSS=MultiScaleEPE_PWC
-CHECKPOINT=/visinf/home/vimb01/projects/fusedModels/I_A_blind/
+CHECKPOINT=/visinf/home/vimb01/projects/fusedModelsConv33/ia/
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-IA_fine_sintel-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/0C300_$MODEL-fine_sintel-$TIME"
 
 # set cuda GPU ids
 export CUDA_VISIBLE_DEVICES=2
