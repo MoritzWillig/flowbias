@@ -3,19 +3,17 @@ from __future__ import absolute_import, division, print_function
 import torch
 import torch.nn as nn
 
-from .pwcnetConvConnector import PWCConvAppliedConnector, PWCLinCombAppliedConnector, PWCAppliedConvConnector13, PWCAppliedConvConnector33
-from .pwc_modules import upsample2d_as, initialize_msra, conv_rep
+from .pwc_modules import upsample2d_as, initialize_msra
 from .pwc_modules import WarpingLayer, FeatureExtractor, ContextNetwork, FlowEstimatorDense
 from .correlation_package.correlation import Correlation
 
-
-class PWCNetFusion(nn.Module):
+class PWCNetX1Zero(nn.Module):
     """
-    Modified pwcNet with additional connector between, encoder and decoder, to allow feature mapping
+    PWCNet except that the x1 features at the encoder, decoder interface get set to zero.
     """
 
-    def __init__(self, args, connector, div_flow=0.05):
-        super(PWCNetFusion, self).__init__()
+    def __init__(self, args, div_flow=0.05):
+        super(PWCNetX1Zero, self).__init__()
         self.args = args
         self._div_flow = div_flow
         self.search_range = 4
@@ -40,8 +38,6 @@ class PWCNetFusion(nn.Module):
 
             layer = FlowEstimatorDense(num_ch_in)
             self.flow_estimators.append(layer)
-
-        self.connector = connector
 
         self.context_networks = ContextNetwork(self.dim_corr + 32 + 2 + 448 + 2)
 
@@ -80,7 +76,7 @@ class PWCNetFusion(nn.Module):
             out_corr = Correlation(pad_size=self.search_range, kernel_size=1, max_displacement=self.search_range, stride1=1, stride2=1, corr_multiply=1)(x1, x2_warp)
             out_corr_relu = self.leakyRELU(out_corr)
 
-            x1 = self.connector(x1, l)
+            x1 = torch.zeros_like(x1)
 
             # flow estimator
             if l == 0:
@@ -106,32 +102,3 @@ class PWCNetFusion(nn.Module):
             out_flow = upsample2d_as(flow, x1_raw, mode="bilinear") * (1.0 / self._div_flow)
             output_dict_eval['flow'] = out_flow
             return output_dict_eval
-
-
-class PWCNetConv13Fusion(PWCNetFusion):
-    """
-    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
-    """
-
-    def __init__(self, args, div_flow=0.05):
-        super(PWCNetConv13Fusion, self).__init__(args, PWCAppliedConvConnector13(args), div_flow=div_flow)
-
-
-class PWCNetConv33Fusion(PWCNetFusion):
-    """
-    Modified pwcNet with additional convnets between, encoder and decoder, to allow feature mapping
-    """
-
-    def __init__(self, args, div_flow=0.05):
-        super(PWCNetConv33Fusion, self).__init__(args, PWCAppliedConvConnector33(args), div_flow=div_flow)
-
-
-
-
-class PWCNetLinCombFusion(PWCNetFusion):
-    """
-    Modified pwcNet with additional linear feature mapping
-    """
-
-    def __init__(self, args, div_flow=0.05):
-        super(PWCNetLinCombFusion, self).__init__(PWCLinCombAppliedConnector({}), args, div_flow=div_flow)

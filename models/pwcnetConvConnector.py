@@ -37,7 +37,7 @@ class PWCConvAppliedConnector(PWCConvConnector):
         super(PWCConvAppliedConnector, self).__init__(args, connector_kernel_size, conv_layers)
 
     def forward(self, x1, l):
-        return self.fusors[-(l+1)](x1)
+        return self.fusors[5-l](x1)
 
 
 class PWCConvTrainableConnector(PWCConvConnector):

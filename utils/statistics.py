@@ -16,11 +16,14 @@ class SeriesStatistic(object):
         print(f"max: {np.max(s)}")
         print(s)
 
-    def get_statistics(self):
+    def get_statistics(self, report_individual_values=True):
         s = np.array(self.series).astype(float)
-        return {
+        statistics = {
             "average": np.average(s),
             "min": np.min(s),
             "max": np.max(s),
-            "values": list(s)
         }
+        if report_individual_values:
+            statistics["values"] = list(s)
+
+        return statistics

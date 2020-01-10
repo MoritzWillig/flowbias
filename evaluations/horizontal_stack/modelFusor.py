@@ -1,13 +1,13 @@
 from flowbias.models import PWCNet, PWCNetFusion, PWCNetLinCombFusion, PWCAppliedConvConnector33
 from flowbias.utils.model_loading import load_model_parameters, save_model
 
-resulting_model_dir = "/data/dataB/fusedModelsConv33/"
+resulting_model_dir = "/data/dataB/fusedModels_blind/"
 
-# fusing type: "blind", "correlation", "trained"
+# fusing mode: "blind", "correlation", "trained"
 # blind:        no fusing
 # correlation:  weighted fusing
 # trained:      trained
-fusingX = "trained"
+fusingMode = "blind"
 
 correlation_path = None
 
@@ -81,6 +81,6 @@ for ename, encoder_model in models.items():
             continue
 
         fuse_and_save_model(
-            encoder_model, decoder_model, resulting_model_dir+ename+dname+"/", fusingX,
+            encoder_model, decoder_model, resulting_model_dir+ename+dname+"/", fusingMode,
             connector_path=learned_connectors[ename+dname], connector_class=connector_class)
 print("done")

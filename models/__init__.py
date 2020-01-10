@@ -8,6 +8,7 @@ from . import IRR_FlowNet
 from . import pwcnet
 from . import pwcnetRecordable
 from . import pwcnetFusion
+from . import pwcnetX1Zero
 from . import pwcnetConvConnector
 from . import pwcnet_bi
 from . import pwcnet_occ
@@ -28,6 +29,7 @@ FlowNet1S_irr_occ_bi = flownet1s_irr_occ_bi.FlowNet1S
 PWCNet               = pwcnet.PWCNet
 PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
 PWCNetFusion         = pwcnetFusion.PWCNetFusion
+PWCNetX1Zero         = pwcnetX1Zero.PWCNetX1Zero
 PWCNetConv13Fusion     = pwcnetFusion.PWCNetConv13Fusion  # 3 conv layers - kernel size 1
 PWCNetConv33Fusion     = pwcnetFusion.PWCNetConv33Fusion  # 3 conv layers - kernel size 3
 PWCTrainableConvConnector11 = pwcnetConvConnector.PWCTrainableConvConnector11  # 1 conv layer - kernel size 1

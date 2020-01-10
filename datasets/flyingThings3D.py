@@ -50,9 +50,9 @@ class FlyingThings3d(data.Dataset):
         self._args = args
         self._reduce_every_nth = reduce_every_nth
         if not os.path.isdir(images_root):
-            raise ValueError("Image directory '%s' not found!")
+            raise ValueError(f"Image directory '{images_root}' not found!")
         if flow_root is not None and not os.path.isdir(flow_root):
-            raise ValueError("Flow directory '%s' not found!")
+            raise ValueError(f"Flow directory '{flow_root}' not found!")
         #if occ_root is not None and not os.path.isdir(occ_root):
         #    raise ValueError("Occ directory '%s' not found!")
 
