@@ -14,6 +14,8 @@ import shutil
 import random
 import fnmatch
 
+from flowbias.config import Config
+
 # ---------------------------------------------------
 # Class that contains both the network model and loss
 # ---------------------------------------------------
@@ -401,6 +403,11 @@ def configure_data_loaders(args):
             kwargs["is_cropped"] = True
             kwargs["args"] = args
 
+            # replace dataset names with configured paths
+            for (name, value) in kwargs.items():
+                if name.startswith("root") and (value in Config.dataset_locations):
+                    kwargs[name] = Config.dataset_locations[value]
+
             # ----------------------------------------------
             # Create training dataset
             # ----------------------------------------------
@@ -429,6 +436,11 @@ def configure_data_loaders(args):
             kwargs = tools.kwargs_from_args(args, "validation_dataset")
             kwargs["is_cropped"] = True
             kwargs["args"] = args
+
+            # replace dataset names with configured paths
+            for (name, value) in kwargs.items():
+                if name.startswith("root") and (value in Config.dataset_locations):
+                    kwargs[name] = Config.dataset_locations[value]
 
             # ----------------------------------------------
             # Create validation dataset

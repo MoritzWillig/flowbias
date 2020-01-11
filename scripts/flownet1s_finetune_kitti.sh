@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bashdata/
 
 # experiments and datasets meta
 #EXPERIMENTS_HOME=/data/vimb01/experiments
