@@ -5,9 +5,11 @@ class SeriesStatistic(object):
 
     def __init__(self):
         self.series = []
+        self.weights = []
 
-    def push_value(self, value):
+    def push_value(self, value, weight=0.0):
         self.series.append(value)
+        self.weights.append(weight)
 
     def print_statistics(self):
         s = np.array(self.series)
@@ -19,7 +21,7 @@ class SeriesStatistic(object):
     def get_statistics(self, report_individual_values=True):
         s = np.array(self.series).astype(float)
         statistics = {
-            "average": np.average(s),
+            "average": np.average(s, weights=self.weights),
             "min": np.min(s),
             "max": np.max(s),
         }
