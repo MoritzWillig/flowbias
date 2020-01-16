@@ -11,3 +11,5 @@ class Config:
         "flyingThingsSample": "/data/dataB/datasets/FlyingThings3D_sample401_subset/",
         "sintelSubset": "/data/dataB/datasets/MPI-Sintel_subset400/",
     }
+
+    temp_directory = "/data/dataB/temp/"

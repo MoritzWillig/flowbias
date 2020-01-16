@@ -80,6 +80,7 @@ if __name__ == '__main__':
     }
 
     # load existing results
+    has_old_names = False
     if os.path.isfile(result_file_path):
         with open(result_file_path, "r") as f:
             existing_results_x = json.loads(f.read())
@@ -92,6 +93,7 @@ if __name__ == '__main__':
 
             if key in rename:
                 existing_results[rename[key]] = value
+                has_old_names = True
             else:
                 existing_results[key] = value
     else:
@@ -107,6 +109,13 @@ if __name__ == '__main__':
     print("computing results for:", list(datasets.keys()))
 
     if len(datasets.keys()) == 0:
+        if has_old_names:
+            print("replacing old dataset names")
+            results = {"model_path": model_path, "model_class_name": model_class_name}
+            for key, value in existing_results.items():
+                results[key] = value
+            with open(result_file_path, "w") as f:
+                f.write(json.dumps(results))
         print("no datasets remaining - exiting")
         exit()
 

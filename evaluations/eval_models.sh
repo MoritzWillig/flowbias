@@ -4,11 +4,9 @@ export MKL_NUM_THREADS=1
 # base experiments
 python ./evaluate_for_all_datasets.py /data/dataB/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/A.json
 #x python ./evaluate_for_all_datasets.py /data/dataB/models/B_things_PWCNet-20191122-152857_incomplete/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/B.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/C.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/D_FlowNet1S-onChairs-20191205-145310/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/D.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/E_FlowNet1S-onThings-20191205-115159/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/E.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/F_PWCNet-A_fine_chairs-20191212-133136/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/F.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/G_PWCNet-A_fine_sintel-20191212-134449/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/G.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/H.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/I.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/J_FlowNet1S-D_fine_things-20191216-130336/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/J.json
@@ -90,10 +88,8 @@ python ./evaluate_for_all_datasets.py /data/dataB/fusedModels_blind/wi/checkpoin
 
 # base pwc models as x1Zero
 python ./evaluate_for_all_datasets.py /data/dataB/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_A.json
-#x python ./evaluate_for_all_datasets.py /data/dataB/models/B_things_PWCNet-20191122-152857_incomplete/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/B.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/C.json
+#x python ./evaluate_for_all_datasets.py /data/dataB/models/B_things_PWCNet-20191122-152857_incomplete/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_B.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/F_PWCNet-A_fine_chairs-20191212-133136/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_F.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/G_PWCNet-A_fine_sintel-20191212-134449/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/G.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_H.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_I.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/K_PWCNet-A_fine_things-20191212-133436/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_K.json
@@ -106,5 +102,7 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/X_PWCNet-I_fine_sintel-
 python ./evaluate_for_all_datasets.py /data/dataB/models/Y_PWCNet-I_fine_things-20191230-024005/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_Y.json
 
 # repeated experiments
+python ./evaluate_for_all_datasets.py /data/dataB/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/C.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/H2_PWCNet-sintel-20191227-162133/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/H2.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/I2_PWCNet-things-20191230-022450/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/I2.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/G_PWCNet-A_fine_sintel-20191212-134449/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/G.json
