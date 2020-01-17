@@ -32,10 +32,27 @@ print("found", len(evals), "evaluations")
 print("datasets:", datasets)
 print("datasets:", next(iter(evals.values())).keys())
 
+
+def compute_things_full(eval):
+    thingsTrainDatasetSize = 19635
+    thingsValidDatasetSize = 3823
+    thingsTrainDatasetRatio = thingsTrainDatasetSize / (thingsTrainDatasetSize + thingsValidDatasetSize)
+    thingsValidDatasetRatio = thingsValidDatasetSize / (thingsTrainDatasetSize + thingsValidDatasetSize)
+    thingsFull = (eval["flyingThingsCleanValid"]["epe"]["average"] * thingsValidDatasetRatio) + \
+                 (eval["flyingThingsCleanTrain"]["epe"]["average"] * thingsTrainDatasetRatio)
+    eval["flyingThingsCleanFull"] = {"epe": {"average": thingsFull}}
+
+
+inferred_results = ["flyingThingsCleanFull"]
+complete_results = sorted(list(datasets.union(inferred_results)))
+
 for eval_name, eval in evals.items():
+    # infer some results
+    compute_things_full(eval)
+
     results = []
     missing = []
-    for dataset in datasets:
+    for dataset in complete_results:
         if dataset in eval:
             results.append(f"{eval[dataset]['epe']['average']:.4f}")
         else:
@@ -54,7 +71,7 @@ for eval_name, eval in evals.items():
 
 with open(Config.temp_directory+"/eval_summary.csv", "w") as file:
     head = ["model_id", "model"]
-    head.extend(datasets)
+    head.extend(complete_results)
     head.extend(model_meta_fields)
     print(">>", head)
     file.write("\t".join(head))

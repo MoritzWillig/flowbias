@@ -1,20 +1,20 @@
 import matplotlib.pyplot as plt
 
+from flowbias.config import Config
 from flowbias.models import PWCNet
 from flowbias.datasets import FlyingChairsFull
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.utils.flow import flow_to_png
 
-checkpoint_path = "/visinf/home/vimb01/projects/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
-data_path = "/data/vimb01/FlyingChairs_sample402/FlyingChairs_sample402/data/"
-
+checkpoint_path = Config.model_directory+"A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt"
 
 model = PWCNet({})
 load_model_parameters(model, checkpoint_path)
 model.eval().cuda()
 
 
-dataset = FlyingChairsFull({}, data_path, photometric_augmentations=False)
+dataset = FlyingChairsFull(
+    {}, Config.dataset_locations["flyingChairs"], photometric_augmentations=False)
 batch = sample_to_torch_batch(dataset[0])
 results = model(batch)["flow"].detach().cpu().numpy()
 

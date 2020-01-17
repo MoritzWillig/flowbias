@@ -26,9 +26,9 @@ model_meta = {
     "J": ["flownet", "baseline_fine", "D", "chairs", "things"],
     "N": ["flownet", "baseline_fine", "D", "chairs", "sintel"],
     "P": ["flownet", "baseline_fine", "D", "chairs", "kitti"],
-    #"_": ["pwc", "baseline_fine", "E", "things", "chairs"],
-    #"_": ["pwc", "baseline_fine", "E", "things", "things"],
-    #"_": ["pwc", "baseline_fine", "E", "things", "sintel"],
+    "ZZ": ["flownet", "baseline_fine", "E", "things", "chairs"],
+    #"_": ["flownet", "baseline_fine", "E", "things", "things"],
+    "Z": ["flownet", "baseline_fine", "E", "things", "sintel"],
     "Q": ["flownet", "baseline_fine", "E", "things", "kitti"],
 
     # baseline_single pwc repeated
@@ -83,7 +83,9 @@ model_meta = {
     "0C301": ["pwcConv33", "fused_conv33_fine", "A,I", "chairs,things", "chairs"],
     "0C302": ["pwcConv33", "fused_conv33_fine", "H,A", "sintel,chairs", "chairs"],
     "0C303": ["pwcConv33", "fused_conv33_fine", "A,H", "chairs,sintel", "chairs"],
+    "0C304": ["pwcConv33", "fused_conv33_fine", "H,I", "sintel,things", "chairs"],
     "0C306": ["pwcConv33", "fused_conv33_fine", "W,A", "kitti,chairs", "chairs"],
+    "0C307": ["pwcConv33", "fused_conv33_fine", "A,W", "chairs,kitti", "chairs"],
 
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A": ["pwcX1Zero", "x1_zero_baseline", "A", "chairs", None],
@@ -123,7 +125,7 @@ model_meta_ordering = [
     # baseline_single flowet
     "D", "E", "M", "U",
     # baseline_fine flownet
-    "L", "J", "N", "P", "Q",
+    "L", "J", "N", "P", "ZZ", "Z", "Q",
     # baseline_single pwc repeated
     "C", "I2", "H2", 
     # baseline_single flownet repeated
@@ -141,7 +143,7 @@ model_meta_ordering = [
     "conv33_ah", "conv33_ai", "conv33_aw", "conv33_ha", "conv33_hi", "conv33_hw", "conv33_ia", "conv33_ih",
     "conv33_iw", "conv33_wa", "conv33_wh", "conv33_wi",
     # fusing conv33 finetuned
-    "0C300", "0C301", "0C302", "0C303", "0C306", 
+    "0C300", "0C301", "0C302", "0C303", "0C304", "0C306", "0C307",
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A", "x1ZeroBlind_I", "x1ZeroBlind_H", "x1ZeroBlind_W", 
     # baseline models PWC finetuned - x1 zero
@@ -152,5 +154,5 @@ model_meta_ordering = [
     "x1ZeroBlind_ia", "x1ZeroBlind_ih", "x1ZeroBlind_iw", "x1ZeroBlind_wa", "x1ZeroBlind_wh", "x1ZeroBlind_wi"
 ]
 
-assert(len(model_meta) == len(model_meta_ordering))
 # print(set(iter(model_meta.keys())).difference(model_meta_ordering))
+assert(len(model_meta) == len(model_meta_ordering))

@@ -13,3 +13,5 @@ class Config:
     }
 
     temp_directory = "/data/dataB/temp/"
+
+    model_directory = "/data/dataB/models/"
