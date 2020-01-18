@@ -36,7 +36,7 @@ model_meta = {
     "I2": ["pwc", "baseline_single_repeated", None, "things", None],
     "H2": ["pwc", "baseline_single_repeated", None, "sintel", None],
     # baseline_single flownet repeated
-    "T": ["flownet", "baseline_single", None, "chairs", None],
+    "T": ["flownet", "baseline_single_repeated", None, "chairs", None],
 
     # baseline_fine pwc repeated
     "G": ["pwc", "baseline_fine_repeated", "A", "chairs", "sintel"],

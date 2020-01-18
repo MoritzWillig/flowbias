@@ -42,13 +42,23 @@ def compute_things_full(eval):
                  (eval["flyingThingsCleanTrain"]["epe"]["average"] * thingsTrainDatasetRatio)
     eval["flyingThingsCleanFull"] = {"epe": {"average": thingsFull}}
 
+def compute_kitti_full(eval):
+    kittiTrainDatasetSize = 160
+    kittiValidDatasetSize = 40
+    kittiTrainDatasetRatio = kittiTrainDatasetSize / (kittiTrainDatasetSize + kittiValidDatasetSize)
+    kittiValidDatasetRatio = kittiValidDatasetSize / (kittiTrainDatasetSize + kittiValidDatasetSize)
+    kittiFull = (eval["kitti2015Valid"]["epe"]["average"] * kittiValidDatasetRatio) + \
+                 (eval["kitti2015Train"]["epe"]["average"] * kittiTrainDatasetRatio)
+    eval["kitti2015Full"] = {"epe": {"average": kittiFull}}
 
-inferred_results = ["flyingThingsCleanFull"]
+
+inferred_results = ["flyingThingsCleanFull", "kitti2015Full"]
 complete_results = sorted(list(datasets.union(inferred_results)))
 
 for eval_name, eval in evals.items():
     # infer some results
     compute_things_full(eval)
+    compute_kitti_full(eval)
 
     results = []
     missing = []

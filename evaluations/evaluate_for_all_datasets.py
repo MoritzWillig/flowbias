@@ -7,12 +7,12 @@ import time
 
 from flowbias.datasets.flyingchairs import FlyingChairsValid, FlyingChairsFull
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
-from flowbias.datasets.kitti_combined import KittiComb2015Val
+from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
-from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet
+from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
 from flowbias.utils.statistics import SeriesStatistic
 from torch.utils.data.dataloader import DataLoader
 
@@ -32,10 +32,10 @@ if __name__ == '__main__':
             self.batch_size = None
 
     model_classes = {
-        "pwc": [PWCNet, MultiScaleEPE_PWC],
-        "flownet": [FlowNet1S, MultiScaleEPE_FlowNet],
-        "pwcConv33": [PWCNetConv33Fusion, MultiScaleEPE_PWC],
-        "pwcX1Zero": [PWCNetX1Zero, MultiScaleEPE_PWC]
+        "pwc": [PWCNet, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "flownet": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "pwcConv33": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "pwcX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
     }
 
     assert(len(sys.argv) == 4)
@@ -47,12 +47,9 @@ if __name__ == '__main__':
     print(model_path, "with", model_class_name)
 
     model_class = model_classes[model_class_name][0]
-    loss_class = model_classes[model_class_name][1]
-
     model = model_class(ValArgs())
     load_model_parameters(model, model_path)
-    model.cuda()
-    loss = loss_class(ValArgs()).cuda()
+    model.eval().cuda()
 
     available_datasets = {}
     if os.path.isdir(Config.dataset_locations["flyingChairs"]):
@@ -62,19 +59,21 @@ if __name__ == '__main__':
         available_datasets["flyingThingsCleanTrain"] = FlyingThings3dCleanTrain({}, Config.dataset_locations["flyingThings"], photometric_augmentations=False)
         available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], photometric_augmentations=False)
     if os.path.isdir(Config.dataset_locations["kitti"]):
-        available_datasets["kittiValid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], photometric_augmentations=False)
+        available_datasets["kitti2015Train"] = KittiComb2015Train({}, Config.dataset_locations["kitti"], photometric_augmentations=False, preprocessing_crop=False)
+        available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], photometric_augmentations=False, preprocessing_crop=False)
     if os.path.isdir(Config.dataset_locations["sintel"]):
         available_datasets["sintelCleanValid"] = SintelTrainingCleanValid({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
         available_datasets["sintelCleanFull"] = SintelTrainingCleanFull({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
         available_datasets["sintelFinalValid"] = SintelTrainingFinalValid({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
         available_datasets["sintelFinalFull"] = SintelTrainingFinalFull({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
 
-    need_batch_size_one = ["kittiValid"]
+    need_batch_size_one = ["kitti2015Train", "kitti2015Valid"]
 
     rename = {
         "flyingChairs": "flyingChairsValid",
         "flyingThings": "flyingThingsCleanValid",
         "kitti": "kittiValid",
+        "kittiValid": "kitti2015Valid",
         "sintelClean": "sintelCleanValid",
         "sintelFinal": "sintelFinalValid",
     }
@@ -102,7 +101,11 @@ if __name__ == '__main__':
     existing_results_datasets = list(existing_results.keys())
 
     # compute remaining evaluations
-    datasets = {dataset_name: dataset_data for dataset_name, dataset_data in available_datasets.items() if dataset_name not in existing_results_datasets}
+    reevaluate = ["kitti2015Train"]
+    datasets = {
+        dataset_name: dataset_data
+        for dataset_name, dataset_data in available_datasets.items()
+        if (dataset_name not in existing_results_datasets) or (dataset_name in reevaluate)}
 
     print("available_datasets:", list(available_datasets.keys()))
     print("existing results:", list(existing_results.keys()))
@@ -119,16 +122,13 @@ if __name__ == '__main__':
         print("no datasets remaining - exiting")
         exit()
 
-
-    model.eval()
-    loss.eval()
-
     batch_size = 16
 
     with torch.no_grad():
         demo_available_dataset = next(iter(datasets.values()))
         demo_sample = sample_to_torch_batch(demo_available_dataset[0])
-        demo_loss_values = loss(model(demo_sample), demo_sample)
+        demo_loss = model_classes[model_class_name][1]["default"](ValArgs()).eval().cuda()
+        demo_loss_values = demo_loss(model(demo_sample), demo_sample)
         loss_names = list(demo_loss_values.keys())
 
         results = {"model_path": model_path, "model_class_name": model_class_name}
@@ -136,12 +136,15 @@ if __name__ == '__main__':
         for name, dataset in datasets.items():
             print(datetime.now().strftime("[%d-%b-%Y (%H:%M:%S)]"), name)
 
+            model_config = model_classes[model_class_name]
+            loss_class = model_config[1][name] if name in model_config[1] else model_config[1]["default"]
+            loss = loss_class(ValArgs()).eval().cuda()
+
             losses = {name: SeriesStatistic() for name in loss_names}
             dataset_size = len(dataset)
             i = 0
 
             gpuargs = {"num_workers": 4, "pin_memory": False}
-            #gpuargs = {"pin_memory": False}
             loader = DataLoader(
                 dataset,
                 batch_size=batch_size if name not in need_batch_size_one else 1,
@@ -183,6 +186,9 @@ if __name__ == '__main__':
 
     # add existing results
     for key, value in existing_results.items():
+        # but keep newer results (in case we reevaluated a dataset)
+        if key in results:
+            continue
         results[key] = value
 
     # save

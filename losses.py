@@ -20,6 +20,10 @@ def _downsample2d_as(inputs, target_as):
     _, _, h, w = target_as.size()
     return tf.adaptive_avg_pool2d(inputs, [h, w])
 
+def _downsample_mask_as(inputs, target_as):
+    _, _, h, w = target_as.size()
+    return tf.adaptive_max_pool2d(inputs, [h, w])
+
 def _upsample2d_as(inputs, target_as, mode="bilinear"):
     _, _, h, w = target_as.size()
     return tf.interpolate(inputs, [h, w], mode=mode, align_corners=True)
@@ -75,6 +79,45 @@ class MultiScaleEPE_FlowNet(nn.Module):
                 epe_i = _elementwise_epe(output_i, target_i)
                 total_loss = total_loss + self._weights[i] * epe_i.sum() / self._batch_size
                 loss_dict["epe%i" % (i + 2)] = epe_i.mean()
+            loss_dict["total_loss"] = total_loss
+        else:
+            output = output_dict["flow1"]
+            target = target_dict["target1"]
+            epe = _elementwise_epe(output, target)
+            loss_dict["epe"] = epe.mean()
+
+        return loss_dict
+
+
+class MultiScaleSparseEPE_FlowNet(nn.Module):
+    def __init__(self,
+                 args):
+
+        super(MultiScaleSparseEPE_FlowNet, self).__init__()
+        self._args = args
+        self._batch_size = args.batch_size
+        self._weights = [0.005, 0.01, 0.02, 0.08, 0.32]
+
+    def forward(self, output_dict, target_dict):
+        loss_dict = {}
+
+        valid_masks = target_dict["input_valid"]
+        b, _, h, w = target_dict["target1"].size()
+
+        if self.training:
+            outputs = [output_dict[key] for key in ["flow2", "flow3", "flow4", "flow5", "flow6"]]
+
+            # div_flow trick
+            target = self._args.model_div_flow * target_dict["target1"]
+
+            total_loss = 0
+            for ii, output_ii in enumerate(outputs):
+                valid_mask = _downsample_mask_as(valid_masks, output_ii)
+                masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
+                norm_const = (h * w) / (valid_mask[ii, ...].sum())
+
+                total_loss += self._weights[ii] * (masked_epe.sum() * norm_const) / self._batch_size
+                loss_dict["epe%i" % (ii + 2)] = (masked_epe.mean() * norm_const)
             loss_dict["total_loss"] = total_loss
         else:
             output = output_dict["flow1"]
@@ -373,6 +416,42 @@ class MultiScaleEPE_PWC(nn.Module):
             loss_dict["epe"] = epe.mean()
 
         return loss_dict
+
+
+class MultiScaleSparseEPE_PWC(nn.Module):
+    def __init__(self, args):
+        super(MultiScaleSparseEPE_PWC, self).__init__()
+        self._args = args
+        self._batch_size = args.batch_size
+        self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
+
+    def forward(self, output_dict, target_dict):
+        loss_dict = {}
+
+        valid_masks = target_dict["input_valid"]
+        b, _, h, w = target_dict["target1"].size()
+
+        if self.training:
+            output_flo = output_dict['flow']
+
+            # div_flow trick
+            target = self._args.model_div_flow * target_dict["target1"]
+
+            total_loss = 0
+            for ii, output_ii in enumerate(output_flo):
+                valid_mask = _downsample_mask_as(valid_masks, output_ii)
+                masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
+                norm_const = (h * w) / (valid_mask.sum())
+                total_loss += self._weights[ii] * (masked_epe.sum() * norm_const)
+            loss_dict["total_loss"] = total_loss / self._batch_size
+        else:
+            flow_epe = _elementwise_epe(output_dict["flow"], target_dict["target1"]) * valid_masks
+            epe_per_image = (flow_epe.view(b, -1).sum(1)) / (valid_masks.view(b, -1).sum(1))
+            loss_dict["epe"] = epe_per_image.mean()
+            #loss_dict["epe"] = _elementwise_epe(output_dict["flow"], target_dict["target1"])[valid_masks == 0].mean()
+
+        return loss_dict
+
 
 class MultiScaleEPE_PWC_Bi(nn.Module):
     def __init__(self,

@@ -18,7 +18,7 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
         super(CombinedDatasetBatchSampler, self).__init__(dataset_sizes)
         self._iterations = iterations
         self._dataset_sizes = list(dataset_sizes)
-        self._batch_size = batch_size
+        self._batch_sizes = [batch_size]*len(dataset_sizes) if isinstance(batch_size, int) else batch_size
         self._dataset_sequence_mode = dataset_sequence_mode
 
         if self._dataset_sequence_mode == "cycle":
@@ -37,10 +37,11 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
     def _batch_from_dataset(self, dataset_id):
         dataset_size = self._dataset_sizes[dataset_id]
         dataset_idx = self._dataset_indices[dataset_id]
+        batch_size = self._batch_sizes[dataset_idx]
 
-        if dataset_idx + self._batch_size <= dataset_size:
-            self._dataset_indices[dataset_id] += self._batch_size
-            return self._dataset_sequences[dataset_id][dataset_idx:dataset_idx+self._batch_size]
+        if dataset_idx + batch_size <= dataset_size:
+            self._dataset_indices[dataset_id] += batch_size
+            return self._dataset_sequences[dataset_id][dataset_idx:dataset_idx+batch_size]
         else:
             # take remaining indices
             batch = self._dataset_sequences[dataset_id][dataset_idx:]
@@ -48,7 +49,7 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
             sequence = np.random.permutation(dataset_size)
             self._dataset_sequences[dataset_id] = sequence
             # fill up batch from new permutation
-            remaining = self._batch_size - (dataset_size - dataset_idx) - 1
+            remaining = batch_size - (dataset_size - dataset_idx) - 1
             batch.extend(sequence[:remaining])
             self._dataset_indices[dataset_id] = remaining
             return batch
@@ -66,8 +67,22 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
         elif self._dataset_sequence_mode == "equal_bias":
             raise NotImplementedError()
 
-        return zip([dataset_id]*self._batch_size, batch)
+        return zip([dataset_id]*len(batch), batch)
 
     def __iter__(self):
         for idx in range(self._iterations):
             yield self._generate_batch()
+
+
+class CTSKTrainDatasetBatchSampler(CombinedDatasetBatchSampler):
+
+    def __init__(self, batch_size, iterations=None, dataset_sequence_mode="cycle"):
+        dataset_sizes = [22232, 19635, 908, 160]
+        if iterations is None:
+            if dataset_sequence_mode == "cycle":
+                # choose iteration number, so that the largest dataset is iterated once
+                iterations = max(dataset_sizes)*batch_size
+            else:
+                raise ValueError("For a dataset_sequence_mode, other than 'cycle', the number of iterations must be passed")
+
+        super().__init__(iterations, dataset_sizes, batch_size, dataset_sequence_mode)
