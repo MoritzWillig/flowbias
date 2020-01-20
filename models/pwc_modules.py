@@ -139,14 +139,14 @@ class OpticalFlowEstimator(nn.Module):
 
 
 class FlowEstimatorDense(nn.Module):
-    def __init__(self, ch_in):
+    def __init__(self, ch_in, adjust_chs=0):
         super(FlowEstimatorDense, self).__init__()
-        self.conv1 = conv(ch_in, 128)
-        self.conv2 = conv(ch_in + 128, 128)
-        self.conv3 = conv(ch_in + 256, 96)
-        self.conv4 = conv(ch_in + 352, 64)
-        self.conv5 = conv(ch_in + 416, 32)
-        self.conv_last = conv(ch_in + 448, 2, isReLU=False)
+        self.conv1 = conv(ch_in, 128+adjust_chs)
+        self.conv2 = conv(ch_in + adjust_chs + 128, 128+adjust_chs)
+        self.conv3 = conv(ch_in + adjust_chs + 256, 96+adjust_chs)
+        self.conv4 = conv(ch_in + adjust_chs + 352, 64+adjust_chs)
+        self.conv5 = conv(ch_in + adjust_chs + 416, 32+adjust_chs)
+        self.conv_last = conv(ch_in + adjust_chs + 448, 2, isReLU=False)
 
     def forward(self, x):
         x1 = torch.cat([self.conv1(x), x], dim=1)
@@ -196,7 +196,7 @@ class OccEstimatorDense(nn.Module):
 
 
 class ContextNetwork(nn.Module):
-    def __init__(self, ch_in):
+    def __init__(self, ch_in, adjust_chs=0):
         super(ContextNetwork, self).__init__()
 
         self.convs = nn.Sequential(
