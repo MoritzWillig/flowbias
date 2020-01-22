@@ -8,7 +8,7 @@ from .pwc_modules import WarpingLayer, FeatureExtractor, ContextNetwork, FlowEst
 from .correlation_package.correlation import Correlation
 
 
-class PWCNetWOX1(nn.Module):
+class PWCNetWOX1Connection(nn.Module):
     """
     Standart PWCNet without x1 features getting passed into the decoder.
 
@@ -17,7 +17,7 @@ class PWCNetWOX1(nn.Module):
     """
 
     def __init__(self, args, div_flow=0.05, adjust_decover_conv_layers=True):
-        super(PWCNetWOX1, self).__init__()
+        super(PWCNetWOX1Connection, self).__init__()
         self.args = args
         self._div_flow = div_flow
         self.search_range = 4
@@ -45,12 +45,11 @@ class PWCNetWOX1(nn.Module):
             self.flow_estimators.append(layer)
 
         self.context_networks = ContextNetwork(
-            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[self.output_level])
+            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[-(self.output_level+1)])
 
         initialize_msra(self.modules())
 
     def forward(self, input_dict):
-
         x1_raw = input_dict['input1']
         x2_raw = input_dict['input2']
         _, _, height_im, width_im = x1_raw.size()

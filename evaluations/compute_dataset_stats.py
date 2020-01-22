@@ -1,14 +1,23 @@
 do_plot = True
 
+import os
+import psutil
+
+# 8 processors -> 4 workers with 2 threads
+os.environ["OMP_NUM_THREADS"] = "2"
+phys_cpus = psutil.cpu_count(logical=False)
+#num_procs = int(phys_cpus)  # set 1 worker for every cpu -> reduce OMP threads to 1!
+num_procs = 4
+
 import math
 import numpy as np
 
 if do_plot:
     import matplotlib.pyplot as plt
 from flowbias.utils.localstorage import LocalStorage
-from flowbias.datasets import FlyingChairsTrain, FlyingThings3dCleanTrain, KittiComb2015Train, SintelTrainingCleanTrain
+from flowbias.datasets import FlyingChairsTrain, FlyingChairsFull, FlyingThings3dCleanTrain, KittiComb2015Train, SintelTrainingCleanTrain
 from multiprocessing import Pool
-import psutil
+
 
 chairs_root = "/data/dataB/datasets/FlyingChairs_release/data/"
 things_root = "/data/dataB/datasets/FlyingThings3D_subset/"
@@ -17,17 +26,22 @@ sintel_root = "/data/dataB/datasets/MPI-Sintel-complete/"
 
 datasets = {
     "flyingChairsTrain": [FlyingChairsTrain, "/data/dataB/datasets/FlyingChairs_release/data/"],
+    "flyingChairsFull": [FlyingChairsFull, "/data/dataB/datasets/FlyingChairs_release/data/"],
     "flyingThingsTrain": [FlyingThings3dCleanTrain, "/data/dataB/datasets/FlyingThings3D_subset/"],
     "kittiTrain": [KittiComb2015Train, "/data/dataB/datasets/KITTI_data_scene_flow/", {"preprocessing_crop": True}],
     "sintelTrain": [SintelTrainingCleanTrain, "/data/dataB/datasets/MPI-Sintel-complete/"]
 }
 sz = 1500
-dataset_name = "flyingThingsTrain"
+dataset_name = "flyingChairsFull"
 
 
 def pct(a, percentile):
     sa = np.sort(a[a != 0].flatten())
     return sa[int(len(sa) * percentile / 100)]
+
+
+def log_index_reverse(y):
+    return ((y/100)-10)**10
 
 
 def compute_matrices(id_range):
@@ -95,10 +109,6 @@ if __name__ == '__main__':
         rstat = np.zeros(1500, np.int)
         logstat = np.zeros(3000, np.int)
 
-        cpu_usage = 1
-        phys_cpus = psutil.cpu_count(logical=False)
-        num_procs = int(phys_cpus * cpu_usage)
-
         with Pool(processes=num_procs) as p:
             print(f"{len(dataset)} samples using {num_procs} processes ({phys_cpus} processors)")
             proc_range = int(math.ceil(len(dataset) / num_procs))
@@ -164,7 +174,7 @@ if __name__ == '__main__':
         plt.title(dataset_name+"_log")
         plt.imshow(logField, cmap="hot", vmin=0, vmax=1)
         img_rng = [0-10, sz, 2*sz+10]
-        ltrns = [str(tick) for tick in [-sz, 0, sz]]
+        ltrns = [str(log_index_reverse(tick)) for tick in [-sz, 0, sz]]
         plt.xticks(img_rng, ltrns)
         plt.yticks(img_rng, ltrns)
         plt.show()
@@ -172,15 +182,26 @@ if __name__ == '__main__':
         plt.figure()
         plt.title(dataset_name+" rstat")
         plt.plot(range(len(rstat)), rstat)
-        plt.xlim(0, len(rstat))
-        plt.ylim(0, 500)
+        #plt.xlim(0, len(rstat))
+        plt.xlim(-10, 600)
+        #plt.ylim(0, 500)
         plt.show()
+        print("mode", np.argmax(rstat), rstat[np.argmax(rstat)], rstat[600])
+
+        print("!!", rstat[0], logstat[0])
 
         plt.figure()
         plt.title(dataset_name+" r log stat")
+        print("log mode", ((np.argmax(logstat)/100)-10)**10)
         plt.plot(range(len(logstat)), logstat)
-        plt.xlim(0, len(logstat))
-        plt.ylim(0, 500)
+        #plt.xlim(0, len(logstat))
+        ldisp = [950, 1200]
+        plt.xlim(ldisp[0], ldisp[1])
+        #plt.ylim(0, 500)
+        plt.ylim(5e6, 3e7)
+        xr = range(ldisp[0], ldisp[1]+1, 25)
+        yr = [f"{log_index_reverse(l):.3f}" for l in xr]
+        plt.xticks(xr, yr)
         plt.show()
 
         cs = np.cumsum(np.array(rstat, dtype=np.float))

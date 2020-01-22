@@ -1,20 +1,21 @@
 #!/bin/bash
 
 # experiments and datasets meta
-EXPERIMENTS_HOME=/data/vimb01/experiments
+#EXPERIMENTS_HOME=/data/vimb01/experiments
+EXPERIMENTS_HOME=/data/dataB/experiments
 
-# datasets
-FLYINGCHAIRS_HOME=/data/vimb01/FlyingChairs_release/data/
+# datasets - read path from config.py
+FLYINGCHAIRS_HOME=flyingChairs
 
 # model and checkpoint
-MODEL=PWCNet
+MODEL=PWCNetWOX1Connection
 EVAL_LOSS=MultiScaleEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-onChairs-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/WOX1_$MODEL-onChairs-$TIME"
 
 # training configuration
 python ../main.py \
