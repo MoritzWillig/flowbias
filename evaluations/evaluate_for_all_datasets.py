@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     model_classes = {
         "pwc": [PWCNet, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "flownet": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "flownet": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_FlowNet}],
         "pwcConv33": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
         "pwcX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
     }
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     existing_results_datasets = list(existing_results.keys())
 
     # compute remaining evaluations
-    reevaluate = ["kitti2015Train"]
+    reevaluate = ["kitti2015Train", "kitti2015Valid"]
     datasets = {
         dataset_name: dataset_data
         for dataset_name, dataset_data in available_datasets.items()

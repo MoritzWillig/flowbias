@@ -4,7 +4,7 @@
 EXPERIMENTS_HOME=/data/dataA/experiments
 
 # model and checkpoint
-MODEL=PWCNetExperts
+MODEL=PWCExpertNet
 EVAL_LOSS=MultiScaleAdaptiveEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
@@ -23,14 +23,18 @@ python ../main.py \
 --checkpoint=$CHECKPOINT \
 --lr_scheduler=MultiStepLR \
 --lr_scheduler_gamma=0.5 \
---lr_scheduler_milestones="[110, 147, 183_ADJUST]" \
+--lr_scheduler_milestones="[30, 40, 50]" \
 --model=$MODEL \
+--model_num_experts=4 \
+--model_expert_split=0.2 \
 --num_workers=4 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
---total_epochs=216_ADJUST \
+--total_epochs=60 \
+--training_sampler=CTSKTrainDatasetBatchSampler \
+--training_iters_per_epoch=10000 \
 --training_augmentation=RandomAffineFlow \
 --training_dataset=CTSKTrain \
 --training_dataset_photometric_augmentations=True \

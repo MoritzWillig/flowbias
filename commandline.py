@@ -18,6 +18,8 @@ import flowbias.logger as logger
 import flowbias.optim as optim
 import logging
 
+import flowbias.datasets.samplers as samplers
+
 
 def _get_type_from_arg(arg):
     if isinstance(arg, bool):
@@ -199,6 +201,7 @@ def _parse_arguments():
     add("--start_epoch", type=int, default=1)
     add("--total_epochs", type=int, default=10)
     add("--save_result_path_name", default="", type=str)
+    add("--training_iters_per_epoch", type=int, default=0)
     add("--save_result_img", type=tools.str2bool, default=False)
     add("--save_result_occ", type=tools.str2bool, default=False)
     add("--save_result_flo", type=tools.str2bool, default=False)
@@ -234,7 +237,8 @@ def _parse_arguments():
         name="model",
         default_class="FlowNet1S",
         exclude_classes=["_*", "Variable"],
-        exclude_params=["self","args"])
+        exclude_params=["self","args"],
+        unknown_default_types={"num_experts": int, "expert_split": float})
 
     # -------------------------------------------------------------------------
     # Arguments inferred from augmentations for training
@@ -270,6 +274,17 @@ def _parse_arguments():
         exclude_params=["self", "args", "is_cropped"],
         exclude_classes=["_*"],
         unknown_default_types={"root": str, "rootA": str, "rootB": str})
+
+    # -------------------------------------------------------------------------
+    # Arguments inferred from data samplers for training
+    # -------------------------------------------------------------------------
+    _add_arguments_for_module(
+        parser,
+        samplers,
+        name="training_sampler",
+        default_class=None,
+        exclude_params=["self", "args", "batch_size"],
+        exclude_classes=["_*"],)
 
     # -------------------------------------------------------------------------
     # Arguments inferred from datasets for validation
@@ -364,6 +379,10 @@ def postprocess_args(args):
     if args.training_dataset is not None:
         dataset_classes = tools.module_classes_to_dict(datasets)
         args.training_dataset_class = dataset_classes[args.training_dataset]
+
+    if args.training_sampler is not None:
+        sampler_classes = tools.module_classes_to_dict(samplers)
+        args.training_sampler_class = sampler_classes[args.training_sampler]
 
     if args.validation_dataset is not None:
         dataset_classes = tools.module_classes_to_dict(datasets)

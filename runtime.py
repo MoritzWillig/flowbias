@@ -8,6 +8,7 @@ import logging
 import flowbias.logger as logger
 import flowbias.tools as tools
 import collections
+import itertools
 
 import scipy.misc
 import torch
@@ -29,6 +30,7 @@ TQDM_SMOOTHING = 0
 # Magic progressbar for inputs of type 'iterable'
 # -------------------------------------------------------------------------------------------
 def create_progressbar(iterable,
+                       total=None,
                        desc="",
                        train=False,
                        unit="it",
@@ -72,7 +74,7 @@ def create_progressbar(iterable,
     tqdm_args = {
         "iterable": iterable,
         "desc": desc,                          # Prefix for the progress bar
-        "total": len(iterable),                # The number of expected iterations
+        "total": len(iterable) if total is None else total,  # The number of expected iterations
         "leave": True,                         # Leave progress bar when done
         "miniters": 1 if train else None,      # Minimum display update interval in iterations
         "unit": unit,                          # String be used to define the unit of each iteration
@@ -116,6 +118,7 @@ class TrainingEpoch:
                  loader,
                  optimizer,
                  augmentation=None,
+                 iters_per_epoch=None,
                  add_progress_stats={},
                  desc="Training Epoch"):
 
@@ -126,6 +129,7 @@ class TrainingEpoch:
         self._optimizer = optimizer
         self._augmentation = augmentation
         self._add_progress_stats = add_progress_stats
+        self._iters_per_epoch = iters_per_epoch
 
     def _step(self, example_dict):
 
@@ -204,11 +208,27 @@ class TrainingEpoch:
         # ---------------------------------------
         moving_averages_dict = None
 
+        #
+        #
+        #
+        if self._iters_per_epoch is None:
+            iterator = self._loader
+            total = None
+        else:
+            # if the dataset loops infinitely, we have to restrict the
+            # iterations per epoch
+            # -> wrap the dataloader
+            iterator = itertools.islice(self._loader, self._iters_per_epoch)
+            #iterator = self._loader
+            total = self._iters_per_epoch
+
+
         # ---------------------------------------
         # Progress bar arguments
         # ---------------------------------------
         progressbar_args = {
-            "iterable": self._loader,
+            "iterable": iterator,
+            "total": total,
             "desc": self._desc,
             "train": True,
             "offset": offset,
@@ -552,7 +572,8 @@ def exec_runtime(args,
                     model_and_loss=model_and_loss,
                     optimizer=optimizer,
                     loader=train_loader,
-                    augmentation=training_augmentation).run()
+                    augmentation=training_augmentation,
+                    iters_per_epoch=args.training_iters_per_epoch).run()
 
             # -------------------------------------------
             # Create and run a validation epoch

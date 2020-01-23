@@ -372,7 +372,10 @@ def configure_data_loaders(args):
 
         def _log_statistics(dataset, prefix, name):
             with logger.LoggingBlock("%s Dataset: %s" % (prefix, name)):
-                example_dict = dataset[0]  # get sizes from first dataset example
+                if hasattr(dataset, "get_demo_sample"):
+                    example_dict = dataset.get_demo_sample()
+                else:
+                    example_dict = dataset[0]  # get sizes from first dataset example
                 for key, value in sorted(example_dict.items()):
                     if key in ["index", "basename"]:  # no need to display these
                         continue
@@ -413,14 +416,27 @@ def configure_data_loaders(args):
             # ----------------------------------------------
             train_dataset = tools.instance_from_kwargs(args.training_dataset_class, kwargs)
 
+            #
+            if args.training_sampler is not None:
+                sampler_kwargs = tools.kwargs_from_args(args, "training_sampler")
+                sampler_kwargs["batch_size"] = args.batch_size
+                sampler_kwargs["args"] = args
+                train_sampler = tools.instance_from_kwargs(args.training_sampler_class, sampler_kwargs)
+
+                #import itertools
+                #train_sampler = list(itertools.islice(train_sampler, args.training_iters_per_epoch))
+            else:
+                train_sampler = None
+
             # ----------------------------------------------
             # Create training loader
             # ----------------------------------------------
             train_loader = DataLoader(
                 train_dataset,
-                batch_size=args.batch_size,
-                shuffle=True,
-                drop_last=False,
+                batch_size=args.batch_size if train_sampler is None else 0,
+                shuffle=True if train_sampler is None else False,
+                drop_last=False if train_sampler is None else None,
+                batch_sampler=train_sampler,
                 **gpuargs)
 
             _log_statistics(train_dataset, prefix="Training", name=args.training_dataset)

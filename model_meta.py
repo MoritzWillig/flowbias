@@ -27,7 +27,7 @@ model_meta = {
     "N": ["flownet", "baseline_fine", "D", "chairs", "sintel"],
     "P": ["flownet", "baseline_fine", "D", "chairs", "kitti"],
     "ZZ": ["flownet", "baseline_fine", "E", "things", "chairs"],
-    #"_": ["flownet", "baseline_fine", "E", "things", "things"],
+    "ZT": ["flownet", "baseline_fine", "E", "things", "things"],
     "Z": ["flownet", "baseline_fine", "E", "things", "sintel"],
     "Q": ["flownet", "baseline_fine", "E", "things", "kitti"],
 
@@ -84,8 +84,12 @@ model_meta = {
     "0C302": ["pwcConv33", "fused_conv33_fine", "H,A", "sintel,chairs", "chairs"],
     "0C303": ["pwcConv33", "fused_conv33_fine", "A,H", "chairs,sintel", "chairs"],
     "0C304": ["pwcConv33", "fused_conv33_fine", "H,I", "sintel,things", "chairs"],
+    "0C305": ["pwcConv33", "fused_conv33_fine", "I,H", "things,sintel", "chairs"],
     "0C306": ["pwcConv33", "fused_conv33_fine", "W,A", "kitti,chairs", "chairs"],
     "0C307": ["pwcConv33", "fused_conv33_fine", "A,W", "chairs,kitti", "chairs"],
+    "0C308": ["pwcConv33", "fused_conv33_fine", "W,I", "kitti,things", "chairs"],
+    "0C309": ["pwcConv33", "fused_conv33_fine", "I,W", "things,kitti", "chairs"],
+    "0C310": ["pwcConv33", "fused_conv33_fine", "W,H", "kitti,sintel", "chairs"],
 
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A": ["pwcX1Zero", "x1_zero_baseline", "A", "chairs", None],
@@ -125,7 +129,7 @@ model_meta_ordering = [
     # baseline_single flowet
     "D", "E", "M", "U",
     # baseline_fine flownet
-    "L", "J", "N", "P", "ZZ", "Z", "Q",
+    "L", "J", "N", "P", "ZZ", "ZT", "Z", "Q",
     # baseline_single pwc repeated
     "C", "I2", "H2", 
     # baseline_single flownet repeated
@@ -143,7 +147,7 @@ model_meta_ordering = [
     "conv33_ah", "conv33_ai", "conv33_aw", "conv33_ha", "conv33_hi", "conv33_hw", "conv33_ia", "conv33_ih",
     "conv33_iw", "conv33_wa", "conv33_wh", "conv33_wi",
     # fusing conv33 finetuned
-    "0C300", "0C301", "0C302", "0C303", "0C304", "0C306", "0C307",
+    "0C300", "0C301", "0C302", "0C303", "0C304", "0C305", "0C306", "0C307", "0C308", "0C309", "0C310",
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A", "x1ZeroBlind_I", "x1ZeroBlind_H", "x1ZeroBlind_W", 
     # baseline models PWC finetuned - x1 zero

@@ -27,6 +27,7 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/X_PWCNet-I_fine_sintel-
 python ./evaluate_for_all_datasets.py /data/dataB/models/Y_PWCNet-I_fine_things-20191230-024005/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/Y.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/Z_FlowNet1S-sintel-20191227-163340/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/Z.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/ZZ_FlowNet1S-E_fine_chairs-20200111-180519/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/ZZ.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/ZT_FlowNet1S-E_fine_things_res1-20200116-140705/checkpoint_best.ckpt flownet /data/dataB/meta/full_evals/ZT.json
 
 #conv33 fused no finetune
 python ./evaluate_for_all_datasets.py /data/dataB/fusedModelsConv33/ah/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/conv33_ah.json
@@ -48,8 +49,12 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/0C301_PWCNetConv33Fusio
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C302_PWCNetConv33Fusion-fine_chairs-20200105-171550/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C302.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C303_PWCNetConv33Fusion-fine_chairs-20200105-171857/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C303.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C304_PWCNetConv33Fusion-fine_chairs-20200111-174643/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C304.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/0C305_res2_PWCNetConv33Fusion-fine_chairs-20200116-141744/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C305.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C306_PWCNetConv33Fusion-fine_chairs-20200105-172316/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C306.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C307_PWCNetConv33Fusion-fine_chairs-20200111-174308/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C307.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/0C308_PWCNetConv33Fusion-fine_chairs-20200116-020142/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C308.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/0C309_PWCNetConv33Fusion-fine_chairs-20200116-141109/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C309.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/0C310_PWCNetConv33Fusion-fine_chairs-20200116-022159/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C310.json
 
 # fused no finetune
 python ./evaluate_for_all_datasets.py /data/dataB/fusedModels_blind/ah/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/blind_ah.json

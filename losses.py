@@ -453,6 +453,20 @@ class MultiScaleSparseEPE_PWC(nn.Module):
         return loss_dict
 
 
+class MultiScaleAdaptiveEPE_PWC(nn.Module):
+
+    def __init__(self, args):
+        super().__init__()
+        self.denseLoss = MultiScaleEPE_PWC(args)
+        self.sparseLoss = MultiScaleSparseEPE_PWC(args)
+
+    def forward(self, output_dict, target_dict):
+        if target_dict["dense"][0]:
+            return self.denseLoss.forward(output_dict, target_dict)
+        else:
+            return self.sparseLoss.forward(output_dict, target_dict)
+
+
 class MultiScaleEPE_PWC_Bi(nn.Module):
     def __init__(self,
                  args):

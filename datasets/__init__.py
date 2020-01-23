@@ -6,6 +6,7 @@ from . import sintel
 from . import monkaa
 from . import pwcInterfaceDataset
 from . import subsampledDataset
+from . import combined_dataset
 
 ## FlyingChairs
 FlyingChairsTrain = flyingchairs.FlyingChairsTrain
@@ -61,3 +62,7 @@ PWCInterfaceDatasetValid = pwcInterfaceDataset.PWCInterfaceDatasetValid
 
 ## SubsampledDataset
 SubsampledDataset = subsampledDataset.SubsampledDataset
+
+## Combined Dataset
+CTSKTrain = combined_dataset.CTSKTrain
+CTSKValid = combined_dataset.CTSKValid

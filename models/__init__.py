@@ -11,6 +11,7 @@ from . import pwcnetFusion
 from . import pwcnetX1Zero
 from . import pwcnetConvConnector
 from . import pwcnetWOX1Connection
+from . import pwcExpertNet
 from . import pwcnet_bi
 from . import pwcnet_occ
 from . import pwcnet_occ_bi
@@ -47,6 +48,7 @@ PWCConnector3        = pwcnetConvConnector.PWCConvConnector3
 PWCConvAppliedConnector = pwcnetConvConnector.PWCConvAppliedConnector
 PWCLinCombAppliedConnector = pwcnetConvConnector.PWCLinCombAppliedConnector
 PWCNetWOX1Connection = pwcnetWOX1Connection.PWCNetWOX1Connection
+PWCExpertNet         = pwcExpertNet.PWCExpertNet
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet
