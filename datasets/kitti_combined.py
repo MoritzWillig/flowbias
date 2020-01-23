@@ -335,7 +335,6 @@ class Kitti_comb(data.Dataset):
 
     def __getitem__(self, index):
         index = index % self._size
-
         im1_filename = self._image_list[index][0]
         im2_filename = self._image_list[index][1]
         flo_f_filename = self._flow_list[index][0]

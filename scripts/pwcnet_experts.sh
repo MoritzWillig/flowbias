@@ -19,7 +19,7 @@ export CUDA_VISIBLE_DEVICES=0
 # training configuration
 python ../main.py \
 --batch_size=$SIZE_OF_BATCH \
---batch_size_val=$SIZE_OF_BATCH \
+--batch_size_val=1 \
 --checkpoint=$CHECKPOINT \
 --lr_scheduler=MultiStepLR \
 --lr_scheduler_gamma=0.5 \

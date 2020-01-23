@@ -43,7 +43,7 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
             batch = self._dataset_sequences[dataset_id][dataset_idx:dataset_idx+batch_size]
         else:
             # take remaining indices
-            batch = np.empty(batch_size)
+            batch = np.empty(batch_size, dtype=np.int)
             idcs_from_old_perm = (dataset_size - dataset_idx)
             batch[:idcs_from_old_perm] = self._dataset_sequences[dataset_id][dataset_idx:]
             # reshuffle indices

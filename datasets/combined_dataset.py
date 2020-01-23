@@ -13,6 +13,11 @@ class CombinedDataset:
         self._datasets = list(datasets)
         self._dense = list(dense)
         self._size = sum([len(dataset) for dataset in self._datasets])
+        self._cum_index = []
+        ci = 0
+        for dataset in self._datasets:
+            ci += len(dataset)
+            self._cum_index.append(ci)
         self._args = args
 
     def __getitem__(self, index):
@@ -20,6 +25,12 @@ class CombinedDataset:
         :param index: (dataset_id, index)
         :return:
         """
+
+        if isinstance(index, int):
+            for i, ci in enumerate(self._cum_index):
+                if ci >= index:
+                    index = (i, index-ci)
+                    break
 
         dataset_idx = index[0]
         sample_dict = self._datasets[dataset_idx][index[1]]
