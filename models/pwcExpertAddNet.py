@@ -13,8 +13,8 @@ def get_feature_split(channels, split):
 
 
 def applyAndMergeAdd(a, base, expert, weight):
-    # <=> base(a) + factor * expert(a)
-    return torch.addcmul(base(a), weight, expert(a))
+    return base(a) + (weight * expert(a))
+    #return torch.addcmul(base(a), weight, expert(a))
 
 
 class FeatureExtractorExpertAdd(nn.Module):
