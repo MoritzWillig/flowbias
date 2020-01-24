@@ -238,7 +238,7 @@ def _parse_arguments():
         default_class="FlowNet1S",
         exclude_classes=["_*", "Variable"],
         exclude_params=["self","args"],
-        unknown_default_types={"num_experts": int, "expert_split": float})
+        unknown_default_types={"num_experts": int, "expert_split": float, "expert_weight": float})
 
     # -------------------------------------------------------------------------
     # Arguments inferred from augmentations for training
