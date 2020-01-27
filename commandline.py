@@ -201,7 +201,7 @@ def _parse_arguments():
     add("--start_epoch", type=int, default=1)
     add("--total_epochs", type=int, default=10)
     add("--save_result_path_name", default="", type=str)
-    add("--training_iters_per_epoch", type=int, default=0)
+    add("--training_iters_per_epoch", type=int, default=None)
     add("--save_result_img", type=tools.str2bool, default=False)
     add("--save_result_occ", type=tools.str2bool, default=False)
     add("--save_result_flo", type=tools.str2bool, default=False)
