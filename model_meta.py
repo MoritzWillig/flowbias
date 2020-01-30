@@ -90,6 +90,7 @@ model_meta = {
     "0C308": ["pwcConv33", "fused_conv33_fine", "W,I", "kitti,things", "chairs"],
     "0C309": ["pwcConv33", "fused_conv33_fine", "I,W", "things,kitti", "chairs"],
     "0C310": ["pwcConv33", "fused_conv33_fine", "W,H", "kitti,sintel", "chairs"],
+    "0C311": ["pwcConv33", "fused_conv33_fine", "H,W", "sintel,kitti", "chairs"],
 
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A": ["pwcX1Zero", "x1_zero_baseline", "A", "chairs", None],
@@ -119,6 +120,9 @@ model_meta = {
     "x1ZeroBlind_wa": ["pwcX1Zero", "x1_zero_baseline_fused", "W,A", "kitti,chairs", None],
     "x1ZeroBlind_wh": ["pwcX1Zero", "x1_zero_baseline_fused", "W,H", "kitti,sintel", None],
     "x1ZeroBlind_wi": ["pwcX1Zero", "x1_zero_baseline_fused", "W,I", "kitti,things", None],
+
+    # baseline pwc without X1 connection
+    "pwcWOX1_chairs": ["WOX1Connection", "without_x1_connection_baseline", None, "chairs", None],
 }
 
 model_meta_ordering = [
@@ -147,7 +151,7 @@ model_meta_ordering = [
     "conv33_ah", "conv33_ai", "conv33_aw", "conv33_ha", "conv33_hi", "conv33_hw", "conv33_ia", "conv33_ih",
     "conv33_iw", "conv33_wa", "conv33_wh", "conv33_wi",
     # fusing conv33 finetuned
-    "0C300", "0C301", "0C302", "0C303", "0C304", "0C305", "0C306", "0C307", "0C308", "0C309", "0C310",
+    "0C300", "0C301", "0C302", "0C303", "0C304", "0C305", "0C306", "0C307", "0C308", "0C309", "0C310", "0C311",
     # baseline models PWC no fine - x1 zero
     "x1ZeroBlind_A", "x1ZeroBlind_I", "x1ZeroBlind_H", "x1ZeroBlind_W", 
     # baseline models PWC finetuned - x1 zero
@@ -155,7 +159,9 @@ model_meta_ordering = [
     "x1ZeroBlind_X", "x1ZeroBlind_O",
     # fused blind x1 zero
     "x1ZeroBlind_ah", "x1ZeroBlind_ai", "x1ZeroBlind_aw", "x1ZeroBlind_ha", "x1ZeroBlind_hi", "x1ZeroBlind_hw",
-    "x1ZeroBlind_ia", "x1ZeroBlind_ih", "x1ZeroBlind_iw", "x1ZeroBlind_wa", "x1ZeroBlind_wh", "x1ZeroBlind_wi"
+    "x1ZeroBlind_ia", "x1ZeroBlind_ih", "x1ZeroBlind_iw", "x1ZeroBlind_wa", "x1ZeroBlind_wh", "x1ZeroBlind_wi",
+    # baseline pwc without X1 connection
+    "pwcWOX1_chairs"
 ]
 
 # print(set(iter(model_meta.keys())).difference(model_meta_ordering))

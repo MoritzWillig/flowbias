@@ -2,6 +2,7 @@
 
 # experiments and datasets meta
 EXPERIMENTS_HOME=/data/dataA/experiments
+#EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # model and checkpoint
 MODEL=PWCExpertNet

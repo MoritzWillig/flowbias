@@ -10,7 +10,7 @@ from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThi
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
-from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero
+from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
 from flowbias.utils.statistics import SeriesStatistic
@@ -35,7 +35,8 @@ if __name__ == '__main__':
         "pwc": [PWCNet, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
         "flownet": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_FlowNet}],
         "pwcConv33": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "pwcX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
+        "pwcX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "PWCNetWOX1Connection": [PWCNetWOX1Connection, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
     }
 
     assert(len(sys.argv) == 4)
@@ -101,7 +102,9 @@ if __name__ == '__main__':
     existing_results_datasets = list(existing_results.keys())
 
     # compute remaining evaluations
-    reevaluate = ["kitti2015Train", "kitti2015Valid"]
+    #reevaluate = ["kitti2015Train", "kitti2015Valid"]  # forces datasets to be reevaluated
+    reevaluate = []
+
     datasets = {
         dataset_name: dataset_data
         for dataset_name, dataset_data in available_datasets.items()

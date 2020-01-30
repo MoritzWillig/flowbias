@@ -41,7 +41,7 @@ python ../main.py \
 --training_dataset_root=$FLYINGCHAIRS_HOME \
 --training_key=total_loss \
 --training_loss=$EVAL_LOSS \
---validation_dataset=FlyingChairsValid  \
+--validation_dataset=FlyingChairsValid \
 --validation_dataset_photometric_augmentations=False \
 --validation_dataset_root=$FLYINGCHAIRS_HOME \
 --validation_key=epe \

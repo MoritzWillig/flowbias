@@ -55,6 +55,7 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/0C307_PWCNetConv33Fusio
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C308_PWCNetConv33Fusion-fine_chairs-20200116-020142/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C308.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C309_PWCNetConv33Fusion-fine_chairs-20200116-141109/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C309.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/0C310_PWCNetConv33Fusion-fine_chairs-20200116-022159/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C310.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/0C311_PWCNetConv33Fusion-fine_chairs-20200122-163116/checkpoint_best.ckpt pwcConv33 /data/dataB/meta/full_evals/0C311.json
 
 # fused no finetune
 python ./evaluate_for_all_datasets.py /data/dataB/fusedModels_blind/ah/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/blind_ah.json
@@ -109,6 +110,9 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/V_PWCNet-I_fine_chairs-
 python ./evaluate_for_all_datasets.py /data/dataB/models/W_PWCNet-kitti-20191216-124247/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_W.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/X_PWCNet-I_fine_sintel-20191227-155229/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_X.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/Y_PWCNet-I_fine_things-20191230-024005/checkpoint_best.ckpt pwcX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_Y.json
+
+# pwc without x1 connection
+python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_chairs_PWCNetWOX1Connection-20200122-164023/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_chairs.json
 
 # repeated experiments
 python ./evaluate_for_all_datasets.py /data/dataB/models/C_PWCNet-onChairs-20191126-113818/checkpoint_best.ckpt pwc /data/dataB/meta/full_evals/C.json

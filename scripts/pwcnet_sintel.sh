@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # experiments and datasets meta
-EXPERIMENTS_HOME=/data/vimb01/experiments
+#EXPERIMENTS_HOME=/data/vimb01/experiments
+EXPERIMENTS_HOME=/data/dataA/experiments
 
 # datasets
-SINTEL_HOME=/data/vimb01/MPI-Sintel-complete/
+#SINTEL_HOME=/data/vimb01/MPI-Sintel-complete/
+SINTEL_HOME=sintel
 
 # model and checkpoint
 MODEL=PWCNet

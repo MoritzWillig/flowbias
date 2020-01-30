@@ -8,7 +8,7 @@ KITTI_HOME=/data02/vimb01/KITTI_scene_flow/
 
 # model and checkpoint
 MODEL=PWCNet
-EVAL_LOSS=MultiScaleEPE_PWC
+EVAL_LOSS=MultiScaleSparseEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
@@ -22,7 +22,7 @@ export CUDA_VISIBLE_DEVICES=1
 # training configuration
 python ../main.py \
 --batch_size=$SIZE_OF_BATCH \
---batch_size_val=$SIZE_OF_BATCH \
+--batch_size_val=1 \
 --checkpoint=$CHECKPOINT \
 --lr_scheduler=MultiStepLR \
 --lr_scheduler_gamma=0.5 \
@@ -41,7 +41,7 @@ python ../main.py \
 --training_key=total_loss \
 --training_loss=$EVAL_LOSS \
 --validation_dataset=KittiComb2015Val  \
---validation_dataset_preprocessing_crop=True \
+--validation_dataset_preprocessing_crop=False \
 --validation_dataset_photometric_augmentations=False \
 --validation_dataset_root=$KITTI_HOME \
 --validation_key=epe \
