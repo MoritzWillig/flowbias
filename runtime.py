@@ -502,7 +502,7 @@ def exec_runtime(args,
                  training_augmentation,
                  validation_augmentation):
     filename_len = int(math.log10(args.total_epochs))
-    
+
     # ----------------------------------------------------------------------------------------------
     # Validation schedulers are a bit special:
     # They want to be called with a validation loss..
