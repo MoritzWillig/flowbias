@@ -633,7 +633,7 @@ def exec_runtime(args,
                     stats_dict=dict(avg_loss_dict, epoch=epoch),
                     store_as_best=store_as_best)
 
-                if (args.save_every_nth_checkpoint is not None) and ((epoch + 1) % args.save_every_nth_checkpoint == 0):
+                if (args.save_every_nth_checkpoint is not None) and (epoch % args.save_every_nth_checkpoint == 0):
                     checkpoint_saver.save_custom(
                         directory=args.save,
                         model_and_loss=model_and_loss,
