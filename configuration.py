@@ -315,6 +315,27 @@ class CheckpointSaver:
             shutil.copyfile(latest_checkpoint_filename, best_checkpoint_filename)
             shutil.copyfile(latest_statistics_filename, best_statistics_filename)
 
+    def save_custom(self, directory, model_and_loss, stats_dict, custom_postfix=""):
+        # -----------------------------------------------------------------------------------------
+        # Make sure directory exists
+        # -----------------------------------------------------------------------------------------
+        tools.ensure_dir(directory)
+
+        # -----------------------------------------------------------------------------------------
+        # Save
+        # -----------------------------------------------------------------------------------------
+        save_dict = dict(stats_dict)
+        save_dict[self._model_key] = model_and_loss.state_dict()
+
+        latest_checkpoint_filename = os.path.join(
+            directory, self._prefix + custom_postfix + self._extension)
+
+        latest_statistics_filename = os.path.join(
+            directory, self._prefix + custom_postfix + ".json")
+
+        torch.save(save_dict, latest_checkpoint_filename)
+        tools.write_json(data_dict=stats_dict, filename=latest_statistics_filename)
+
 
 def configure_checkpoint_saver(args, model_and_loss):
     with logger.LoggingBlock("Checkpoint", emph=True):

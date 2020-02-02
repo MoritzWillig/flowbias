@@ -14,6 +14,7 @@ import scipy.misc
 import torch
 import torch.nn as nn
 import os
+import math
 
 # for evaluation
 from flowbias.utils.flow import flow_to_png, flow_to_png_middlebury
@@ -500,7 +501,8 @@ def exec_runtime(args,
                  inference_loader,
                  training_augmentation,
                  validation_augmentation):
-
+    filename_len = int(math.log10(args.total_epochs))
+    
     # ----------------------------------------------------------------------------------------------
     # Validation schedulers are a bit special:
     # They want to be called with a validation loss..
@@ -630,6 +632,14 @@ def exec_runtime(args,
                     model_and_loss=model_and_loss,
                     stats_dict=dict(avg_loss_dict, epoch=epoch),
                     store_as_best=store_as_best)
+
+                if (args.save_every_nth_checkpoint is not None) and ((epoch + 1) % args.save_every_nth_checkpoint == 0):
+                    checkpoint_saver.save_custom(
+                        directory=args.save,
+                        model_and_loss=model_and_loss,
+                        stats_dict=dict(avg_loss_dict, epoch=epoch),
+                        custom_postfix=f"_iter_{epoch:{filename_len}f}"
+                    )
 
             # ----------------------------------------------------------------
             # Vertical space between epochs

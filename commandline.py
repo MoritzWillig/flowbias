@@ -207,7 +207,8 @@ def _parse_arguments():
     add("--save_result_flo", type=tools.str2bool, default=False)
     add("--save_result_png", type=tools.str2bool, default=False)
     add("--save_result_bidirection", type=tools.str2bool, default=False)
-    add("--num_iters", type=int, default=1)
+    add("--save_every_nth_checkpoint", type=int, default=None)
+    add("--num_iters", type=int, default=1)  # custom parameter for IRR networks
 
     # -------------------------------------------------------------------------
     # Arguments inferred from losses
