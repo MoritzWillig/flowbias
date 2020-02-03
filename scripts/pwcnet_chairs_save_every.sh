@@ -17,6 +17,9 @@ SIZE_OF_BATCH=8
 TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/PWC_EVERY_$MODEL-onChairs-$TIME"
 
+# set cuda GPU ids
+export CUDA_VISIBLE_DEVICES=0
+
 # training configuration
 python ../main.py \
 --batch_size=$SIZE_OF_BATCH \
