@@ -501,7 +501,7 @@ def exec_runtime(args,
                  inference_loader,
                  training_augmentation,
                  validation_augmentation):
-    filename_len = int(math.log10(args.total_epochs))
+    filename_len = int(math.log10(args.total_epochs) + 1)
 
     # ----------------------------------------------------------------------------------------------
     # Validation schedulers are a bit special:
