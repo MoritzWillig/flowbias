@@ -638,7 +638,7 @@ def exec_runtime(args,
                         directory=args.save,
                         model_and_loss=model_and_loss,
                         stats_dict=dict(avg_loss_dict, epoch=epoch),
-                        custom_postfix=f"_iter_{epoch:{filename_len}f}"
+                        custom_postfix=f"_iter_{epoch:0{filename_len}}"
                     )
 
             # ----------------------------------------------------------------
