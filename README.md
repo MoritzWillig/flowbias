@@ -1,4 +1,23 @@
-# Iterative Residual Refinement <br/> for Joint Optical Flow and Occlusion Estimation
+# Analysing and overcoming the dataset bias for optical flow backbone networks
+
+## Adding a new model
+* Add new line to `evaluations/eval_models.sh`, pointing to the new model(s)
+* run `eval_models.sh` (~30min for evaluating a PWC Model on all datasets)
+* open `model_meta.py`
+  * add a new line to `model_meta`
+  * set the key name to the name chosen in `eval_models.sh`
+  * add the model parameters in the array (the fields correspond to the entries of the `model_meta_fields` array)
+  * add the newly inserted key to the model_meta_ordering
+    * this is used for ordering models of the experiments when creating the csv-file
+  * run `evaluations/collect_model_results.py` to create a csv containing all results
+
+(Note A) The individual model meta files may not contain all dataset splits, as some are only computed by `collect_model_results.py`. (e.g. `kitti2015Full = kitti2015Train + kitti2015Valid`)
+
+(Note B) By default `evaluate_for_all_datasets.py` will not reevaluate a dataset split, if the model meta file already contains a result for it. This usually prevents computing the same results over and over again. If you have changed your evaluation method, use the `reevaluate` variable to force a reevaluation of the affected dataset split(s).
+
+## Old
+
+Based on: Iterative Residual Refinement <br/> for Joint Optical Flow and Occlusion Estimation
 
 <img src=output.gif>
 
