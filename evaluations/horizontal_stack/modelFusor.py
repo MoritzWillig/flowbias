@@ -1,7 +1,7 @@
-from flowbias.models import PWCNet, PWCNetFusion, PWCNetLinCombFusion, PWCAppliedConvConnector33
+from flowbias.models import PWCNet, PWCNetFusion, PWCNetLinCombFusion, PWCAppliedConvConnector33, PWCNetWOX1Connection
 from flowbias.utils.model_loading import load_model_parameters, save_model
 
-resulting_model_dir = "/data/dataB/fusedModels_blind/"
+resulting_model_dir = "/data/dataB/fusedModelsWOX1Conn_blind/"
 
 # fusing mode: "blind", "correlation", "trained"
 # blind:        no fusing
@@ -13,6 +13,9 @@ correlation_path = None
 
 connector_class = PWCAppliedConvConnector33
 
+""" base PWCNet fusing
+base_model = PWCNet
+resulting_blind_model = PWCNet
 
 models = {
     "a": "/data/dataB/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt",
@@ -34,22 +37,34 @@ learned_connectors = {
     "wa": "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-WA_33_sintel-20200104-181111/checkpoint_best.ckpt",
     "wh": "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-WH_33_sintel-20200104-203925/checkpoint_best.ckpt",
     "wi": "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-WI_33_sintel-20200104-230204/checkpoint_best.ckpt"
+}"""
+
+base_model = PWCNetWOX1Connection
+resulting_blind_model = PWCNetWOX1Connection
+
+models = {
+    "c": "/data/dataB/models/WOX1_chairs_PWCNetWOX1Connection-20200122-164023/checkpoint_best.ckpt",
+    "t": "/data/dataB/models/WOX1_PWCNetWOX1Connection-things-20200127-234143/checkpoint_best.ckpt",
+    "s": "/data/dataB/models/WOX1_PWCNetWOX1Connection-sintel-20200127-232828/checkpoint_best.ckpt",
+    "k": "/data/dataB/models/WOX1_PWCNetWOX1Connection-kitti-20200128-000101/checkpoint_best.ckpt"
 }
+
+learned_connectors = {}
 
 
 def fuse_and_save_model(
         encoder_path, decoder_path, resulting_model_path, fusing,
         correlation_path=None,
         connector_path=None, connector_class=None):
-    encoderModel = PWCNet({})
+    encoderModel = base_model({})
     load_model_parameters(encoderModel, encoder_path)
 
-    decoderModel = PWCNet({})
+    decoderModel = base_model({})
     load_model_parameters(decoderModel, decoder_path)
 
 
     if fusing == "blind":
-        resulting_model = PWCNet({})
+        resulting_model = resulting_blind_model({})
     elif fusing == "correlation":
         assert(correlation_path is not None)
         connector = PWCNetLinCombFusion({})
@@ -82,5 +97,6 @@ for ename, encoder_model in models.items():
 
         fuse_and_save_model(
             encoder_model, decoder_model, resulting_model_dir+ename+dname+"/", fusingMode,
-            connector_path=learned_connectors[ename+dname], connector_class=connector_class)
+            connector_path=learned_connectors[ename+dname] if fusingMode != "blind" else None,
+            connector_class=connector_class)
 print("done")

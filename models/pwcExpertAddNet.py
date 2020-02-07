@@ -174,7 +174,8 @@ class PWCExpertAddNet(nn.Module):
         initialize_msra(self.modules())
 
     def forward(self, input_dict):
-        expert_id = input_dict['dataset'][0]  # assuming each sample in the batch is from the same dataset
+        # assuming each sample in the batch is from the same dataset
+        expert_id = input_dict['dataset'] if isinstance(input_dict['dataset'], int) else input_dict['dataset'][0]
         x1_raw = input_dict['input1']
         x2_raw = input_dict['input2']
         _, _, height_im, width_im = x1_raw.size()

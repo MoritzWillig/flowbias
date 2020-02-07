@@ -190,7 +190,8 @@ class PWCExpertNet(nn.Module):
         initialize_msra(self.modules())
 
     def forward(self, input_dict):
-        expert_id = input_dict['dataset'][0]  # assuming each sample in the batch is from the same dataset
+        # assuming each sample in the batch is from the same dataset
+        expert_id = input_dict['dataset'] if isinstance(input_dict['dataset'], int) else input_dict['dataset'][0]
         x1_raw = input_dict['input1']
         x2_raw = input_dict['input2']
         _, _, height_im, width_im = x1_raw.size()
@@ -245,3 +246,10 @@ class PWCExpertNet(nn.Module):
             out_flow = upsample2d_as(flow, x1_raw, mode="bilinear") * (1.0 / self._div_flow)
             output_dict_eval['flow'] = out_flow
             return output_dict_eval
+
+
+class CTSKPWCExpertNet02(PWCExpertNet):
+    def __init__(self, args, div_flow=0.05):
+        num_experts = 4
+        expert_split = 0.2
+        super().__init__(args, num_experts, expert_split, div_flow)

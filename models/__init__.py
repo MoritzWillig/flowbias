@@ -50,6 +50,7 @@ PWCConvAppliedConnector = pwcnetConvConnector.PWCConvAppliedConnector
 PWCLinCombAppliedConnector = pwcnetConvConnector.PWCLinCombAppliedConnector
 PWCNetWOX1Connection = pwcnetWOX1Connection.PWCNetWOX1Connection
 PWCExpertNet         = pwcExpertNet.PWCExpertNet
+CTSKPWCExpertNet02   = pwcExpertNet.CTSKPWCExpertNet02
 PWCExpertAddNet      = pwcExpertAddNet.PWCExpertAddNet
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet

@@ -2,10 +2,15 @@ from glob import glob
 import numpy as np
 from flowbias.utils.data_loading import load_sample
 
-sample_interface_pathA = "/data/vimb01/evaluations/A_onThings_interface/*"
-sample_interface_pathB = "/data/vimb01/evaluations/C_onThings_interface/*"
+#sample_interface_pathA = "/data/vimb01/evaluations/A_onThings_interface/*"
+#sample_interface_pathA = "/data/dataB/meta/correlations/A_onThings_interface_sub/*"
+sample_interface_pathA = "/data/dataA/model_interfaces/A_things/*"
+#sample_interface_pathB = "/data/vimb01/evaluations/C_onThings_interface/*"
+#sample_interface_pathB = "/data/dataB/meta/correlations/C_onThings_interface_sub/*"
+sample_interface_pathB = "/data/dataA/model_interfaces/I_things/*"
 
-resulting = "/data/vimb01/evaluations/corr_Athings_Cthings/"
+#resulting = "/data/vimb01/evaluations/corr_Athings_Cthings/"
+resulting = "/data/dataB/meta/correlations/corr_Athings_Ithings/"
 
 all_sample_filenamesA = sorted(glob(sample_interface_pathA))
 all_sample_filenamesB = sorted(glob(sample_interface_pathB))
@@ -18,9 +23,11 @@ print(f"num_levels: {num_levels}")
 
 def extractLevel(interface, level):
     out_corr_relu, x1, flow, l = interface
+
+    #print("!!>>",out_corr_relu[level].shape, x1[level].shape, flow[level].shape)
     out_corr_reluS = np.squeeze(out_corr_relu[level], axis=(0,))
-    x1S = np.squeeze(x1[level], axis=(0, 1))
-    flowS = np.squeeze(flow[level], axis=(0, 1))
+    x1S = np.squeeze(x1[level], axis=(0,))
+    flowS = np.squeeze(flow[level], axis=(0,))
     lS = l[level]
     return out_corr_reluS, x1S, flowS, lS
 
@@ -43,14 +50,10 @@ def custom_coeff(data):
         data[i, :] -= mean[i]
 
     print("normalizing data")
-    std_dev = np.zeros(num_features)
+    # we compute the sample variance here _without_ the (1/n)-term
+    var = np.zeros(num_features)
     for f in range(num_features):
-        #std_dev[f] = np.sqrt(np.sum(np.square(data[:, f]))/num_rows)
-        std_dev[f] = np.sum(np.square(data[:, f]))
-
-    # data /= std_dev[:, None] <- to large
-    #for i in range(num_rows):
-    #    data[i, :] /= std_dev
+        var[f] = np.sum(np.square(data[:, f]))
 
     print("computing coeff")
     res = np.zeros((num_features, num_features))
@@ -58,28 +61,35 @@ def custom_coeff(data):
         if f1 % 10 == 0:
             print(f"{f1}/{num_features}")
         for f2 in range(f1, num_features):
-            corr = np.dot(data[:, f1], data[:, f2]) / np.sqrt((std_dev[f1]*std_dev[f2]))
+            corr = np.dot(data[:, f1], data[:, f2]) / np.sqrt(var[f1]*var[f2])
             res[f1, f2] = corr
             res[f2, f1] = corr
+
+    std_dev = np.sqrt(var/num_rows)
+
     return res, mean, std_dev
+
+num_images = len(all_sample_filenamesA)
+#num_images = 10
 
 for level in range(num_levels):
     #collect all data for a given level
     print(f"starting level {level}")
 
     out_corr_reluX, x1X, flowX, lX = extractLevel(load_sample(all_sample_filenamesA[0]), level)
-    print(">>",out_corr_reluX.shape, x1X.shape, flowX.shape)
+    print(">>", out_corr_reluX.shape, x1X.shape, flowX.shape)
     x_shape = flatten_merge(out_corr_reluX, x1X, flowX).shape
     pixel_per_image = x_shape[1]
-    num_datapoints = len(all_sample_filenamesA) * pixel_per_image
+    num_datapoints = num_images * pixel_per_image
     num_features = x_shape[0]
     #a_full = np.zeros((num_datapoints, num_features))
     #b_full = np.zeros((num_datapoints, num_features))
+    #full = np.zeros((num_datapoints, num_features*2), dtype=np.longdouble)
     full = np.zeros((num_datapoints, num_features*2))
     print(f"{full.shape} full data size")
 
     # build up matrix containing all features from all images at the current level
-    for ii in range(len(all_sample_filenamesA)):
+    for ii in range(num_images):
         if ii % 10 == 0:
             print(f"loading data point {ii}")
         out_corr_reluA, x1A, flowA, lA = extractLevel(load_sample(all_sample_filenamesA[ii]), level)

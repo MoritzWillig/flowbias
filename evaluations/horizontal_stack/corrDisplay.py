@@ -6,7 +6,8 @@ num_levels = 5
 
 fig = plt.figure()
 
-corr_dir = "/data/vimb01/evaluations/corr_Athings_Cthings"
+#corr_dir = "/data/vimb01/evaluations/corr_Athings_Cthings"
+corr_dir = "/data/dataB/meta/correlations/corr_Athings_Ithings"
 
 for i in range(num_levels):
     print(f"level {i}")
@@ -19,7 +20,12 @@ for i in range(num_levels):
     std_dev = np.load(std_dev_file)
 
     print("has NaN: ", np.isnan(corr).any())
-    print("min/max (absolute) correlation: ", np.min(np.abs(corr)), np.max(corr))
+
+    # set the main diagonal to some other value,
+    # since it will always be one ...
+    mmcorr = corr.copy()
+    np.fill_diagonal(mmcorr, mmcorr[0])
+    print("min/max (absolute) correlation: ", np.min(np.abs(mmcorr)), np.max(mmcorr))
 
     print("means:", mean)
     print("std_dev:", std_dev)
