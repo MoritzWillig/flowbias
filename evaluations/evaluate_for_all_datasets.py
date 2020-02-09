@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 import torch
 import torch.utils.data as data
-import time
 
 from flowbias.datasets.flyingchairs import FlyingChairsValid, FlyingChairsFull
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
@@ -12,12 +11,11 @@ from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Va
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, CTSKPWCExpertNet02
+from flowbias.utils.meta_infrastructure import get_available_datasets, dataset_needs_batch_size_one
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
 from flowbias.utils.statistics import SeriesStatistic
 from torch.utils.data.dataloader import DataLoader
-
-from flowbias.config import Config
 
 """
 Computes the average epe of a model for all datasets.
@@ -100,23 +98,7 @@ if __name__ == '__main__':
     load_model_parameters(model, model_path)
     model.eval().cuda()
 
-    available_datasets = {}
-    if os.path.isdir(Config.dataset_locations["flyingChairs"]):
-        available_datasets["flyingChairsValid"] = FlyingChairsValid({}, Config.dataset_locations["flyingChairs"], photometric_augmentations=False)
-        available_datasets["flyingChairsFull"] = FlyingChairsFull({}, Config.dataset_locations["flyingChairs"], photometric_augmentations=False)
-    if os.path.isdir(Config.dataset_locations["flyingThings"]):
-        available_datasets["flyingThingsCleanTrain"] = FlyingThings3dCleanTrain({}, Config.dataset_locations["flyingThings"], photometric_augmentations=False)
-        available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], photometric_augmentations=False)
-    if os.path.isdir(Config.dataset_locations["kitti"]):
-        available_datasets["kitti2015Train"] = KittiComb2015Train({}, Config.dataset_locations["kitti"], photometric_augmentations=False, preprocessing_crop=False)
-        available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], photometric_augmentations=False, preprocessing_crop=False)
-    if os.path.isdir(Config.dataset_locations["sintel"]):
-        available_datasets["sintelCleanValid"] = SintelTrainingCleanValid({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
-        available_datasets["sintelCleanFull"] = SintelTrainingCleanFull({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
-        available_datasets["sintelFinalValid"] = SintelTrainingFinalValid({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
-        available_datasets["sintelFinalFull"] = SintelTrainingFinalFull({}, Config.dataset_locations["sintel"], photometric_augmentations=False)
-
-    need_batch_size_one = ["kitti2015Train", "kitti2015Valid"]
+    available_datasets = get_available_datasets(force_mode="test")
 
     rename = {
         "flyingChairs": "flyingChairsValid",
@@ -210,7 +192,7 @@ if __name__ == '__main__':
             gpuargs = {"num_workers": 4, "pin_memory": False}
             loader = DataLoader(
                 dataset,
-                batch_size=batch_size if name not in need_batch_size_one else 1,
+                batch_size=1 if dataset_needs_batch_size_one(name, force_mode="test") else batch_size,
                 shuffle=False,
                 drop_last=False,
                 **gpuargs)
