@@ -72,3 +72,29 @@ class CTSKValid(CombinedDataset):
         ]
         dense = [True, True, True, False]
         super().__init__(args, datasets, dense)
+
+
+class CTSTrain(CombinedDataset):
+
+    def __init__(self, args, photometric_augmentations=True):
+        datasets = [
+            FlyingChairsTrain(args, Config.dataset_locations["flyingChairs"], photometric_augmentations=photometric_augmentations),
+            FlyingThings3dCleanTrain(args, Config.dataset_locations["flyingThings"], photometric_augmentations=photometric_augmentations),
+            SintelTrainingCleanTrain(args, Config.dataset_locations["sintel"], photometric_augmentations=photometric_augmentations)
+        ]
+        dense = [True, True, True]
+        super().__init__(args, datasets, dense)
+
+
+class CTSValid(CombinedDataset):
+
+    def __init__(self, args, photometric_augmentations=True):
+        args_kitti = Namespace(**vars(args))
+        args_kitti._batch_size = 1
+        datasets = [
+            FlyingChairsValid(args, Config.dataset_locations["flyingChairs"], photometric_augmentations=photometric_augmentations),
+            FlyingThings3dCleanValid(args, Config.dataset_locations["flyingThings"], photometric_augmentations=photometric_augmentations),
+            SintelTrainingCleanValid(args, Config.dataset_locations["sintel"], photometric_augmentations=photometric_augmentations)
+        ]
+        dense = [True, True, True]
+        super().__init__(args, datasets, dense)

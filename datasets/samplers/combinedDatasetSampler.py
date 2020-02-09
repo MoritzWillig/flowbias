@@ -84,3 +84,13 @@ class CTSKTrainDatasetBatchSampler(CombinedDatasetBatchSampler):
     def __init__(self, batch_size, dataset_sequence_mode="cycle"):
         dataset_sizes = [22232, 19635, 908, 160]
         super().__init__(dataset_sizes, batch_size, dataset_sequence_mode)
+
+
+class CTSTrainDatasetBatchSampler(CombinedDatasetBatchSampler):
+    """
+    Sampler for a combined training of Chairs, Things and Sintel
+    """
+
+    def __init__(self, batch_size, dataset_sequence_mode="cycle"):
+        dataset_sizes = [22232, 19635, 908]
+        super().__init__(dataset_sizes, batch_size, dataset_sequence_mode)
