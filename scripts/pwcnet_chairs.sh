@@ -8,14 +8,17 @@ EXPERIMENTS_HOME=/data/dataB/experiments
 FLYINGCHAIRS_HOME=flyingChairs
 
 # model and checkpoint
-MODEL=PWCNetWOX1Connection
+MODEL=PWCNetDSEncoder
 EVAL_LOSS=MultiScaleEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/WOX1_$MODEL-onChairs-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/PWC_DSEncoder_$MODEL-onChairs-$TIME"
+
+# set cuda GPU ids
+export CUDA_VISIBLE_DEVICES=0
 
 # training configuration
 python ../main.py \
