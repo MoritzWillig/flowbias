@@ -148,8 +148,18 @@ model_meta = {
     "expert_split02_expert2": ["CTSKPWCExpertNet02", "pwc_expert_split_02", None, "chairs,things,sintel,kitti", None, "expert_base02_PWCExpertNet-20200124-000701", "expert2"],
     "expert_split02_expert3": ["CTSKPWCExpertNet02", "pwc_expert_split_02", None, "chairs,things,sintel,kitti", None, "expert_base02_PWCExpertNet-20200124-000701", "expert3"],
 
+    "expert_add01_known":   ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "error"],
+    "expert_add01_no_expert": ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "noExpert"],
+    "expert_add01_expert0": ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "expert0"],
+    "expert_add01_expert1": ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "expert1"],
+    "expert_add01_expert2": ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "expert2"],
+    "expert_add01_expert3": ["CTSKPWCExpertNetAdd01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "expert3"],
+
+    # pwc trained on multiple datasets
+    "pwc_on_CTSK": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200127-234847", None],
+
     # pwc iteration inspection
-    "pwc_chairs_iter_148": ["PWCNet", "pwc_iteration_inspection", None, "chairs", None, "iter_PWCNet-chairs_148"]
+    "pwc_chairs_iter_148": ["PWCNet", "pwc_iteration_inspection", None, "chairs", None, "iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt", None]
 }
 
 model_meta_ordering = [
@@ -195,6 +205,11 @@ model_meta_ordering = [
     # pwc expert model split
     "expert_split02_known",
     "expert_split02_expert0", "expert_split02_expert1", "expert_split02_expert2", "expert_split02_expert3",
+    # pwc expert model add
+    "expert_add01_known", "expert_add01_no_expert",
+    "expert_add01_expert0", "expert_add01_expert1", "expert_add01_expert2", "expert_add01_expert3",
+    # pwc trained on multiple datasets
+    "pwc_on_CTSK",
     # pwc iteration inspection
     "pwc_chairs_iter_148"
 ]
@@ -203,7 +218,7 @@ model_folders = {
     "_default": "/data/dataB/models/",
     "blind": "/data/dataB/fusedModels_blind/",
     "convBlind": "/data/dataB/fusedModelsConv33/",
-    "WOX1Blind": "/data/dataB/fusedModelsWOX1Conn_blind"
+    "WOX1Blind": "/data/dataB/fusedModelsWOX1Conn_blind/"
 }
 
 # print(set(iter(model_meta.keys())).difference(model_meta_ordering))

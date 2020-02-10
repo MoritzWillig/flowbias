@@ -10,7 +10,7 @@ from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThi
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
-from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, CTSKPWCExpertNet02
+from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01
 from flowbias.utils.meta_infrastructure import get_available_datasets, dataset_needs_batch_size_one
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
@@ -61,8 +61,8 @@ class CTSKDatasetDetector(DataEnricher):
             raise ValueError("Unknown dataset!")
         return dataset_id
 
-    def __init__(self, dataset):
-        super().__init__(dataset, {"dataset": self._detect_dataset_id(dataset)})
+    def __init__(self, dataset, additional):
+        super().__init__(dataset, {"dataset": self._detect_dataset_id(dataset), **additional})
 
 
 if __name__ == '__main__':
@@ -82,7 +82,13 @@ if __name__ == '__main__':
         "CTSKPWCExpertNet02Expert0": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
         "CTSKPWCExpertNet02Expert1": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
         "CTSKPWCExpertNet02Expert2": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "CTSKPWCExpertNet02Expert3": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]]
+        "CTSKPWCExpertNet02Expert3": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSKPWCExpertNet01AddKnown": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSKPWCExpertNet01AddNoExpert": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
+        "CTSKPWCExpertNet01AddExpert0": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSKPWCExpertNet01AddExpert1": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSKPWCExpertNet01AddExpert2": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "CTSKPWCExpertNet01AddExpert3": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
     }
 
     assert(len(sys.argv) == 4)

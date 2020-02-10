@@ -144,6 +144,18 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base02_PWCExpert
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base02_PWCExpertNet-20200124-000701/checkpoint_best.ckpt CTSKPWCExpertNet02Expert2 /data/dataB/meta/full_evals/expert_split02_expert2.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base02_PWCExpertNet-20200124-000701/checkpoint_best.ckpt CTSKPWCExpertNet02Expert3 /data/dataB/meta/full_evals/expert_split02_expert3.json
 
+# expert models
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddKnown /data/dataB/meta/full_evals/expert_add01_known.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddNoExpert /data/dataB/meta/full_evals/expert_add01_no_expert.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddExpert0 /data/dataB/meta/full_evals/expert_add01_expert0.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddExpert1 /data/dataB/meta/full_evals/expert_add01_expert1.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddExpert2 /data/dataB/meta/full_evals/expert_add01_expert2.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddExpert3 /data/dataB/meta/full_evals/expert_add01_expert3.json
+
+
+# pwc trained on multiple datasets
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_noExpert_PWCNet-20200127-234847/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwc_on_CTSK.json
+
 # iteration inspection
 python ./evaluate_for_all_datasets.py /data/dataB/models/iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt PWCNet /data/dataB/meta/full_evals/pwc_chairs_iter_148.json
 

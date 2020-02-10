@@ -48,12 +48,18 @@ class FeatureExtractorExpertAdd(nn.Module):
 
     def forward(self, x, expert_id):
         feature_pyramid = []
-        for conv_base, conv_expert in zip(self.convsBase, self.convsExperts[expert_id]):
-            # x = conv[1](conv[0](x))
-            x_0 = applyAndMergeAdd(x, conv_base[0], conv_expert[0], self._expert_weight)
-            x_1 = applyAndMergeAdd(x_0, conv_base[1], conv_expert[1], self._expert_weight)
-            feature_pyramid.append(x_1)
-            x = x_1
+
+        if expert_id == -1:
+            for conv_base in self.convsBase:
+                x = conv_base(x)
+                feature_pyramid.append(x)
+        else:
+            for conv_base, conv_expert in zip(self.convsBase, self.convsExperts[expert_id]):
+                # x = conv[1](conv[0](x))
+                x_0 = applyAndMergeAdd(x, conv_base[0], conv_expert[0], self._expert_weight)
+                x_1 = applyAndMergeAdd(x_0, conv_base[1], conv_expert[1], self._expert_weight)
+                feature_pyramid.append(x_1)
+                x = x_1
         return feature_pyramid[::-1]
 
 
@@ -90,10 +96,13 @@ class ContextNetworkExpertAdd(nn.Module):
         self.convs_experts = nn.ModuleList(convs_experts)
 
     def forward(self, x, expert_id):
-        conv_expert = self.convs_experts[expert_id]
-        for i in range(7):
-            x = applyAndMergeAdd(x, self.convs_base[i], conv_expert[i], self._expert_weight)
-        return x
+        if expert_id == -1:
+            return self.convs_base(x)
+        else:
+            conv_expert = self.convs_experts[expert_id]
+            for i in range(7):
+                x = applyAndMergeAdd(x, self.convs_base[i], conv_expert[i], self._expert_weight)
+            return x
 
 
 class FlowEstimatorDenseExpertAdd(nn.Module):
@@ -130,13 +139,22 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
         self.conv_last_expert = nn.ModuleList(conv_last_expert)
 
     def forward(self, x, expert_id):
-        x1 = torch.cat([applyAndMergeAdd(x, self.conv1_base, self.conv1_expert[expert_id], self._expert_weight), x], dim=1)
-        x2 = torch.cat([applyAndMergeAdd(x1, self.conv2_base, self.conv2_expert[expert_id], self._expert_weight), x1], dim=1)
-        x3 = torch.cat([applyAndMergeAdd(x2, self.conv3_base, self.conv3_expert[expert_id], self._expert_weight), x2], dim=1)
-        x4 = torch.cat([applyAndMergeAdd(x3, self.conv4_base, self.conv4_expert[expert_id], self._expert_weight), x3], dim=1)
-        x5 = torch.cat([applyAndMergeAdd(x4, self.conv5_base, self.conv5_expert[expert_id], self._expert_weight), x4], dim=1)
-        x_out = applyAndMergeAdd(x5, self.conv_last_base, self.conv_last_expert[expert_id], self._expert_weight)
-        return x5, x_out
+        if expert_id == -1:
+            x1 = torch.cat([self.conv1_base(x), x], dim=1)
+            x2 = torch.cat([self.conv2_base(x1), x1], dim=1)
+            x3 = torch.cat([self.conv3_base(x2), x2], dim=1)
+            x4 = torch.cat([self.conv4_base(x3), x3], dim=1)
+            x5 = torch.cat([self.conv5_base(x4), x4], dim=1)
+            x_out = self.conv_last_base(x5)
+            return x5, x_out
+        else:
+            x1 = torch.cat([applyAndMergeAdd(x, self.conv1_base, self.conv1_expert[expert_id], self._expert_weight), x], dim=1)
+            x2 = torch.cat([applyAndMergeAdd(x1, self.conv2_base, self.conv2_expert[expert_id], self._expert_weight), x1], dim=1)
+            x3 = torch.cat([applyAndMergeAdd(x2, self.conv3_base, self.conv3_expert[expert_id], self._expert_weight), x2], dim=1)
+            x4 = torch.cat([applyAndMergeAdd(x3, self.conv4_base, self.conv4_expert[expert_id], self._expert_weight), x3], dim=1)
+            x5 = torch.cat([applyAndMergeAdd(x4, self.conv5_base, self.conv5_expert[expert_id], self._expert_weight), x4], dim=1)
+            x_out = applyAndMergeAdd(x5, self.conv_last_base, self.conv_last_expert[expert_id], self._expert_weight)
+            return x5, x_out
 
 
 class PWCExpertAddNet(nn.Module):
@@ -230,3 +248,10 @@ class PWCExpertAddNet(nn.Module):
             out_flow = upsample2d_as(flow, x1_raw, mode="bilinear") * (1.0 / self._div_flow)
             output_dict_eval['flow'] = out_flow
             return output_dict_eval
+
+
+class CTSKPWCExpertNetAdd01(PWCExpertAddNet):
+
+    def __init__(self, args, div_flow=0.05):
+        super().__init__(args, 4, 0.1)
+

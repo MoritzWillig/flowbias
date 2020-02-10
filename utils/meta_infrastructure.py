@@ -32,11 +32,14 @@ def assemble_meta_path(meta_path, load_latest):
         base_name = splits[0]
     model_dir = model_folders[base_name] + splits[-1]
 
-    if load_latest:
-        model_file = "checkpoint_latest.ckpt"
+    if model_dir.endswith(".ckpt"):
+        model_file = ""
     else:
-        model_file = "checkpoint_best.ckpt"
-    return model_dir + "/" + model_file
+        if load_latest:
+            model_file = "/checkpoint_latest.ckpt"
+        else:
+            model_file = "/checkpoint_best.ckpt"
+    return model_dir + model_file
 
 
 class DataTransformer:
@@ -60,6 +63,7 @@ def create_no_enricher():
 
 loaders = {
     "_default": create_no_enricher(),
+    "noExpert": create_enricher(-1),
     "expert0": create_enricher(0),
     "expert1": create_enricher(1),
     "expert2": create_enricher(2),

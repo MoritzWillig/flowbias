@@ -66,3 +66,6 @@ SubsampledDataset = subsampledDataset.SubsampledDataset
 ## Combined Dataset
 CTSKTrain = combined_dataset.CTSKTrain
 CTSKValid = combined_dataset.CTSKValid
+
+CTSTrain = combined_dataset.CTSTrain
+CTSValid = combined_dataset.CTSValid

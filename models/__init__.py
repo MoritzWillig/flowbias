@@ -56,6 +56,7 @@ PWCNetDSEncoder = pwcnetDSEncoder.PWCNetDSEncoder
 PWCExpertNet         = pwcExpertNet.PWCExpertNet
 CTSKPWCExpertNet02   = pwcExpertNet.CTSKPWCExpertNet02
 PWCExpertAddNet      = pwcExpertAddNet.PWCExpertAddNet
+CTSKPWCExpertNetAdd01   = pwcExpertAddNet.CTSKPWCExpertNetAdd01
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet
