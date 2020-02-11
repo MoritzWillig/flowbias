@@ -11,7 +11,9 @@ from flowbias.datasets.flyingchairs import FlyingChairsValid, FlyingChairsFull
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
-
+from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
+from flowbias.models import PWCNet, PWCNetWOX1Connection, PWCNetWOX1ConnectionExt, PWCNetConv33Fusion, PWCExpertNet, PWCExpertAddNet, CTSKPWCExpertNetAdd01, CTSKPWCExpertNet02, PWCNetDSEncoder
+from flowbias.models import FlowNet1S
 
 MetaEntry = namedtuple("MetaEntry", model_meta_fields)
 
@@ -142,6 +144,88 @@ def get_available_datasets(force_mode=None, restrict_to=None):
         if "kitti2015Valid" in restrict_to:
             available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
     return available_datasets
+
+
+def switch_to_train(loss):
+    return loss.eval()
+
+
+def switch_to_eval(loss):
+    return loss.eval()
+
+
+def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
+    losses = {
+        "epe": [
+            {
+                "models": [
+                        PWCNet, PWCNetWOX1Connection, PWCNetWOX1ConnectionExt, PWCNetConv33Fusion, PWCExpertNet,
+                        PWCExpertAddNet, CTSKPWCExpertNetAdd01, CTSKPWCExpertNet02, PWCNetDSEncoder
+                    ],
+                "losses": {
+                    "@dense": MultiScaleEPE_PWC,
+                    "@sparse": MultiScaleSparseEPE_PWC
+                },
+                "processor": switch_to_train
+            },
+            {
+                "models": [ FlowNet1S ],
+                "losses": [ MultiScaleEPE_FlowNet, MultiScaleSparseEPE_FlowNet],
+                "processor": switch_to_eval
+            }
+        ],
+        "total_loss": [
+            {
+                "models": [
+                    PWCNet, PWCNetWOX1Connection, PWCNetWOX1ConnectionExt, PWCNetConv33Fusion, PWCExpertNet,
+                    PWCExpertAddNet, CTSKPWCExpertNetAdd01, CTSKPWCExpertNet02, PWCNetDSEncoder
+                ],
+                "losses": {
+                    "@dense": MultiScaleEPE_PWC,
+                    "@sparse": MultiScaleSparseEPE_PWC
+                },
+                "processor": switch_to_train
+            },
+            {
+                "models": [FlowNet1S],
+                "losses": [MultiScaleEPE_FlowNet, MultiScaleSparseEPE_FlowNet],
+                "processor": switch_to_train
+            }
+        ]
+    }
+
+    # select a list of losses, that can handle the model output
+    loss_candidates = losses[loss_name]
+    selected_candidate = None
+    for candidate in loss_candidates:
+        if model_instance.__class__ in candidate["models"]:
+            selected_candidate = candidate
+            break
+
+    if selected_candidate is None:
+        raise ValueError("no loss found for handling the given model output")
+
+    # find category of the dataset
+    dataset_categories = {
+        "_default": "@dense",
+        "KITTI": "@sparse"
+    }
+
+    if dataset_name in dataset_categories:
+        category = dataset_categories[dataset_name]
+    else:
+        category = dataset_categories["_default"]
+
+    if category not in selected_candidate["losses"]:
+        raise ValueError("no loss found for the given dataset category")
+
+    loss = selected_candidate["losses"]
+    processor = selected_candidate["processor"]
+
+    if loss_args is None:
+        loss_args = {}
+
+    return processor(loss(**loss_args))
 
 
 def dataset_needs_batch_size_one(dataset_name, force_mode=None):

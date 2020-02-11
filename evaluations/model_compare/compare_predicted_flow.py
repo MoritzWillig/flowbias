@@ -2,13 +2,10 @@ import math
 
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
 import torch
 
-from flowbias.config import Config
 from flowbias.utils.flow import compute_color
 from flowbias.utils.meta_infrastructure import get_available_datasets, load_model_from_meta
-from flowbias.evaluations.edgeEval.area_filter import AreaFilter
 from flowbias.utils.model_loading import sample_to_torch_batch
 
 dataset_name = "sintelFinalValid" #flyingChairsValid flyingThingsCleanValid sintelFinalValid kitti2015Valid
@@ -26,7 +23,7 @@ models = [
 
 num_cols = 4
 
-datasets = get_available_datasets(restrict_to=[dataset_name])
+datasets = get_available_datasets(restrict_to=[dataset_name], force_mode="test")
 dataset = datasets[dataset_name]
 sample = sample_to_torch_batch(dataset[sample_id])
 print(sample.keys())
@@ -45,10 +42,8 @@ with torch.no_grad():
             results.append({"flow":torch.zeros((1,1))})
             continue
         model, transformer = load_model_from_meta(model_name)
-        model.cuda().eval().nogradients()
+        model.cuda().eval()
         results.append(model(transformer(sample)))
-        del model
-        torch.cuda.empty_cache()
 
 
 class AGrid:
