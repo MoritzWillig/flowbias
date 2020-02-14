@@ -159,3 +159,6 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_noExpert_PWCNet-
 # iteration inspection
 python ./evaluate_for_all_datasets.py /data/dataB/models/iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt PWCNet /data/dataB/meta/full_evals/pwc_chairs_iter_148.json
 
+# pwc down sampling encoder
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWC_DSEncoder_PWCNetDSEncoder-onChairs-20200209-190403/checkpoint_best.ckpt PWCNetDSEncoder /data/dataB/meta/full_evals/pwcDSEncoder_chairs.json
+

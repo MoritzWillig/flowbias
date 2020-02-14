@@ -159,7 +159,11 @@ model_meta = {
     "pwc_on_CTSK": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200127-234847", None],
 
     # pwc iteration inspection
-    "pwc_chairs_iter_148": ["PWCNet", "pwc_iteration_inspection", None, "chairs", None, "iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt", None]
+    "pwc_chairs_iter_148": ["PWCNet", "pwc_iteration_inspection", None, "chairs", None, "iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt", None],
+
+    # pwc down sampling encoder
+    "pwcDSEncoder_chairs": ["PWCNetDSEncoder", "pwc_ds_encoder", None, "chairs", None, "PWC_DSEncoder_PWCNetDSEncoder-onChairs-20200209-190403", None]
+
 }
 
 model_meta_ordering = [
@@ -211,7 +215,9 @@ model_meta_ordering = [
     # pwc trained on multiple datasets
     "pwc_on_CTSK",
     # pwc iteration inspection
-    "pwc_chairs_iter_148"
+    "pwc_chairs_iter_148",
+    # pwc down sampling encoder
+    "pwcDSEncoder_chairs"
 ]
 
 model_folders = {

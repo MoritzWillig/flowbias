@@ -10,7 +10,8 @@ from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThi
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
-from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01
+from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, \
+    CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder
 from flowbias.utils.meta_infrastructure import get_available_datasets, dataset_needs_batch_size_one
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
@@ -89,6 +90,7 @@ if __name__ == '__main__':
         "CTSKPWCExpertNet01AddExpert1": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
         "CTSKPWCExpertNet01AddExpert2": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
         "CTSKPWCExpertNet01AddExpert3": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "PWCNetDSEncoder": [PWCNetDSEncoder, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
     }
 
     assert(len(sys.argv) == 4)
