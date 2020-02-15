@@ -35,9 +35,9 @@ char_map = {
     "k": 3,
 }
 
-num_vars = 5
+num_vars = 8
 def build_row(row, dataset_id, no_b=False):
-    a = np.zeros(4 * num_vars, dtype=np.double)
+    a = np.zeros(4 * num_vars + 1, dtype=np.double)
     a_idx = char_map[row[0][-2]]
     b_idx = char_map[row[0][-1]]
     aa = results_baseline[a_idx][1 + dataset_id]
@@ -46,12 +46,12 @@ def build_row(row, dataset_id, no_b=False):
     a[4 + dataset_id] = aa * aa
     a[8 + dataset_id] = bb
     a[12 + dataset_id] = bb * bb
-    #a[16 + dataset_id] = aa * bb
-    #a[20 + dataset_id] = aa * aa * bb
-    #a[24 + dataset_id] = aa * bb * bb
-    #a[28 + dataset_id] = aa * aa * bb * bb
-    #a[28 + dataset_id] = np.exp(aa)
-    #a[32 + dataset_id] = np.exp(bb)
+    a[16 + dataset_id] = aa * bb
+    a[20 + dataset_id] = aa * aa * bb
+    a[24 + dataset_id] = aa * bb * bb
+    a[28 + dataset_id] = aa * aa * bb * bb
+    #a[32 + dataset_id] = np.exp(aa)
+    #a[36 + dataset_id] = np.exp(bb)
     a[-1] = 1  # constant term ...
 
     b = row[1 + dataset_id]
@@ -61,7 +61,7 @@ def build_row(row, dataset_id, no_b=False):
         return a, b
 
 
-a = np.zeros((len(results)*4, 4*num_vars), dtype=np.double)
+a = np.zeros((len(results)*4, 4*num_vars+1), dtype=np.double)
 b = np.zeros((len(results)*4), dtype=np.double)
 for i, row in enumerate(results):
 
@@ -83,7 +83,7 @@ solution, residuals, rank, s = np.linalg.lstsq(a,b)
 print(solution)
 
 
-row = results[0]
+row = results[5]
 print("=======")
 print(np.dot(build_row(row, 0, True), solution), row[1])
 print(np.dot(build_row(row, 1, True), solution), row[2])
