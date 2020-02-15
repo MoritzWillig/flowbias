@@ -11,7 +11,7 @@ from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Va
 from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
 
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, \
-    CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder
+    CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder, PWCNetWOX1ConnectionExt
 from flowbias.utils.meta_infrastructure import get_available_datasets, dataset_needs_batch_size_one
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
@@ -79,6 +79,7 @@ if __name__ == '__main__':
         "PWCNetConv33Fusion": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
         "PWCNetX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
         "PWCNetWOX1Connection": [PWCNetWOX1Connection, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "PWCNetWOX1ConnectionExt": [PWCNetWOX1ConnectionExt, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
         "CTSKPWCExpertNet02Known": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
         "CTSKPWCExpertNet02Expert0": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
         "CTSKPWCExpertNet02Expert1": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],

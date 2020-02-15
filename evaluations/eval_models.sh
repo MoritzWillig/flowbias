@@ -117,6 +117,9 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connecti
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-sintel-20200127-232828/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_sintel.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-kitti-20200128-000101/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti.json
 
+# pwc without x1 connection between encoder, decoder and context network
+python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1Ext_PWCNetWOX1ConnectionExt-onChairs-20200209-181206/checkpoint_best.ckpt PWCNetWOX1ConnectionExt /data/dataB/meta/full_evals/WOX1Ext_chairs.json
+
 # blind fused pwc without X1 connection
 python ./evaluate_for_all_datasets.py /data/dataB/fusedModelsWOX1Conn_blind/ct/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/WOX1Blind_ct.json
 python ./evaluate_for_all_datasets.py /data/dataB/fusedModelsWOX1Conn_blind/cs/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/WOX1Blind_cs.json
@@ -161,4 +164,3 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/iter_PWCNet-chairs_148/
 
 # pwc down sampling encoder
 python ./evaluate_for_all_datasets.py /data/dataB/models/PWC_DSEncoder_PWCNetDSEncoder-onChairs-20200209-190403/checkpoint_best.ckpt PWCNetDSEncoder /data/dataB/meta/full_evals/pwcDSEncoder_chairs.json
-
