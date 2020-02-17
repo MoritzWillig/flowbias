@@ -1,4 +1,4 @@
-do_plot = False
+do_plot = True
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,6 +40,7 @@ def load_dataset_stats(dataset_name):
     if not LocalStorage.contains("field_"+dataset_name):
         print(f"no data for {dataset_name}")
     else:
+        print(f"found {dataset_name}")
         field = LocalStorage.get("field_"+dataset_name)
         logField = LocalStorage.get("logfield_"+dataset_name)
         rstat = LocalStorage.get("rstat_"+dataset_name)
@@ -49,9 +50,10 @@ def load_dataset_stats(dataset_name):
 
 
 def compute_for_dataset(dataset_name):
-    if not dataset_name not in dataset_stats:
-        print(f"no data for {dataset_name}")
+    if dataset_name not in dataset_stats:
+        print(f"skipping {dataset_name}")
         return
+    print(f"visualizing {dataset_name}")
     field, logField, rstat, logstat, ahisto = dataset_stats[dataset_name]
 
     sz = (field.shape[0] - 1) // 2
@@ -174,6 +176,8 @@ def compute_for_dataset(dataset_name):
         plt.xlim(0, len(rstat))
         plt.savefig(Config.temp_directory + f"{dataset_name}_ahisto.png")
         # plt.show()
+
+        plt.close('all')
 
 
 if not do_plot:

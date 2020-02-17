@@ -7,10 +7,11 @@ import flowbias.models
 from flowbias.utils.model_loading import load_model_parameters
 from flowbias.config import Config
 
-from flowbias.datasets.flyingchairs import FlyingChairsValid, FlyingChairsFull
+from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsValid, FlyingChairsFull
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
-from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
-from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
+from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full
+from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull
+from flowbias.datasets.sintel import SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
 from flowbias.models import PWCNet, PWCNetWOX1Connection, PWCNetWOX1ConnectionExt, PWCNetConv33Fusion, PWCExpertNet, PWCExpertAddNet, CTSKPWCExpertNetAdd01, CTSKPWCExpertNet02, PWCNetDSEncoder
 from flowbias.models import FlowNet1S
@@ -96,10 +97,11 @@ def load_model_from_meta(name, args=None, load_latest=False):
 
 def get_dataset_names():
     return [
-        "flyingChairsValid", "flyingChairsFull",
+        "flyingChairsTrain", "flyingChairsValid", "flyingChairsFull",
         "flyingThingsCleanTrain", "flyingThingsCleanValid",
-        "sintelCleanValid", "sintelCleanFull", "sintelFinalValid", "sintelFinalFull",
-        "kitti2015Train", "kitti2015Valid"]
+        "sintelCleanTrain", "sintelCleanValid", "sintelCleanFull",
+        "sintelFinalTrain", "sintelFinalValid", "sintelFinalFull",
+        "kitti2015Train", "kitti2015Valid", "kitti2015Full"]
 
 
 def get_available_datasets(force_mode=None, restrict_to=None):
@@ -120,6 +122,8 @@ def get_available_datasets(force_mode=None, restrict_to=None):
 
     available_datasets = {}
     if os.path.isdir(Config.dataset_locations["flyingChairs"]):
+        if "flyingChairsTrain" in restrict_to:
+            available_datasets["flyingChairsTrain"] = FlyingChairsTrain({}, Config.dataset_locations["flyingChairs"], **params)
         if "flyingChairsValid" in restrict_to:
             available_datasets["flyingChairsValid"] = FlyingChairsValid({}, Config.dataset_locations["flyingChairs"], **params)
         if "flyingChairsFull" in restrict_to:
@@ -130,10 +134,14 @@ def get_available_datasets(force_mode=None, restrict_to=None):
         if "flyingThingsCleanValid" in restrict_to:
             available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], **params)
     if os.path.isdir(Config.dataset_locations["sintel"]):
+        if "sintelCleanTrain" in restrict_to:
+            available_datasets["sintelCleanTrain"] = SintelTrainingCleanTrain({}, Config.dataset_locations["sintel"], **params)
         if "sintelCleanValid" in restrict_to:
             available_datasets["sintelCleanValid"] = SintelTrainingCleanValid({}, Config.dataset_locations["sintel"], **params)
         if "sintelCleanFull" in restrict_to:
             available_datasets["sintelCleanFull"] = SintelTrainingCleanFull({}, Config.dataset_locations["sintel"], **params)
+        if "sintelFinalTrain" in restrict_to:
+            available_datasets["sintelFinalTrain"] = SintelTrainingFinalTrain({}, Config.dataset_locations["sintel"], **params)
         if "sintelFinalValid" in restrict_to:
             available_datasets["sintelFinalValid"] = SintelTrainingFinalValid({}, Config.dataset_locations["sintel"], **params)
         if "sintelFinalFull" in restrict_to:
@@ -143,6 +151,8 @@ def get_available_datasets(force_mode=None, restrict_to=None):
             available_datasets["kitti2015Train"] = KittiComb2015Train({}, Config.dataset_locations["kitti"], **kitti_params)
         if "kitti2015Valid" in restrict_to:
             available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
+        if "kitti2015Full" in restrict_to:
+            available_datasets["kitti2015Full"] = KittiComb2015Full({}, Config.dataset_locations["kitti"], **kitti_params)
     return available_datasets
 
 
@@ -230,9 +240,13 @@ def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
 
 def dataset_needs_batch_size_one(dataset_name, force_mode=None):
     varying_image_sizes = []
-    if force_mode is not "train":
+    # kitti2015Valid does only crop in train mode:
+    if force_mode != "train":
         varying_image_sizes.append("kitti2015Valid")
+
+    # if we force test mode, we do not crop the images
     if force_mode == "test":
         varying_image_sizes.append("kitti2015Train")
+        varying_image_sizes.append("kitti2015Full")
 
     return dataset_name in varying_image_sizes
