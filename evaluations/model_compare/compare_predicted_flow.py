@@ -6,10 +6,14 @@ from PIL import Image, ImageFont, ImageDraw
 
 from flowbias.config import Config
 from flowbias.losses import _elementwise_epe
-from flowbias.utils.flow import compute_color
+from flowbias.utils.flow import compute_color, make_color_wheel
 from flowbias.utils.meta_infrastructure import get_available_datasets, load_model_from_meta
 from flowbias.utils.model_loading import sample_to_torch_batch
 from flowbias.utils.visualization.AGrid import AGrid
+
+field = np.linspace([-1]*450, [+1]*450, num=450)
+flow_wheel = compute_color(field, field.T)
+flow_wheel[np.linalg.norm(np.dstack([field, field.T]), ord=2, axis=2)>0.99] = 1.0
 
 
 def do_evaluation(comp_name, dataset_name, sample_id):
@@ -52,6 +56,7 @@ def do_evaluation(comp_name, dataset_name, sample_id):
     grid.place(0, 0, im1, "frame A")
     grid.place(1, 0, im2, "frame B")
     grid.place(2, 0, gt_flow, "ground truth")
+    grid.place(3, 0, flow_wheel, "flow wheel")
 
     err_grid = AGrid(
         plt_size,
@@ -106,18 +111,25 @@ def do_evaluation(comp_name, dataset_name, sample_id):
 #    "expert_split02_expert0", "expert_split02_expert1", "expert_split02_expert2", "expert_split02_expert3",
 #    "expert_add01_expert0", "expert_add01_expert1", "expert_add01_expert2", "expert_add01_expert3",
 #    "A", "pwc_chairs_iter_148", "I", "F",
+
 #    "expert_add01_no_expert", "pwc_on_CTSK"
 #]
 #models = ["W", "pwcWOX1_kitti", "A", "S", "WOX1Blind_ks", "WOX1Blind_sk"]  # kitti networks
 
-comp_name = "fused_models"
+"""comp_name = "fused_models"
 models = [
     "pwcWOX1_chairs", "WOX1Blind_ct", "WOX1Blind_cs", "WOX1Blind_ck",
     "WOX1Blind_tc", "pwcWOX1_things", "WOX1Blind_ts", "WOX1Blind_tk",
     "WOX1Blind_sc","WOX1Blind_st", "pwcWOX1_sintel", "WOX1Blind_sk",
     "WOX1Blind_kc", "WOX1Blind_kt", "WOX1Blind_ks", "pwcWOX1_kitti"
 ]
+num_cols = 4"""
+comp_name = "wox1_base_models"
+models = [
+    "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti"
+]
 num_cols = 4
+
 
 evals = [
     {

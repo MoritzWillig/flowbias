@@ -76,7 +76,6 @@ def compute_matrices(id_range):
         yy = flow[:, 1]
         r = np.sqrt(xx ** 2 + yy ** 2)  # radius
         a = np.arctan2(yy, xx)  # angle [-pi, +pi]
-        an = ((a + twopi)*100).astype(np.int) % int(100*twopi)  # to range [0, 2PI] * 100
 
         has_flow_selector = r > 1e-10
         num_zero_flow = r.size - np.count_nonzero(has_flow_selector)
@@ -86,6 +85,7 @@ def compute_matrices(id_range):
         rstat += rstat_part
 
         # write angle histogram
+        an = ((a[has_flow_selector] + twopi) * 100).astype(np.int) % int(100 * twopi)  # to range [0, 2PI] * 100
         ahisto_part, _ = np.histogram(an, ahisto_bins, (0, ahisto_bins))
         ahisto += ahisto_part
 
@@ -119,7 +119,6 @@ def compute_matrices(id_range):
 if __name__ == '__main__':
     print(f"computing dataset stats: {dataset_name}")
     if not LocalStorage.contains("field_"+dataset_name):
-
         dataset = datasets[dataset_name]
 
         start = time.time()

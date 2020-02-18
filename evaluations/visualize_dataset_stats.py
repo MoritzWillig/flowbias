@@ -169,12 +169,13 @@ def compute_for_dataset(dataset_name):
         plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_cumsum.png", bbox_inches="tight")
         #plt.show()
 
-        # show as intensity ring?
+        ahisto = ahisto.astype(np.float) / np.sum(ahisto)
         plt.figure()
         plt.title(dataset_name + "ahisto")
         plt.plot(range(len(ahisto)), ahisto)
-        plt.xlim(0, len(rstat))
-        plt.savefig(Config.temp_directory + f"{dataset_name}_ahisto.png")
+        plt.xlim(0, 628)
+        plt.xticks([0, 157, 314, 471, 628], [r"$-\pi$", r"$-\pi/2$", 0, r"$\pi/2$", r"$\pi$"])
+        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_ahisto.png")
         # plt.show()
 
         plt.close('all')
