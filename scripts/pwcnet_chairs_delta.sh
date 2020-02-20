@@ -2,20 +2,20 @@
 
 # experiments and datasets meta
 #EXPERIMENTS_HOME=/data/vimb01/experiments
-EXPERIMENTS_HOME=/data/dataB/experiments
+EXPERIMENTS_HOME=/data/dataA/experiments
 
 # datasets - read path from config.py
 FLYINGCHAIRS_HOME=flyingChairs
 
 # model and checkpoint
 MODEL=PWCNet
-EVAL_LOSS=MultiScaleEPE_PWC
+EVAL_LOSS=MultiScaleEPE_PWCDelta
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/PWC_$MODEL-onChairs-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/PWC_Delta_$MODEL-onChairs-$TIME"
 
 # set cuda GPU ids
 export CUDA_VISIBLE_DEVICES=0
