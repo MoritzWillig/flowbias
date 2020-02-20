@@ -4,6 +4,7 @@ from glob import glob
 from pathlib import Path
 
 from flowbias.config import Config
+from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure, metric_eval_datasets
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
@@ -26,7 +27,6 @@ datasets = set(get_dataset_names())
 for eval in evals.values():
     datasets = datasets.union(set(eval.keys()))
 datasets = datasets.difference(set(non_dataset_keys))
-
 
 summary = {}
 
@@ -75,7 +75,13 @@ def compute_kitti_full(eval):
     compute_dataset_full(eval, "kitti2015Train", "kitti2015Valid", "kitti2015Full", 160, 40)
 
 
+def compute_cross_dataset_measure_linear(eval):
+    aepes = [eval[dataset_name]['epe']['average'] for dataset_name in metric_eval_datasets]
+    return cross_dataset_measure(aepes)
+
+
 sorted_datasets = sorted(list(datasets))
+metric_fields = ["cross_dataset_measure_linear"]
 
 for eval_name, eval in evals.items():
     # infer some results
@@ -84,6 +90,9 @@ for eval_name, eval in evals.items():
     compute_sintel_clean_full(eval)
     compute_sintel_final_full(eval)
     compute_kitti_full(eval)
+
+    metrics = []
+    metrics.append(str(compute_cross_dataset_measure_linear(eval)))
 
     results = []
     missing = []
@@ -98,6 +107,7 @@ for eval_name, eval in evals.items():
 
     line = [eval_name, eval["model_class_name"]]
     line.extend(results)
+    line.extend(metrics)
     line.extend(["None" if data is None else data for data in model_meta[eval_name]])
     summary[eval_name] = line
 
@@ -107,6 +117,7 @@ for eval_name, eval in evals.items():
 with open(Config.temp_directory+"/eval_summary.csv", "w") as file:
     head = ["model_id", "model"]
     head.extend(sorted_datasets)
+    head.extend(metric_fields)
     head.extend(model_meta_fields)
     print(">>", head)
     file.write("\t".join(head))
