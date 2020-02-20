@@ -1,7 +1,10 @@
 from flowbias.config import Config
 from flowbias.datasets import KittiComb2015Train, KittiComb2015Val, PWCInterfaceDatasetTrain, FlyingThings3dCleanTrain, \
     FlyingThings3dCleanValid, SintelTrainingCleanTrain, FlyingChairsTrain
+from flowbias.utils.meta_infrastructure import get_available_datasets
 
+datasets = get_available_datasets()
+"""
 datasets = {
     "flyingChairsTrain": FlyingChairsTrain({}, Config.dataset_locations["flyingChairs"]),
     "kitti2015Train": KittiComb2015Train({}, Config.dataset_locations["kitti"]),
@@ -10,9 +13,8 @@ datasets = {
     "flyingThingsCleanValid": FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"]),
     "sintelTrainingCleanTrain": SintelTrainingCleanTrain({}, Config.dataset_locations["sintel"])
     #"pwcinterface": PWCInterfaceDatasetTrain({},"/data/dataA/model_interfaces/A_things", "/data/dataA/model_interfaces/A_things")
-}
+}"""
 
 
 for name, dataset in datasets.items():
-    #dataset = KittiComb2015Train({}, "/data/dataB/datasets/KITTI_data_scene_flow/")
     print(name, ":", len(dataset))

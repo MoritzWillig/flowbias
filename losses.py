@@ -795,6 +795,48 @@ class MultiScaleEPE_PWC_Bi_Occ_upsample_KITTI(nn.Module):
         return loss_dict
 
 
+class MultiScaleEPE_PWCDelta(nn.Module):
+    def __init__(self,
+                 args):
+        super(MultiScaleEPE_PWCDelta, self).__init__()
+        self._args = args
+        self._batch_size = args.batch_size
+        self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
+
+    def flow_gradient(self, x):
+        b, _, w, h = x.size()
+        out = torch.empty((b, 2, w, h))
+
+        out[:, 0, :-1, :] = x[:, 0, 1:, :] - x[:, 0, :-1, :]
+        out[:, 0, :, :-1] = x[:, 1, :, 1:] - x[:, 1, :, :-1]
+        x[:, 0, :, -1] = 0
+        x[:, 1, -1, :] = 0
+        return x
+
+    def forward(self, output_dict, target_dict):
+        loss_dict = {}
+
+        target_delta = self.flow_gradient(target_dict["target1"])[:, :, :-1, :-1]
+
+        if self.training:
+            outputs = output_dict['flow']
+
+            # div_flow trick
+            target = self._args.model_div_flow * target_delta
+
+            total_loss = 0
+            for ii, output_ii in enumerate(outputs):
+                loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
+                total_loss = total_loss + self._weights[ii] * loss_ii
+            loss_dict["total_loss"] = total_loss / self._batch_size
+
+        else:
+            epe = _elementwise_epe(output_dict["flow"][:, :, :-1, :-1], target_delta)
+            loss_dict["epe"] = epe.mean()
+
+        return loss_dict
+
+
 class L1ConnectorLoss(nn.Module):
     def __init__(self, args):
 

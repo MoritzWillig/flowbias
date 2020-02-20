@@ -5,10 +5,11 @@ from datetime import datetime
 import torch
 import torch.utils.data as data
 
-from flowbias.datasets.flyingchairs import FlyingChairsValid, FlyingChairsFull
-from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
+from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsValid, FlyingChairsFull
+from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThings3dCleanValid
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
-from flowbias.datasets.sintel import SintelTrainingCleanValid, SintelTrainingFinalValid, SintelTrainingCleanFull, SintelTrainingFinalFull
+from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull, \
+    SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
 
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, \
     CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder, PWCNetWOX1ConnectionExt
@@ -40,13 +41,16 @@ class DataEnricher(data.Dataset):
 class CTSKDatasetDetector(DataEnricher):
     # this are the dataset indices used by the CTSKTrain CombinedDataset and CTSKTrainDatasetBatchSampler
     _known_datasets = [
+        [FlyingChairsTrain, 0],
         [FlyingChairsValid, 0],
         [FlyingChairsFull, 0],
-        [FlyingThings3dCleanValid, 1],
         [FlyingThings3dCleanTrain, 1],
+        [FlyingThings3dCleanValid, 1],
+        [SintelTrainingCleanTrain, 2],
         [SintelTrainingCleanValid, 2],
-        [SintelTrainingFinalValid, 2],
         [SintelTrainingCleanFull, 2],
+        [SintelTrainingFinalTrain, 2],
+        [SintelTrainingFinalValid, 2],
         [SintelTrainingFinalFull, 2],
         [KittiComb2015Train, 3],
         [KittiComb2015Val, 3],
@@ -107,7 +111,7 @@ if __name__ == '__main__':
     load_model_parameters(model, model_path)
     model.eval().cuda()
 
-    available_datasets = get_available_datasets(force_mode="test")
+    available_datasets = get_available_datasets(force_mode="test", select_by_any_tag=["train", "valid"])
 
     rename = {
         "flyingChairs": "flyingChairsValid",
@@ -232,7 +236,7 @@ if __name__ == '__main__':
 
             results[name] = {}
             for lname, lloss in losses.items():
-                statistic = lloss.get_statistics(report_individual_values=False)
+                statistic = lloss.get_statistics(report_individual_values=True)
                 results[name][lname] = statistic
                 print(f"{lname}: {statistic['average']}")
 

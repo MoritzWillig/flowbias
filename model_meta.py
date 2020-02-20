@@ -127,6 +127,9 @@ model_meta = {
     "pwcWOX1_sintel": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "sintel", None, "WOX1_PWCNetWOX1Connection-sintel-20200127-232828", None],
     "pwcWOX1_kitti": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "WOX1_PWCNetWOX1Connection-kitti-20200128-000101", None],
 
+    # PWCNetWOX1 finetuned
+    "pwcWOX1_chairs_fine_things": ["PWCNetWOX1Connection", "without_x1_connection_finetuned", "pwcWOX1_chairs", "chairs", "things", "PWCNetWOX1Connection-WOX1Chairs_fine_things-20200206-153903", None],
+
     # pwc without x1 connection between encoder, decoder and context network
     "WOX1Ext_chairs": ["PWCNetWOX1ConnectionExt", "without_x1_connection_ext_baseline", None, "chairs", None, "WOX1Ext_PWCNetWOX1ConnectionExt-onChairs-20200209-181206", None],
 
@@ -197,7 +200,7 @@ model_meta_ordering = [
     # fusing conv33 finetuned
     "0C300", "0C301", "0C302", "0C303", "0C304", "0C305", "0C306", "0C307", "0C308", "0C309", "0C310", "0C311",
     # baseline models PWC no fine - x1 zero
-    "x1ZeroBlind_A", "x1ZeroBlind_I", "x1ZeroBlind_H", "x1ZeroBlind_W", 
+    "x1ZeroBlind_A", "x1ZeroBlind_I", "x1ZeroBlind_H", "x1ZeroBlind_W",
     # baseline models PWC finetuned - x1 zero
     "x1ZeroBlind_F", "x1ZeroBlind_K", "x1ZeroBlind_R", "x1ZeroBlind_S", "x1ZeroBlind_V", "x1ZeroBlind_Y",
     "x1ZeroBlind_X", "x1ZeroBlind_O",
@@ -206,6 +209,8 @@ model_meta_ordering = [
     "x1ZeroBlind_ia", "x1ZeroBlind_ih", "x1ZeroBlind_iw", "x1ZeroBlind_wa", "x1ZeroBlind_wh", "x1ZeroBlind_wi",
     # baseline pwc without X1 connection
     "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti",
+    # PWCNetWOX1 finetuned
+    "pwcWOX1_chairs_fine_things",
     # pwc without x1 connection between encoder, decoder and context network
     "WOX1Ext_chairs",
     # blind fused pwc without X1 connection

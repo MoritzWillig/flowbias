@@ -8,7 +8,7 @@ from flowbias.utils.model_loading import load_model_parameters
 from flowbias.config import Config
 
 from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsValid, FlyingChairsFull
-from flowbias.datasets.flyingThings3D import FlyingThings3dCleanValid, FlyingThings3dCleanTrain
+from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThings3dCleanValid, FlyingThings3dCleanFull
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full
 from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull
 from flowbias.datasets.sintel import SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
@@ -95,18 +95,51 @@ def load_model_from_meta(name, args=None, load_latest=False):
     return model, transformer
 
 
-def get_dataset_names():
-    return [
-        "flyingChairsTrain", "flyingChairsValid", "flyingChairsFull",
-        "flyingThingsCleanTrain", "flyingThingsCleanValid",
-        "sintelCleanTrain", "sintelCleanValid", "sintelCleanFull",
-        "sintelFinalTrain", "sintelFinalValid", "sintelFinalFull",
-        "kitti2015Train", "kitti2015Valid", "kitti2015Full"]
+dataset_splits = [
+    [ "flyingChairsTrain", ["flyingChairs", "train"]],
+    [ "flyingChairsValid", ["flyingChairs", "valid"]],
+    [ "flyingChairsFull", ["flyingChairs", "full"]],
+    [ "flyingThingsCleanTrain", ["flyingThings", "train"]],
+    [ "flyingThingsCleanValid", ["flyingThings", "valid"]],
+    [ "flyingThingsCleanFull", ["flyingThings", "full"]],
+    [ "sintelCleanTrain", ["sintel", "train", "clean"]],
+    [ "sintelCleanValid", ["sintel", "valid", "clean"]],
+    [ "sintelCleanFull", ["sintel", "full", "clean"]],
+    [ "sintelFinalTrain", ["sintel", "train", "final"]],
+    [ "sintelFinalValid", ["sintel", "valid", "final"]],
+    [ "sintelFinalFull", ["sintel", "full", "final"]],
+    [ "kitti2015Train", ["kitti", "train"]],
+    [ "kitti2015Valid", ["kitti", "valid"]],
+    [ "kitti2015Full", ["kitti", "full"]]
+]
 
 
-def get_available_datasets(force_mode=None, restrict_to=None):
+def create_any_selector(candidates):
+    candidates = set(candidates)
+    return lambda tags: not candidates.isdisjoint(tags)
+
+
+def create_filter_selector(exceptions):
+    exceptions = set(exceptions)
+    return lambda tags: exceptions.isdisjoint(tags)
+
+
+def get_dataset_names(select_by_any_tag=None, exclude_by_tag=None):
+    selectors = []
+    if select_by_any_tag is not None:
+        selectors.append(create_any_selector(select_by_any_tag))
+
+    if exclude_by_tag is not None:
+        selectors.append(create_filter_selector(exclude_by_tag))
+    return [dataset[0] for dataset in dataset_splits if all([selector(dataset[1]) for selector in selectors])]
+
+
+def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=None, exclude_by_tag=None):
+    if restrict_to is not None and select_by_any_tag is not None:
+        ValueError("restrict_to and select_by_tag parameters are mutually exclusive")
+
     if restrict_to is None:
-        restrict_to = get_dataset_names()
+        restrict_to = get_dataset_names(select_by_any_tag=select_by_any_tag, exclude_by_tag=exclude_by_tag)
 
     if force_mode is None:
         params = {}
@@ -133,6 +166,8 @@ def get_available_datasets(force_mode=None, restrict_to=None):
             available_datasets["flyingThingsCleanTrain"] = FlyingThings3dCleanTrain({}, Config.dataset_locations["flyingThings"], **params)
         if "flyingThingsCleanValid" in restrict_to:
             available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], **params)
+        if "flyingThingsCleanFull" in restrict_to:
+            available_datasets["flyingThingsCleanFull"] = FlyingThings3dCleanFull({}, Config.dataset_locations["flyingThings"], **params)
     if os.path.isdir(Config.dataset_locations["sintel"]):
         if "sintelCleanTrain" in restrict_to:
             available_datasets["sintelCleanTrain"] = SintelTrainingCleanTrain({}, Config.dataset_locations["sintel"], **params)

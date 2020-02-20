@@ -265,6 +265,30 @@ class FlyingThings3dCleanValid(FlyingThings3d):
             photometric_augmentations=photometric_augmentations)
 
 
+class FlyingThings3dCleanFull(data.Dataset):
+    """
+    Contains FlyingThings3dCleanTrain and FlyingThings3dCleanValid, but _not_ FlyingThings3dCleanTest
+    """
+    def __init__(self,
+                 args,
+                 root,
+                 reduce_every_nth=None,
+                 **kwargs):
+        self._train = FlyingThings3dCleanTrain(args, root, reduce_every_nth=reduce_every_nth, **kwargs)
+        self._valid = FlyingThings3dCleanTrain(args, root, reduce_every_nth=reduce_every_nth, **kwargs)
+        self._train_size = len(self._train)
+        self._valid_size = len(self._valid)
+
+    def __getitem__(self, index):
+        if index < self._train_size:
+            return self._train[index]
+        else:
+            return self._valid[index - self._train_size]
+
+    def __len__(self):
+        return self._train_size + self._valid_size
+
+
 class FlyingThings3dCleanTest(FlyingThings3d):
     def __init__(self,
                  args,

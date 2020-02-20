@@ -3,6 +3,8 @@ import psutil
 import sys
 import time
 
+from .log_transforms import log_index_fwd, log_index_reverse
+
 # using threads on a ryzen 1900x is faster by a factor of 3
 use_threading = True
 
@@ -40,13 +42,6 @@ field_size = (2 * field_extend) + 1
 rstat_bins = 1500
 logstat_bins = 3000
 ahisto_bins = int(twopi * 100)
-
-def log_index_reverse(y):
-    return ((y/100)-10)**10
-
-
-def log_index_fwd(x):
-    return (10+np.log10(x))*100
 
 
 def compute_matrices(id_range):

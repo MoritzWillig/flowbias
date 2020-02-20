@@ -117,6 +117,9 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connecti
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-sintel-20200127-232828/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_sintel.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-kitti-20200128-000101/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti.json
 
+# PWCNetWOX1 finetuned
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-WOX1Chairs_fine_things-20200206-153903/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_chairs_fine_things.json
+
 # pwc without x1 connection between encoder, decoder and context network
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1Ext_PWCNetWOX1ConnectionExt-onChairs-20200209-181206/checkpoint_best.ckpt PWCNetWOX1ConnectionExt /data/dataB/meta/full_evals/WOX1Ext_chairs.json
 

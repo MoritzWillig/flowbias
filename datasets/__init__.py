@@ -19,6 +19,7 @@ FlyingThings3dFinalTest = flyingThings3D.FlyingThings3dFinalTest
 FlyingThings3dCleanTrain = flyingThings3D.FlyingThings3dCleanTrain
 FlyingThings3dCleanTest = flyingThings3D.FlyingThings3dCleanTest
 FlyingThings3dCleanValid = flyingThings3D.FlyingThings3dCleanValid
+FlyingThings3dCleanFull = flyingThings3D.FlyingThings3dCleanFull
 
 ## Sintel
 SintelTestClean = sintel.SintelTestClean
