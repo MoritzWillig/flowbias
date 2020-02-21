@@ -16,6 +16,7 @@ SIZE_OF_BATCH=8
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-kitti-$TIME"
+SAVE_EVERY=150
 
 # set cuda GPU ids
 export CUDA_VISIBLE_DEVICES=1
@@ -34,6 +35,7 @@ python ../main.py \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
+--save_every_nth_checkpoint=$SAVE_EVERY \
 --total_epochs=30000 \
 --training_augmentation=RandomAffineFlow \
 --training_dataset=KittiComb2015Train \

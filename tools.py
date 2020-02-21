@@ -182,6 +182,12 @@ def str2str_or_none(v):
     return v
 
 
+def str2int_or_none(v):
+    if v.lower() == "none":
+        return None
+    return int(v)
+
+
 def str2dict(v):
     return ast.literal_eval(v)
 
