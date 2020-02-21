@@ -99,6 +99,8 @@ class MultiScaleSparseEPE_FlowNet(nn.Module):
         self._weights = [0.005, 0.01, 0.02, 0.08, 0.32]
 
     def forward(self, output_dict, target_dict):
+        raise RuntimeError("implement correct masking")
+
         loss_dict = {}
 
         valid_masks = target_dict["input_valid"]
@@ -423,7 +425,10 @@ class MultiScaleSparseEPE_PWC(nn.Module):
         super(MultiScaleSparseEPE_PWC, self).__init__()
         self._args = args
         self._batch_size = args.batch_size
-        self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
+
+        # corrected weights, as the image is now upsampled
+        self._weights = [0.32 * 64, 0.08 * 32, 0.02 * 16, 0.01 * 8, 0.005 * 4]
+        #self._up_weights = [0.32, 0.08, 0.02, 0.01, 0.005]
 
     def forward(self, output_dict, target_dict):
         loss_dict = {}
@@ -439,9 +444,18 @@ class MultiScaleSparseEPE_PWC(nn.Module):
 
             total_loss = 0
             for ii, output_ii in enumerate(output_flo):
-                valid_mask = _downsample_mask_as(valid_masks, output_ii)
-                masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
-                norm_const = (h * w) / (valid_mask.sum())
+                #valid_mask_ii = valid_masks[ii, :, :, :]
+                #valid_mask = _downsample_mask_as(valid_masks, output_ii) <- wrong masking!
+                #masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
+                #norm_const = (h * w) / (valid_mask.sum())
+                #total_loss += self._weights[ii] * (masked_epe.sum() * norm_const)
+
+                #_upsample2d_as
+                valid_mask_ii = valid_masks[ii, :, :, :]
+                output_ii = _upsample2d_as(output_ii, valid_mask_ii)
+                masked_epe = _elementwise_epe(output_ii, target)[valid_mask_ii != 0]
+                # if there are less valid pixels, each pixel is 'worth' more
+                norm_const = (h * w) / (valid_mask_ii.sum())
                 total_loss += self._weights[ii] * (masked_epe.sum() * norm_const)
             loss_dict["total_loss"] = total_loss / self._batch_size
         else:
