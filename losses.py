@@ -456,8 +456,9 @@ class MultiScaleSparseEPE_PWC(nn.Module):
                 output_ii = _upsample2d_as(output_ii, valid_masks)
                 masked_epe = _elementwise_epe(output_ii, target)[valid_masks != 0]
                 # if there are less valid pixels, each pixel is 'worth' more
-                norm_const = (h * w) / (valid_masks.sum())
-                total_loss += self._up_weights[ii] * (masked_epe.sum() * norm_const)
+                norm_const = (h * w) / (valid_masks.view(b, -1).sum())
+                print("$>", norm_const.size())
+                total_loss += self._up_weights[ii] * (masked_epe.view(b, -1).sum() * norm_const)
             loss_dict["total_loss"] = total_loss / self._batch_size
         else:
             flow_epe = _elementwise_epe(output_dict["flow"], target_dict["target1"]) * valid_masks
