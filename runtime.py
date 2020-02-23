@@ -541,10 +541,10 @@ def exec_runtime(args,
     # Remember validation loss
     # --------------------------------------------------------
     best_validation_loss = float("inf") if args.validation_key_minimize else -float("inf")
-    store_as_best = False
 
     for epoch in range(args.start_epoch, args.total_epochs + 1):
         with logger.LoggingBlock("Epoch %i/%i" % (epoch, args.total_epochs), emph=True):
+            store_as_best = False
 
             # --------------------------------------------------------
             # Update standard learning scheduler
@@ -580,8 +580,8 @@ def exec_runtime(args,
             # -------------------------------------------
             # Create and run a validation epoch
             # -------------------------------------------
-            if validation_loader is not None:
-
+            eval_this_epoch = (args.eval_every_nth is None) or (epoch % args.eval_every_nth == 0)
+            if (validation_loader is not None) and eval_this_epoch:
                 # ---------------------------------------------------
                 # Construct holistic recorder for epoch
                 # ---------------------------------------------------

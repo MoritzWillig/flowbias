@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # experiments and datasets meta
-#EXPERIMENTS_HOME=/data/vimb01/experiments
 EXPERIMENTS_HOME=/data/vimb01/experiments
+#EXPERIMENTS_HOME=/data/dataA/experiments
 
 # datasets
-KITTI_HOME=/data02/vimb01/KITTI_scene_flow/
+#KITTI_HOME=/data02/vimb01/KITTI_scene_flow/
+KITTI_HOME=kitti
 
 # model and checkpoint
 MODEL=PWCNet
@@ -17,6 +18,7 @@ SIZE_OF_BATCH=8
 TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-kitti-$TIME"
 SAVE_EVERY=150
+EVAL_EVERY=25
 
 # set cuda GPU ids
 export CUDA_VISIBLE_DEVICES=1
@@ -36,6 +38,7 @@ python ../main.py \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
 --save_every_nth_checkpoint=$SAVE_EVERY \
+--eval_every_nth=$EVAL_EVERY \
 --total_epochs=30000 \
 --training_augmentation=RandomAffineFlow \
 --training_dataset=KittiComb2015Train \

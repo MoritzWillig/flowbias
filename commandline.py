@@ -201,6 +201,7 @@ def _parse_arguments():
     add("--start_epoch", type=int, default=1)
     add("--total_epochs", type=int, default=10)
     add("--save_result_path_name", default="", type=str)
+    # number of iterations in epoch. Use in conjunction with the training_sampler argument
     add("--training_iters_per_epoch", type=int, default=None)
     add("--save_result_img", type=tools.str2bool, default=False)
     add("--save_result_occ", type=tools.str2bool, default=False)
@@ -208,6 +209,10 @@ def _parse_arguments():
     add("--save_result_png", type=tools.str2bool, default=False)
     add("--save_result_bidirection", type=tools.str2bool, default=False)
     add("--save_every_nth_checkpoint", type=tools.str2int_or_none, default=None)
+    # evaluate only every nth epoch to save evaluations (useful for small datasets like KITTI).
+    # Set to this to None a small number as this determines if a model is saved as the validation loss
+    # determines if a model is saved as best checkpoint.
+    add("--eval_every_nth", type=tools.str2int_or_none, default=None)
     add("--num_iters", type=int, default=1)  # custom parameter for IRR networks
 
     # -------------------------------------------------------------------------

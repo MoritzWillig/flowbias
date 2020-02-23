@@ -427,7 +427,8 @@ class MultiScaleSparseEPE_PWC(nn.Module):
         self._batch_size = args.batch_size
 
         # corrected weights, as the image is now upsampled
-        self._up_weights = [0.32, 0.08, 0.02, 0.01, 0.005]
+        # -> we have more (upsampled pixels, so each pixel is worth less
+        self._up_weights = [0.32/(4**6), 0.08/(4**5), 0.02/(4**4), 0.01/(4**3), 0.005/(4**2)]
         #self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
 
     def forward(self, output_dict, target_dict):
@@ -444,27 +445,22 @@ class MultiScaleSparseEPE_PWC(nn.Module):
 
             total_loss = 0
             for ii, output_ii in enumerate(output_flo):
-                #valid_mask_ii = valid_masks[ii, :, :, :]
-                #valid_mask = _downsample_mask_as(valid_masks, output_ii)
-                #masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
-                #norm_const = (h * w) / (valid_mask.sum())
-                #total_loss += self._weights[ii] * (masked_epe.sum() * norm_const)
+                # compute dense epe
+                output_ii_up = _upsample2d_as(output_ii, valid_masks)
+                dense_epe = _elementwise_epe(output_ii_up, target)
 
-                print(">>", target.size(), output_ii.size(), self._up_weights)
-
-                #_upsample2d_as
-                output_ii = _upsample2d_as(output_ii, valid_masks)
-                masked_epe = _elementwise_epe(output_ii, target)[valid_masks != 0]
                 # if there are less valid pixels, each pixel is 'worth' more
-                norm_const = (h * w) / (valid_masks.view(b, -1).sum())
-                print("$>", norm_const.size())
-                total_loss += self._up_weights[ii] * (masked_epe.view(b, -1).sum() * norm_const)
+                norm_const = (h * w) / (valid_masks.view(b, -1).sum(1))
+
+                # select the valid pixels for each image and correct their weight
+                for bb in range(b):
+                    masked_epe_bb = dense_epe[bb, :, :, :][valid_masks[bb, :, :, :] != 0]
+                    total_loss += self._up_weights[ii] * masked_epe_bb.sum() * norm_const[bb]
             loss_dict["total_loss"] = total_loss / self._batch_size
         else:
             flow_epe = _elementwise_epe(output_dict["flow"], target_dict["target1"]) * valid_masks
             epe_per_image = (flow_epe.view(b, -1).sum(1)) / (valid_masks.view(b, -1).sum(1))
             loss_dict["epe"] = epe_per_image.mean()
-            #loss_dict["epe"] = _elementwise_epe(output_dict["flow"], target_dict["target1"])[valid_masks == 0].mean()
 
         return loss_dict
 
