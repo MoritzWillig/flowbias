@@ -21,6 +21,9 @@ dataset_performances = {
 
 def linear_baseline_performance(aepe, dataset_name):
     """
+    higher is better:
+    1.0: best performance seen so far
+    0.5: average performance
     :param aepe:
     :param dataset_name:
     :return:
@@ -31,7 +34,7 @@ def linear_baseline_performance(aepe, dataset_name):
 
 
 def cross_dataset_measure(aepes, measure=linear_baseline_performance):
-    r = sorted([measure(aepe, dataset_name) for aepe, dataset_name in zip(aepes, metric_eval_datasets)])
+    r = sorted([measure(aepe, dataset_name) for aepe, dataset_name in zip(aepes, metric_eval_datasets)], reverse=True)
     best = r[0]
     others = r[1:]
     mean_others = sum(others) / len(others)
