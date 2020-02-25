@@ -16,7 +16,7 @@ SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-kitti-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/$MODEL-kitti_fixed_aug-$TIME"
 SAVE_EVERY=150
 EVAL_EVERY=25
 
@@ -40,7 +40,7 @@ python ../main.py \
 --save_every_nth_checkpoint=$SAVE_EVERY \
 --eval_every_nth=$EVAL_EVERY \
 --total_epochs=30000 \
---training_augmentation=RandomAffineFlow \
+--training_augmentation=RandomAffineFlowOccKITTI \
 --training_dataset=KittiComb2015Train \
 --training_dataset_photometric_augmentations=True \
 --training_dataset_root=$KITTI_HOME \
