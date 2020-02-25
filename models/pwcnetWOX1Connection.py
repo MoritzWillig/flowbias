@@ -19,6 +19,8 @@ class PWCNetWOX1Connection(nn.Module):
     def __init__(self, args, div_flow=0.05, adjust_decover_conv_layers=True):
         super(PWCNetWOX1Connection, self).__init__()
         self.args = args
+
+
         self._div_flow = div_flow
         self.search_range = 4
         self.num_chs = [3, 16, 32, 64, 96, 128, 196]

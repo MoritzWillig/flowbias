@@ -17,7 +17,7 @@ def applyAndMergeAdd(a, base, expert, weight):
     #return torch.addcmul(base(a), weight, expert(a))
 
 
-class FeatureExtractorExpertAdd(nn.Module):
+class FeatureExtractorExpertAddWOX1(nn.Module):
     def __init__(self, num_chs, num_experts, expert_weight):
         """
 
@@ -25,7 +25,7 @@ class FeatureExtractorExpertAdd(nn.Module):
         :param num_experts:
         :param expert_split: percentage of features that belong to experts
         """
-        super(FeatureExtractorExpertAdd, self).__init__()
+        super(FeatureExtractorExpertAddWOX1, self).__init__()
 
         self.num_chs = num_chs
         self._expert_weight = expert_weight
@@ -63,13 +63,13 @@ class FeatureExtractorExpertAdd(nn.Module):
         return feature_pyramid[::-1]
 
 
-class ContextNetworkExpertAdd(nn.Module):
+class ContextNetworkExpertAddWOX1(nn.Module):
     """
     The flow prediction from  are not split but added.
     """
 
     def __init__(self, ch_in, num_experts, expert_weight):
-        super(ContextNetworkExpertAdd, self).__init__()
+        super(ContextNetworkExpertAddWOX1, self).__init__()
         self._expert_weight = expert_weight
 
         self.convs_base = nn.Sequential(
@@ -105,18 +105,18 @@ class ContextNetworkExpertAdd(nn.Module):
             return x
 
 
-class FlowEstimatorDenseExpertAdd(nn.Module):
+class FlowEstimatorDenseExpertAddWOX1(nn.Module):
 
-    def __init__(self, ch_in, num_experts, expert_weight):
-        super(FlowEstimatorDenseExpertAdd, self).__init__()
+    def __init__(self, ch_in, num_experts, expert_weight, adjust_chs=0):
+        super(FlowEstimatorDenseExpertAddWOX1, self).__init__()
         self._expert_weight = expert_weight
 
-        self.conv1_base = conv(ch_in, 128)
-        self.conv2_base = conv(ch_in + 128, 128)
-        self.conv3_base = conv(ch_in + 256, 96)
-        self.conv4_base = conv(ch_in + 352, 64)
-        self.conv5_base = conv(ch_in + 416, 32)
-        self.conv_last_base = conv(ch_in + 448, 2, isReLU=False)
+        self.conv1_base = conv(ch_in, 128 + adjust_chs)
+        self.conv2_base = conv(ch_in + 128 + adjust_chs, 128 + adjust_chs)
+        self.conv3_base = conv(ch_in + 256 + adjust_chs, 96 + adjust_chs)
+        self.conv4_base = conv(ch_in + 352 + adjust_chs, 64 + adjust_chs)
+        self.conv5_base = conv(ch_in + 416 + adjust_chs, 32 + adjust_chs)
+        self.conv_last_base = conv(ch_in + adjust_chs + 448, 2, isReLU=False)
 
         conv1_expert = []
         conv2_expert = []
@@ -125,12 +125,12 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
         conv5_expert = []
         conv_last_expert = []
         for expert_id in range(num_experts):
-            conv1_expert.append(conv(ch_in, 128))
-            conv2_expert.append(conv(ch_in + 128, 128))
-            conv3_expert.append(conv(ch_in + 256, 96))
-            conv4_expert.append(conv(ch_in + 352, 64))
-            conv5_expert.append(conv(ch_in + 416, 32))
-            conv_last_expert.append(conv(ch_in + 448, 2, isReLU=False))
+            conv1_expert.append(conv(ch_in, 128 + adjust_chs))
+            conv2_expert.append(conv(ch_in + adjust_chs + 128, 128 + adjust_chs))
+            conv3_expert.append(conv(ch_in + adjust_chs + 256, 96 + adjust_chs))
+            conv4_expert.append(conv(ch_in + adjust_chs + 352, 64 + adjust_chs))
+            conv5_expert.append(conv(ch_in + adjust_chs + 416, 32 + adjust_chs))
+            conv_last_expert.append(conv(ch_in + adjust_chs + 448, 2, isReLU=False))
         self.conv1_expert = nn.ModuleList(conv1_expert)
         self.conv2_expert = nn.ModuleList(conv2_expert)
         self.conv3_expert = nn.ModuleList(conv3_expert)
@@ -157,9 +157,9 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
             return x5, x_out
 
 
-class PWCExpertAddNet(nn.Module):
-    def __init__(self, args, num_experts, expert_weight, div_flow=0.05):
-        super(PWCExpertAddNet, self).__init__()
+class PWCExpertAddNetWOX1(nn.Module):
+    def __init__(self, args, num_experts, expert_weight, div_flow=0.05, adjust_decover_conv_layers=True):
+        super(PWCExpertAddNetWOX1, self).__init__()
         self.args = args
         self._num_experts = num_experts
         self._expert_weight = expert_weight
@@ -170,7 +170,7 @@ class PWCExpertAddNet(nn.Module):
         self.num_levels = 7
         self.leakyRELU = nn.LeakyReLU(0.1, inplace=True)
 
-        self.feature_pyramid_extractor = FeatureExtractorExpertAdd(self.num_chs, num_experts, self._expert_weight)
+        self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, self._expert_weight)
         self.warping_layer = WarpingLayer()
 
         self.flow_estimators = nn.ModuleList()
@@ -181,13 +181,15 @@ class PWCExpertAddNet(nn.Module):
 
             if l == 0:
                 num_ch_in = self.dim_corr
+                ch = 0
             else:
-                num_ch_in = self.dim_corr + ch + 2
+                num_ch_in = self.dim_corr + 2
 
-            layer = FlowEstimatorDenseExpertAdd(num_ch_in, num_experts, self._expert_weight)
+            layer = FlowEstimatorDenseExpertAddWOX1(num_ch_in,num_experts, self._expert_weight, 0 if adjust_decover_conv_layers else ch)
             self.flow_estimators.append(layer)
 
-        self.context_networks = ContextNetworkExpertAdd(self.dim_corr + 32 + 2 + 448 + 2, num_experts, self._expert_weight)
+        self.context_networks = ContextNetworkExpertAddWOX1(
+            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[-(self.output_level+1)], num_experts, self._expert_weight)
 
         initialize_msra(self.modules())
 
@@ -213,6 +215,7 @@ class PWCExpertAddNet(nn.Module):
         flow = torch.zeros(b_size, 2, h_x1, w_x1, dtype=init_dtype, device=init_device).float()
 
         for l, (x1, x2) in enumerate(zip(x1_pyramid, x2_pyramid)):
+
             # warping
             if l == 0:
                 x2_warp = x2
@@ -228,7 +231,9 @@ class PWCExpertAddNet(nn.Module):
             if l == 0:
                 x_intm, flow = self.flow_estimators[l](out_corr_relu, expert_id)
             else:
-                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, x1, flow], dim=1), expert_id)
+                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, flow], dim=1), expert_id)
+            # The name 'x_intm' is left unchanged for consistence with the original architecture. However, it now only
+            # depends on the correlation and the predicted flow from the upper layers.
 
             # upsampling or post-processing
             if l != self.output_level:
@@ -250,7 +255,7 @@ class PWCExpertAddNet(nn.Module):
             return output_dict_eval
 
 
-class CTSKPWCExpertNetAdd01(PWCExpertAddNet):
+class CTSKPWCExpertNetAdd01WOX1(PWCExpertAddNetWOX1):
 
     def __init__(self, args, div_flow=0.05):
         super().__init__(args, 4, 0.1, div_flow=div_flow)

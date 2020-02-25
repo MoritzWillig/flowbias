@@ -15,6 +15,7 @@ from . import pwcnetWOX1ConnectionExt
 from . import pwcnetDSEncoder
 from . import pwcExpertNet
 from . import pwcExpertAddNet
+from . import pwcExpertAddNetWOX1
 from . import pwcnet_bi
 from . import pwcnet_occ
 from . import pwcnet_occ_bi
@@ -57,6 +58,8 @@ PWCExpertNet         = pwcExpertNet.PWCExpertNet
 CTSKPWCExpertNet02   = pwcExpertNet.CTSKPWCExpertNet02
 PWCExpertAddNet      = pwcExpertAddNet.PWCExpertAddNet
 CTSKPWCExpertNetAdd01   = pwcExpertAddNet.CTSKPWCExpertNetAdd01
+PWCExpertAddNetWOX1      = pwcExpertAddNetWOX1.PWCExpertAddNetWOX1
+CTSKPWCExpertNetAdd01WOX1   = pwcExpertAddNetWOX1.CTSKPWCExpertNetAdd01WOX1
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet
