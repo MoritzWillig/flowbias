@@ -34,7 +34,7 @@ python ../main.py \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
 --total_epochs=30000 \
---training_augmentation=RandomAffineFlow \
+--training_augmentation=RandomAffineFlowOccKITTI \
 --training_dataset=KittiComb2015Train \
 --training_dataset_photometric_augmentations=True \
 --training_dataset_root=$KITTI_HOME \

@@ -34,7 +34,7 @@ python ../main.py \
 --total_epochs=60 \
 --training_sampler=CTSKTrainDatasetBatchSampler \
 --training_iters_per_epoch=10000 \
---training_augmentation=RandomAffineFlow \
+--training_augmentation=RandomAffineFlowAdaptive \
 --training_dataset=CTSKTrain \
 --training_dataset_photometric_augmentations=True \
 --training_key=total_loss \

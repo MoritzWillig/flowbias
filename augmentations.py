@@ -1208,3 +1208,17 @@ class RandomAffineFlowOccKITTI(nn.Module):
         example_dict["input_valid"] = valid_mask
 
         return example_dict
+
+
+class RandomAffineFlowAdaptive(nn.Module):
+
+    def __init__(self, args, addnoise=True, crop=None):
+        super(RandomAffineFlowAdaptive, self).__init__()
+        self._random_affine = RandomAffineFlow(args, addnoise)
+        self._random_affine_masked = RandomAffineFlowOccKITTI(args, addnoise, crop)
+
+    def forward(self, example_dict):
+        if "input_valid" in example_dict:
+            return self._random_affine_masked.forward(example_dict)
+        else:
+            return self._random_affine.forward(example_dict)
