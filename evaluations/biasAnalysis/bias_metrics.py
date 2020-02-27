@@ -33,10 +33,18 @@ def linear_baseline_performance(aepe, dataset_name):
     return 1.0 - ((aepe - ref_best) / (2*delta))
 
 
-def cross_dataset_measure(aepes, measure=linear_baseline_performance):
-    r = sorted([measure(aepe, dataset_name) for aepe, dataset_name in zip(aepes, metric_eval_datasets)], reverse=True)
-    best = r[0]
-    others = r[1:]
+def normalized_dataset_difference(aepes, measure=linear_baseline_performance):
+    normalized_scores = sorted([measure(aepe, dataset_name) for aepe, dataset_name in zip(aepes, metric_eval_datasets)], reverse=True)
+    best = normalized_scores[0]
+    others = normalized_scores[1:]
     mean_others = sum(others) / len(others)
+    return mean_others-best
 
-    return 1.0 / (1.0 + math.exp(-(best-mean_others)))
+
+def cross_dataset_measure(aepes, measure=linear_baseline_performance):
+    return 1.0 / (1.0 + math.exp(-(-normalized_dataset_difference(aepes, measure=measure))))
+
+
+def mean_normalized_performance(aepes, measure=linear_baseline_performance):
+    normalized_scores = sorted([measure(aepe, dataset_name) for aepe, dataset_name in zip(aepes, metric_eval_datasets)], reverse=True)
+    return sum(normalized_scores) / len(normalized_scores)

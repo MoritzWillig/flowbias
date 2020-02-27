@@ -1,14 +1,17 @@
 from collections import namedtuple
 import argparse
 import os
+import csv
 
+from flowbias.datasets.subsampledDataset import SubsampledDataset
 from flowbias.model_meta import model_meta, model_meta_fields, model_folders
 import flowbias.models
 from flowbias.utils.model_loading import load_model_parameters
 from flowbias.config import Config
 
 from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsValid, FlyingChairsFull
-from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThings3dCleanValid, FlyingThings3dCleanFull
+from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThings3dCleanValid, \
+    FlyingThings3dCleanFull, FlyingThings3d
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full
 from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull
 from flowbias.datasets.sintel import SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
@@ -56,12 +59,17 @@ class DataTransformer:
         return self.transform(sample)
 
 
+class NoTransformer:
+    def __call__(self, sample):
+        return sample
+
+
 def create_enricher(expert_id):
     return DataTransformer({"dataset": expert_id})
 
 
 def create_no_enricher():
-    return DataTransformer({})
+    return NoTransformer()
 
 
 loaders = {
@@ -74,7 +82,7 @@ loaders = {
 }
 
 
-def load_model_from_meta(name, args=None, load_latest=False):
+def load_model_from_meta(name, args=None, force_architecture=None, load_latest=False, strict_parameter_loading=None):
     meta = get_model_meta(name)
     model_path = assemble_meta_path(meta.folder_name, load_latest=load_latest)
 
@@ -86,12 +94,18 @@ def load_model_from_meta(name, args=None, load_latest=False):
 
     # create model instance
     if args is None:
-        args = argparse.Namespace()
+        args = {"args": argparse.Namespace()}
     module_dict = dict([(name, getattr(flowbias.models, name)) for name in dir(flowbias.models)])
-    model = module_dict[meta.model](args)
+
+    if force_architecture is None:
+        architecture = meta.model
+    else:
+        architecture = force_architecture
+    model = module_dict[architecture](**args)
 
     # load model parameters
-    load_model_parameters(model, model_path)
+    loading_parameters = {"strict": strict_parameter_loading} if strict_parameter_loading is not None else {}
+    load_model_parameters(model, model_path, **loading_parameters)
     return model, transformer
 
 
@@ -113,6 +127,15 @@ dataset_splits = [
     [ "kitti2015Full", ["kitti", "full"]]
 ]
 
+dataset_sets = {
+    "subsets": [
+        ["flyingChairsSubset", ["flyingChairs", "subset"]],
+        ["flyingThingsSubset", ["flyingThings", "subset"]],
+        ["sintelSubset", ["sintel", "subset"]],
+        ["kittiSubset", ["kitti", "subset"]],  # since kitti has so little data, this is equal to kitti train
+    ]
+}
+
 
 def create_any_selector(candidates):
     candidates = set(candidates)
@@ -124,22 +147,27 @@ def create_filter_selector(exceptions):
     return lambda tags: exceptions.isdisjoint(tags)
 
 
-def get_dataset_names(select_by_any_tag=None, exclude_by_tag=None):
+def get_dataset_names(select_by_any_tag=None, exclude_by_tag=None, datasets="main"):
+    if datasets is "main":
+        dataset_set = dataset_splits
+    else:
+        dataset_set = dataset_sets[datasets]
+
     selectors = []
     if select_by_any_tag is not None:
         selectors.append(create_any_selector(select_by_any_tag))
 
     if exclude_by_tag is not None:
         selectors.append(create_filter_selector(exclude_by_tag))
-    return [dataset[0] for dataset in dataset_splits if all([selector(dataset[1]) for selector in selectors])]
+    return [dataset[0] for dataset in dataset_set if all([selector(dataset[1]) for selector in selectors])]
 
 
-def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=None, exclude_by_tag=None):
+def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=None, exclude_by_tag=None, datasets="main"):
     if restrict_to is not None and select_by_any_tag is not None:
         ValueError("restrict_to and select_by_tag parameters are mutually exclusive")
 
     if restrict_to is None:
-        restrict_to = get_dataset_names(select_by_any_tag=select_by_any_tag, exclude_by_tag=exclude_by_tag)
+        restrict_to = get_dataset_names(select_by_any_tag=select_by_any_tag, exclude_by_tag=exclude_by_tag, datasets=datasets)
 
     if force_mode is None:
         params = {}
@@ -154,6 +182,14 @@ def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=
         raise ValueError("unknown dataset mode")
 
     available_datasets = {}
+    if datasets == "main":
+        _get_available_main_split(available_datasets, restrict_to, params, kitti_params)
+    else:
+        _get_available_sub_split(datasets, available_datasets, restrict_to, params, kitti_params)
+    return available_datasets
+
+
+def _get_available_main_split(available_datasets, restrict_to, params, kitti_params):
     if os.path.isdir(Config.dataset_locations["flyingChairs"]):
         if "flyingChairsTrain" in restrict_to:
             available_datasets["flyingChairsTrain"] = FlyingChairsTrain({}, Config.dataset_locations["flyingChairs"], **params)
@@ -188,7 +224,23 @@ def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=
             available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
         if "kitti2015Full" in restrict_to:
             available_datasets["kitti2015Full"] = KittiComb2015Full({}, Config.dataset_locations["kitti"], **kitti_params)
-    return available_datasets
+
+
+def _get_available_sub_split(dataset_set, available_datasets, restrict_to, params, kitti_params):
+    if dataset_set != "subsets":
+        raise ValueError(f"Unknown dataset set '{dataset_set}'")
+
+    if os.path.isdir(Config.dataset_locations["flyingChairsSubset"]) and ("flyingChairsSubset" in restrict_to):
+        available_datasets["flyingChairsSubset"] = FlyingChairsFull({}, Config.dataset_locations["flyingChairsSubset"], **params)
+    if os.path.isdir(Config.dataset_locations["flyingThingsSubset"]) and ("flyingThingsSubset" in restrict_to):
+        available_datasets["flyingThingsSubset"] = FlyingThings3d(
+            {},
+            Config.dataset_locations["flyingThingsSubset"]+"/train/image_clean/left",
+            Config.dataset_locations["flyingThingsSubset"]+"/train/flow/left", "", **params)
+    if os.path.isdir(Config.dataset_locations["sintelSubset"]) and ("sintelSubset" in restrict_to):
+        available_datasets["sintelSubset"] = SubsampledDataset({}, Config.dataset_locations["sintelSubset"], **params)
+    if os.path.isdir(Config.dataset_locations["kittiSubset"]) and ("kittiSubset" in restrict_to):
+        available_datasets["kittiSubset"] = KittiComb2015Train({}, Config.dataset_locations["kittiSubset"], **kitti_params)
 
 
 def switch_to_train(loss):
@@ -285,3 +337,13 @@ def dataset_needs_batch_size_one(dataset_name, force_mode=None):
         varying_image_sizes.append("kitti2015Full")
 
     return dataset_name in varying_image_sizes
+
+
+def get_eval_summary():
+    summary = {}
+
+    with open(Config.eval_summary_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter='\t')
+        for row in reader:
+            summary[row["model_id"]] = dict(row)
+    return summary

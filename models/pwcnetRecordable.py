@@ -80,7 +80,7 @@ class PWCNetRecordable(nn.Module):
             out_corr = Correlation(pad_size=self.search_range, kernel_size=1, max_displacement=self.search_range, stride1=1, stride2=1, corr_multiply=1)(x1, x2_warp)
             out_corr_relu = self.leakyRELU(out_corr)
 
-            self.interface_func(out_corr_relu, x1, flow, l)
+            self.interface_func(out_corr_relu, x1, x2, x2_warp,  flow, l)
 
             # flow estimator
             if l == 0:

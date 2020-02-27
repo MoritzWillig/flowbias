@@ -12,7 +12,7 @@ from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCle
     SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
 
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, \
-    CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder, PWCNetWOX1ConnectionExt
+    CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder, PWCNetWOX1ConnectionExt, CTSPWCExpertNetAdd01
 from flowbias.utils.meta_infrastructure import get_available_datasets, dataset_needs_batch_size_one
 from flowbias.utils.model_loading import load_model_parameters, sample_to_torch_batch
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
@@ -95,6 +95,11 @@ if __name__ == '__main__':
         "CTSKPWCExpertNet01AddExpert1": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
         "CTSKPWCExpertNet01AddExpert2": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
         "CTSKPWCExpertNet01AddExpert3": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSPWCExpertNet01AddKnown": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSPWCExpertNet01AddNoExpert": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
+        "CTSPWCExpertNet01AddExpert0": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSPWCExpertNet01AddExpert1": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSPWCExpertNet01AddExpert2": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
         "PWCNetDSEncoder": [PWCNetDSEncoder, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}]
     }
 
@@ -106,74 +111,74 @@ if __name__ == '__main__':
     result_file_path = sys.argv[3]
     print(model_path, "with", model_class_name)
 
-    model_class = model_classes[model_class_name][0]
-    model = model_class(ValArgs())
-    load_model_parameters(model, model_path)
-    model.eval().cuda()
-
-    available_datasets = get_available_datasets(force_mode="test", select_by_any_tag=["train", "valid"])
-
-    rename = {
-        "flyingChairs": "flyingChairsValid",
-        "flyingThings": "flyingThingsCleanValid",
-        "kitti": "kittiValid",
-        "kittiValid": "kitti2015Valid",
-        "sintelClean": "sintelCleanValid",
-        "sintelFinal": "sintelFinalValid",
-    }
-
-    # load existing results
-    has_old_names = False
-    if os.path.isfile(result_file_path):
-        with open(result_file_path, "r") as f:
-            existing_results_x = json.loads(f.read())
-
-        # rename old keys and skip non-dataset entries
-        existing_results = {}
-        for key, value in existing_results_x.items():
-            if key in ["model_path", "model_class_name"]:
-                # check if the file contains old model_class_names
-                if key == "model_class_name" and value not in model_class_name:
-                    has_old_names = True
-                continue
-
-            if key in rename:
-                existing_results[rename[key]] = value
-                has_old_names = True
-            else:
-                existing_results[key] = value
-    else:
-        # no existing results
-        existing_results = {}
-    existing_results_datasets = list(existing_results.keys())
-
-    # compute remaining evaluations
-    #reevaluate = ["kitti2015Train", "kitti2015Valid"]  # forces datasets to be reevaluated
-    reevaluate = []
-
-    datasets = {
-        dataset_name: dataset_data
-        for dataset_name, dataset_data in available_datasets.items()
-        if (dataset_name not in existing_results_datasets) or (dataset_name in reevaluate)}
-
-    print("available_datasets:", list(available_datasets.keys()))
-    print("existing results:", list(existing_results.keys()))
-    print("computing results for:", list(datasets.keys()))
-
-    if len(datasets.keys()) == 0:
-        if has_old_names:
-            print("replacing old dataset or model names")
-            results = {"model_path": model_path, "model_class_name": model_class_name}
-            for key, value in existing_results.items():
-                results[key] = value
-            with open(result_file_path, "w") as f:
-                f.write(json.dumps(results))
-        print("no datasets remaining - exiting")
-        exit()
-
-    batch_size = 16
-
     with torch.no_grad():
+        model_class = model_classes[model_class_name][0]
+        model = model_class(ValArgs())
+        load_model_parameters(model, model_path)
+        model.eval().cuda()
+
+        available_datasets = get_available_datasets(force_mode="test", select_by_any_tag=["train", "valid"])
+
+        rename = {
+            "flyingChairs": "flyingChairsValid",
+            "flyingThings": "flyingThingsCleanValid",
+            "kitti": "kittiValid",
+            "kittiValid": "kitti2015Valid",
+            "sintelClean": "sintelCleanValid",
+            "sintelFinal": "sintelFinalValid",
+        }
+
+        # load existing results
+        has_old_names = False
+        if os.path.isfile(result_file_path):
+            with open(result_file_path, "r") as f:
+                existing_results_x = json.loads(f.read())
+
+            # rename old keys and skip non-dataset entries
+            existing_results = {}
+            for key, value in existing_results_x.items():
+                if key in ["model_path", "model_class_name"]:
+                    # check if the file contains old model_class_names
+                    if key == "model_class_name" and value not in model_class_name:
+                        has_old_names = True
+                    continue
+
+                if key in rename:
+                    existing_results[rename[key]] = value
+                    has_old_names = True
+                else:
+                    existing_results[key] = value
+        else:
+            # no existing results
+            existing_results = {}
+        existing_results_datasets = list(existing_results.keys())
+
+        # compute remaining evaluations
+        #reevaluate = ["kitti2015Train", "kitti2015Valid"]  # forces datasets to be reevaluated
+        reevaluate = []
+
+        datasets = {
+            dataset_name: dataset_data
+            for dataset_name, dataset_data in available_datasets.items()
+            if (dataset_name not in existing_results_datasets) or (dataset_name in reevaluate)}
+
+        print("available_datasets:", list(available_datasets.keys()))
+        print("existing results:", list(existing_results.keys()))
+        print("computing results for:", list(datasets.keys()))
+
+        if len(datasets.keys()) == 0:
+            if has_old_names:
+                print("replacing old dataset or model names")
+                results = {"model_path": model_path, "model_class_name": model_class_name}
+                for key, value in existing_results.items():
+                    results[key] = value
+                with open(result_file_path, "w") as f:
+                    f.write(json.dumps(results))
+            print("no datasets remaining - exiting")
+            exit()
+
+        batch_size = 16
+
         model_config = model_classes[model_class_name]
 
         demo_available_dataset = next(iter(datasets.values()))

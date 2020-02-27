@@ -13,6 +13,7 @@ SIZE_OF_BATCH=8
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
 SAVE_PATH="$EXPERIMENTS_HOME/expert_base_$MODEL-$TIME"
+SAVE_EVERY=1
 
 # set cuda GPU ids
 export CUDA_VISIBLE_DEVICES=0
@@ -33,6 +34,7 @@ python ../main.py \
 --optimizer_lr=1e-4 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
+--save_every_nth_checkpoint=$SAVE_EVERY \
 --total_epochs=60 \
 --training_sampler=CTSKTrainDatasetBatchSampler \
 --training_iters_per_epoch=10000 \

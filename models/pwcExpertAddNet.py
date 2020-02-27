@@ -255,3 +255,8 @@ class CTSKPWCExpertNetAdd01(PWCExpertAddNet):
     def __init__(self, args, div_flow=0.05):
         super().__init__(args, 4, 0.1, div_flow=div_flow)
 
+
+class CTSPWCExpertNetAdd01(PWCExpertAddNet):
+
+    def __init__(self, args, div_flow=0.05):
+        super().__init__(args, 3, 0.1, div_flow=div_flow)

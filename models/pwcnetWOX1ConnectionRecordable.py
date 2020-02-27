@@ -8,17 +8,26 @@ from .pwc_modules import WarpingLayer, FeatureExtractor, ContextNetwork, FlowEst
 from .correlation_package.correlation import Correlation
 
 
-class PWCNet(nn.Module):
-    
-    def __init__(self, args, div_flow=0.05):
-        super(PWCNet, self).__init__()
+class PWCNetWOX1ConnectionRecordable(nn.Module):
+    """
+    Standart PWCNet without x1 features getting passed into the decoder.
+
+    The number of features in the decoders' conv layers is adjusted accordingly!
+    The context network is left unchanged (only the input size changes) FIXME??
+    """
+
+    def __init__(self, interface_func, args, div_flow=0.05, adjust_decover_conv_layers=True):
+        super(PWCNetWOX1ConnectionRecordable, self).__init__()
         self.args = args
+
         self._div_flow = div_flow
         self.search_range = 4
         self.num_chs = [3, 16, 32, 64, 96, 128, 196]
         self.output_level = 4
         self.num_levels = 7
         self.leakyRELU = nn.LeakyReLU(0.1, inplace=True)
+
+        self.interface_func = interface_func
 
         self.feature_pyramid_extractor = FeatureExtractor(self.num_chs)
         self.warping_layer = WarpingLayer()
@@ -31,18 +40,19 @@ class PWCNet(nn.Module):
 
             if l == 0:
                 num_ch_in = self.dim_corr
+                ch = 0
             else:
-                num_ch_in = self.dim_corr + ch + 2
+                num_ch_in = self.dim_corr + 2
 
-            layer = FlowEstimatorDense(num_ch_in)
+            layer = FlowEstimatorDense(num_ch_in, 0 if adjust_decover_conv_layers else ch)
             self.flow_estimators.append(layer)
 
-        self.context_networks = ContextNetwork(self.dim_corr + 32 + 2 + 448 + 2)
+        self.context_networks = ContextNetwork(
+            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[-(self.output_level+1)])
 
         initialize_msra(self.modules())
 
     def forward(self, input_dict):
-
         x1_raw = input_dict['input1']
         x2_raw = input_dict['input2']
         _, _, height_im, width_im = x1_raw.size()
@@ -74,11 +84,15 @@ class PWCNet(nn.Module):
             out_corr = Correlation(pad_size=self.search_range, kernel_size=1, max_displacement=self.search_range, stride1=1, stride2=1, corr_multiply=1)(x1, x2_warp)
             out_corr_relu = self.leakyRELU(out_corr)
 
+            self.interface_func(out_corr_relu, x1, x2, x2_warp, flow, l)
+
             # flow estimator
             if l == 0:
                 x_intm, flow = self.flow_estimators[l](out_corr_relu)
             else:
-                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, x1, flow], dim=1))
+                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, flow], dim=1))
+            # The name 'x_intm' is left unchanged for consistence with the original architecture. However, it now only
+            # depends on the correlation and the predicted flow from the upper layers.
 
             # upsampling or post-processing
             if l != self.output_level:

@@ -6,7 +6,6 @@ from . import flownet1s_irr_occ_bi
 from . import IRR_FlowNet
 
 from . import pwcnet
-from . import pwcnetRecordable
 from . import pwcnetFusion
 from . import pwcnetX1Zero
 from . import pwcnetConvConnector
@@ -25,6 +24,8 @@ from . import pwcnet_irr_bi
 from . import pwcnet_irr_occ
 from . import pwcnet_irr_occ_bi
 from . import IRR_PWC
+from . import pwcnetRecordable
+from . import pwcnetWOX1ConnectionRecordable
 
 
 FlowNet1S            = flownet1s.FlowNet1S
@@ -34,7 +35,6 @@ FlowNet1S_irr_occ    = flownet1s_irr_occ.FlowNet1S
 FlowNet1S_irr_occ_bi = flownet1s_irr_occ_bi.FlowNet1S
 
 PWCNet               = pwcnet.PWCNet
-PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
 PWCNetFusion         = pwcnetFusion.PWCNetFusion
 PWCNetX1Zero         = pwcnetX1Zero.PWCNetX1Zero
 PWCNetConv13Fusion     = pwcnetFusion.PWCNetConv13Fusion  # 3 conv layers - kernel size 1
@@ -59,6 +59,7 @@ PWCExpertNet         = pwcExpertNet.PWCExpertNet
 CTSKPWCExpertNet02   = pwcExpertNet.CTSKPWCExpertNet02
 PWCExpertAddNet      = pwcExpertAddNet.PWCExpertAddNet
 CTSKPWCExpertNetAdd01   = pwcExpertAddNet.CTSKPWCExpertNetAdd01
+CTSPWCExpertNetAdd01 = pwcExpertAddNet.CTSPWCExpertNetAdd01
 PWCExpertAddNetWOX1      = pwcExpertAddNetWOX1.PWCExpertAddNetWOX1
 CTSKPWCExpertNetAdd01WOX1   = pwcExpertAddNetWOX1.CTSKPWCExpertNetAdd01WOX1
 PWCExpertNetWOX1      = pwcExpertNetWOX1.PWCExpertNetWOX1
@@ -70,6 +71,9 @@ PWCNet_irr           = pwcnet_irr.PWCNet
 PWCNet_irr_bi        = pwcnet_irr_bi.PWCNet
 PWCNet_irr_occ       = pwcnet_irr_occ.PWCNet
 PWCNet_irr_occ_bi    = pwcnet_irr_occ_bi.PWCNet
+PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
+PWCNetWOX1ConnectionRecordable = pwcnetWOX1ConnectionRecordable.PWCNetWOX1ConnectionRecordable
+
 
 IRR_FlowNet          = IRR_FlowNet.FlowNet1S
 IRR_PWC              = IRR_PWC.PWCNet

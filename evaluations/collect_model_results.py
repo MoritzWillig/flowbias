@@ -4,7 +4,8 @@ from glob import glob
 from pathlib import Path
 
 from flowbias.config import Config
-from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure, metric_eval_datasets
+from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure, metric_eval_datasets, \
+    linear_baseline_performance, normalized_dataset_difference, mean_normalized_performance
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
@@ -75,13 +76,23 @@ def compute_kitti_full(eval):
     compute_dataset_full(eval, "kitti2015Train", "kitti2015Valid", "kitti2015Full", 160, 40)
 
 
-def compute_cross_dataset_measure_linear(eval):
+def compute_cross_dataset_measure_linear(eval, return_fields=False):
+    if return_fields:
+        return ["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets], "normalized_dataset_difference", "mean_normalized_performance"]
+    metrics = []
     aepes = [eval[dataset_name]['epe']['average'] for dataset_name in metric_eval_datasets]
-    return cross_dataset_measure(aepes)
+
+    metrics.append(cross_dataset_measure(aepes))
+    for aepe, dataset_name in zip(aepes, metric_eval_datasets):
+        metrics.append(linear_baseline_performance(aepe, dataset_name))
+
+    metrics.append(normalized_dataset_difference(aepes))
+    metrics.append(mean_normalized_performance(aepes))
+    return metrics
 
 
 sorted_datasets = sorted(list(datasets))
-metric_fields = ["cross_dataset_measure_linear"]
+metric_fields = compute_cross_dataset_measure_linear(None, return_fields=True)
 
 for eval_name, eval in evals.items():
     # infer some results
@@ -92,7 +103,7 @@ for eval_name, eval in evals.items():
     compute_kitti_full(eval)
 
     metrics = []
-    metrics.append(str(compute_cross_dataset_measure_linear(eval)))
+    metrics.extend([str(metric) for metric in compute_cross_dataset_measure_linear(eval)])
 
     results = []
     missing = []
@@ -114,7 +125,9 @@ for eval_name, eval in evals.items():
 #with open(Config.temp_directory+"/eval_summary.json") as file:
 #    file.write(json.dumps(summary))
 
-with open(Config.temp_directory+"/eval_summary.csv", "w") as file:
+eval_summary_path = Config.eval_summary_path
+print(f"writing eval summary to {eval_summary_path}")
+with open(eval_summary_path, "w") as file:
     head = ["model_id", "model"]
     head.extend(sorted_datasets)
     head.extend(metric_fields)

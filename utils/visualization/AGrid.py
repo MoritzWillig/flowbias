@@ -12,10 +12,10 @@ class AGrid:
         self.title_params = {} if title_params is None else title_params
 
         self._cell_shape = list(image_shape).copy()
-        self._cell_shape[0] += self._title_height + self._text_height + (2 * padding)
+        self._cell_shape[0] += self._text_height + (2 * padding)
         self._cell_shape[1] += (2 * padding)
 
-        self._a = np.full((grid[1]*self._cell_shape[0], grid[0]*self._cell_shape[1], 3), 1.0)
+        self._a = np.full((self._title_height + grid[1]*self._cell_shape[0], grid[0]*self._cell_shape[1], 3), 1.0)
 
     def _put(self, xx, yy, image):
         if len(image.shape) != 3:

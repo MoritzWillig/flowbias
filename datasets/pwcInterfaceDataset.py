@@ -55,8 +55,8 @@ class PWCInterfaceDataset(data.Dataset):
         sA_filename = self._filenamesA[index]
         sB_filename = self._filenamesB[index]
 
-        out_corr_reluA, x1A, flowA, lA = load_sample(sA_filename)
-        out_corr_reluB, x1B, flowB, lB = load_sample(sB_filename)
+        out_corr_reluA, x1A, x2A, x2_warpA, flowA, lA = load_sample(sA_filename)
+        out_corr_reluB, x1B, x2B, x2_warpB, flowB, lB = load_sample(sB_filename)
 
         for i in range(self.num_levels):
             # read level and convert flow to FloatTensor
@@ -73,7 +73,7 @@ class PWCInterfaceDataset(data.Dataset):
 
 class PWCInterfaceDatasetTrain(PWCInterfaceDataset):
     """
-    skips every 20th sample to use for validation
+    skips some samples to use for validation
     """
 
     def __init__(self,
