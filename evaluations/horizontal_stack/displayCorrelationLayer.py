@@ -48,7 +48,10 @@ for m, c in enumerate(out_corr_relu):
             print(l, ci.shape)
             ci = zoom(ci, 2**(l+1), order=0)
             #ci /= np.linalg.norm(ci, ord=2)
-            ci /= np.mean(ci)
+            print("!>", m,l, np.mean(ci), ci.shape)
+            ci -= np.mean(ci)
+            ci /= np.std(ci)
+            ci += np.mean(ci)
             ci = np.clip(ci, 0, 1)
             #print(np.max(ci))
 

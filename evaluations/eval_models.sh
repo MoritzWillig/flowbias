@@ -104,7 +104,7 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/F_PWCNet-A_fine_chairs-
 python ./evaluate_for_all_datasets.py /data/dataB/models/H_PWCNet-sintel-20191209-150448/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_H.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/I_PWCNet-things_20191209-131019/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_I.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/K_PWCNet-A_fine_things-20191212-133436/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_K.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/O_PWCNet-I_fine_kitti-20191226-2306"pwcWOX1_kitti_tempA", "pwcWOX1_kitti_tempB", "pwcWOX1_kitti_tempC", "pwcWOX1_kitti_tempD",05/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_O.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/O_PWCNet-I_fine_kitti-20191226-230605/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_O.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/R_PWCNet-A_fine_sintel-20191218-135407/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_R.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/S_PWCNet-A_fine_KITTI-20191216-125450/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_S.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/V_PWCNet-I_fine_chairs-20191230-031321/checkpoint_best.ckpt PWCNetX1Zero /data/dataB/meta/full_evals/x1ZeroBlind_V.json

@@ -126,7 +126,7 @@ models = [
 num_cols = 4"""
 comp_name = "wox1_base_models"
 models = [
-    "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti"
+    "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti_temp"
 ]
 num_cols = 4
 

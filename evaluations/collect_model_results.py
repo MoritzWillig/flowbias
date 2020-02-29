@@ -9,6 +9,9 @@ from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
+include_valid_only = False
+include_cross_dataset_statistics = False
+
 result_file_path = "/data/dataB/meta/full_evals/"
 
 non_dataset_keys = ["model_path", "model_class_name"]
@@ -34,6 +37,10 @@ summary = {}
 print("found", len(evals), "evaluations")
 print("datasets:", datasets)
 print("datasets:", next(iter(evals.values())).keys())
+
+
+def dataset_selector(name):
+    return (not include_valid_only) or (name.endswith("Valid"))
 
 
 def compute_dataset_full(eval, train_name, valid_name, full_name, train_size, valid_size):
@@ -78,20 +85,26 @@ def compute_kitti_full(eval):
 
 def compute_cross_dataset_measure_linear(eval, return_fields=False):
     if return_fields:
-        return ["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets], "normalized_dataset_difference", "mean_normalized_performance"]
+        fields = []
+        if include_cross_dataset_statistics:
+            fields.extend(["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets]])
+        fields.extend(["normalized_dataset_difference", "mean_normalized_performance"])
+        return fields
     metrics = []
+
     aepes = [eval[dataset_name]['epe']['average'] for dataset_name in metric_eval_datasets]
 
-    metrics.append(cross_dataset_measure(aepes))
-    for aepe, dataset_name in zip(aepes, metric_eval_datasets):
-        metrics.append(linear_baseline_performance(aepe, dataset_name))
+    if include_cross_dataset_statistics:
+        metrics.append(cross_dataset_measure(aepes))
+        for aepe, dataset_name in zip(aepes, metric_eval_datasets):
+            metrics.append(linear_baseline_performance(aepe, dataset_name))
 
     metrics.append(normalized_dataset_difference(aepes))
     metrics.append(mean_normalized_performance(aepes))
     return metrics
 
 
-sorted_datasets = sorted(list(datasets))
+sorted_datasets = [dataset for dataset in sorted(list(datasets)) if dataset_selector(dataset)]
 metric_fields = compute_cross_dataset_measure_linear(None, return_fields=True)
 
 for eval_name, eval in evals.items():
@@ -116,7 +129,7 @@ for eval_name, eval in evals.items():
     if len(missing) != 0:
         print(eval_name, "missing results for", missing)
 
-    line = [eval_name, eval["model_class_name"]]
+    line = [eval_name]
     line.extend(results)
     line.extend(metrics)
     line.extend(["None" if data is None else data for data in model_meta[eval_name]])
@@ -128,7 +141,7 @@ for eval_name, eval in evals.items():
 eval_summary_path = Config.eval_summary_path
 print(f"writing eval summary to {eval_summary_path}")
 with open(eval_summary_path, "w") as file:
-    head = ["model_id", "model"]
+    head = ["model_id"]
     head.extend(sorted_datasets)
     head.extend(metric_fields)
     head.extend(model_meta_fields)
