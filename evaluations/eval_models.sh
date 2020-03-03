@@ -4,6 +4,7 @@ export MKL_NUM_THREADS=1
 # base experiments
 python ./evaluate_for_all_datasets.py /data/dataB/models/A_PWCNet-onChairs-20191121-171532/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/A.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNet-kitti_fixed_aug-20200225-020620/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwc_kitti_temp.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/pwc_kitti_PWCNet-kitti_fixed_aug-20200225-020620/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwc_kitti.json
 #x python ./evaluate_for_all_datasets.py /data/dataB/models/B_things_PWCNet-20191122-152857_incomplete/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/B.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/D_FlowNet1S-onChairs-20191205-145310/checkpoint_best.ckpt FlowNet1S /data/dataB/meta/full_evals/D.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/E_FlowNet1S-onThings-20191205-115159/checkpoint_best.ckpt FlowNet1S /data/dataB/meta/full_evals/E.json
@@ -117,12 +118,13 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_chairs_PWCNetWOX1C
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-things-20200127-234143/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_things.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-sintel-20200127-232828/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_sintel.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/WOX1_PWCNetWOX1Connection-kitti-20200128-000101/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_temp.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_00450.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempA.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_01050.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempB.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_01950.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempC.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_03000.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempD.json
-python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_latest.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempE.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_temp.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_00450.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempA.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_01050.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempB.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_01950.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempC.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_03000.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempD.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_latest.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_kitti_tempE.json
 
 # PWCNetWOX1 finetuned
 python ./evaluate_for_all_datasets.py /data/dataB/models/PWCNetWOX1Connection-WOX1Chairs_fine_things-20200206-153903/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_chairs_fine_things.json

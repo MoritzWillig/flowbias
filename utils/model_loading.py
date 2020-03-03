@@ -31,3 +31,10 @@ def sample_to_torch_batch(sample):
         if "input" in key or "target" in key:
             sample[key] = value.unsqueeze(0).cuda()
     return sample
+
+
+def torch_batch_to_cuda(sample):
+    for key, value in sample.items():
+        if "input" in key or "target" in key:
+            sample[key] = value.cuda()
+    return sample

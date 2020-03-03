@@ -316,11 +316,11 @@ def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
     if category not in selected_candidate["losses"]:
         raise ValueError("no loss found for the given dataset category")
 
-    loss = selected_candidate["losses"]
+    loss = selected_candidate["losses"][category]
     processor = selected_candidate["processor"]
 
     if loss_args is None:
-        loss_args = {}
+        loss_args = {"args": argparse.Namespace()}
 
     return processor(loss(**loss_args))
 

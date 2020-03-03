@@ -15,6 +15,9 @@ class AGrid:
         self._cell_shape[0] += self._text_height + (2 * padding)
         self._cell_shape[1] += (2 * padding)
 
+        self._grid_cols = grid[0]
+        self._grid_rows = grid[1]
+
         self._a = np.full((self._title_height + grid[1]*self._cell_shape[0], grid[0]*self._cell_shape[1], 3), 1.0)
 
     def _put(self, xx, yy, image):
@@ -40,6 +43,11 @@ class AGrid:
         :param y:
         :return:
         """
+        if x < 0:
+            x = self._grid_cols + x + 1
+        if y < 0:
+            y = self._grid_rows + y + 1
+
         yy = self._title_height + y * self._cell_shape[0]
         xx = x * self._cell_shape[1]
         return xx, yy

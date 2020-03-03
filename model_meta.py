@@ -5,8 +5,9 @@ model_meta = {
     "A": ["PWCNet", "baseline_single", None, "chairs", None, "A_PWCNet-onChairs-20191121-171532", None],
     "I": ["PWCNet", "baseline_single", None, "things", None, "I_PWCNet-things_20191209-131019", None],
     "H": ["PWCNet", "baseline_single", None, "sintel", None, "H_PWCNet-sintel-20191209-150448", None],
-    "W": ["PWCNet", "baseline_single", None, "kitti", None, "W_PWCNet-kitti-20191216-124247", None],
-    "pwc_kitti_temp": ["PWCNet", "baseline_single", None, "kitti", None, "PWCNet-kitti_fixed_aug-20200225-020620", None],
+    "pwc_kitti": ["PWCNet", "baseline_single", None, "kitti", None, "pwc_kitti_PWCNet-kitti_fixed_aug-20200225-020620", None],
+    #"W": ["PWCNet", "baseline_single", None, "kitti", None, "W_PWCNet-kitti-20191216-124247", None],
+    #"pwc_kitti_temp": ["PWCNet", "baseline_single", None, "kitti", None, "PWCNet-kitti_fixed_aug-20200225-020620", None],
     # baseline_fine pwc
     "F": ["PWCNet", "baseline_fine", "A", "chairs", "chairs", "F_PWCNet-A_fine_chairs-20191212-133136", None],
     "K": ["PWCNet", "baseline_fine", "A", "chairs", "things", "K_PWCNet-A_fine_things-20191212-133436", None],
@@ -126,13 +127,14 @@ model_meta = {
     "pwcWOX1_chairs": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "chairs", None, "WOX1_chairs_PWCNetWOX1Connection-20200122-164023", None],
     "pwcWOX1_things": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "things", None, "WOX1_PWCNetWOX1Connection-things-20200127-234143", None],
     "pwcWOX1_sintel": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "sintel", None, "WOX1_PWCNetWOX1Connection-sintel-20200127-232828", None],
-    "pwcWOX1_kitti": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "WOX1_PWCNetWOX1Connection-kitti-20200128-000101", None],
-    "pwcWOX1_kitti_temp": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042", None],
-    "pwcWOX1_kitti_tempA": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_00450.ckpt", None],
-    "pwcWOX1_kitti_tempB": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_01050.ckpt", None],
-    "pwcWOX1_kitti_tempC": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_01950.ckpt", None],
-    "pwcWOX1_kitti_tempD": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_iter_03000.ckpt", None],
-    "pwcWOX1_kitti_tempE": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042/checkpoint_latest.ckpt", None],
+    "pwcWOX1_kitti": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_fixed_aug-20200225-090042", None],
+    #"pwcWOX1_kitti_old": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "WOX1_PWCNetWOX1Connection-kitti-20200128-000101", None],
+    #"pwcWOX1_kitti_temp": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042", None],
+    #"pwcWOX1_kitti_tempA": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_00450.ckpt", None],
+    #"pwcWOX1_kitti_tempB": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_01050.ckpt", None],
+    #"pwcWOX1_kitti_tempC": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_01950.ckpt", None],
+    #"pwcWOX1_kitti_tempD": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_iter_03000.ckpt", None],
+    #"pwcWOX1_kitti_tempE": ["PWCNetWOX1Connection", "without_x1_connection_baseline", None, "kitti", None, "PWCNetWOX1Connection-kitti_temp_fixed_aug-20200225-090042/checkpoint_latest.ckpt", None],
 
     # PWCNetWOX1 finetuned
     "pwcWOX1_chairs_fine_things": ["PWCNetWOX1Connection", "without_x1_connection_finetuned", "pwcWOX1_chairs", "chairs", "things", "PWCNetWOX1Connection-WOX1Chairs_fine_things-20200206-153903", None],
@@ -188,7 +190,7 @@ model_meta = {
 
 model_meta_ordering = [
     # baseline_single pwc
-    "A", "I", "H", "W", "pwc_kitti_temp",
+    "A", "I", "H", "pwc_kitti",
     # baseline_fine pwc
     "F", "K", "R", "S", "V", "Y", "X", "O",
     # baseline_single flowet
@@ -222,8 +224,10 @@ model_meta_ordering = [
     "x1ZeroBlind_ah", "x1ZeroBlind_ai", "x1ZeroBlind_aw", "x1ZeroBlind_ha", "x1ZeroBlind_hi", "x1ZeroBlind_hw",
     "x1ZeroBlind_ia", "x1ZeroBlind_ih", "x1ZeroBlind_iw", "x1ZeroBlind_wa", "x1ZeroBlind_wh", "x1ZeroBlind_wi",
     # baseline pwc without X1 connection
-    "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti", "pwcWOX1_kitti_temp",
-    "pwcWOX1_kitti_tempA", "pwcWOX1_kitti_tempB", "pwcWOX1_kitti_tempC", "pwcWOX1_kitti_tempD", "pwcWOX1_kitti_tempE",
+    "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti",
+    # old kitti results
+    #"pwcWOX1_kitti_temp", "W", "pwc_kitti_temp",
+    #"pwcWOX1_kitti_tempA", "pwcWOX1_kitti_tempB", "pwcWOX1_kitti_tempC", "pwcWOX1_kitti_tempD", "pwcWOX1_kitti_tempE",
     # PWCNetWOX1 finetuned
     "pwcWOX1_chairs_fine_things",
     # pwc without x1 connection between encoder, decoder and context network

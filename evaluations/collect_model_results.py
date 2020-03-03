@@ -9,21 +9,25 @@ from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
-include_valid_only = False
+include_valid_only = True
 include_cross_dataset_statistics = False
 
 result_file_path = "/data/dataB/meta/full_evals/"
 
 non_dataset_keys = ["model_path", "model_class_name"]
 
-eval_filenames = sorted(glob(os.path.join(result_file_path, "*")))
+#eval_filenames = sorted(glob(os.path.join(result_file_path, "*")))
 evals = {}
-for eval_filename in eval_filenames:
-    eval_name = Path(eval_filename).stem
-    with open(eval_filename, "r") as f:
-        eval_result = json.loads(f.read())
+#for eval_filename in eval_filenames:
+    #eval_name = Path(eval_filename).stem
+    #with open(eval_filename, "r") as f:
+    #    eval_result = json.loads(f.read())
+    #evals[eval_name] = eval_result
 
-    evals[eval_name] = eval_result
+for model_name in model_meta_ordering:
+    with open(result_file_path+model_name+".json", "r") as f:
+        eval_result = json.loads(f.read())
+    evals[model_name] = eval_result
 
 # extract all known datasets
 datasets = set(get_dataset_names())
