@@ -14,14 +14,14 @@ def linAdd_conv(in_planes, out_planes, kernel_size=3, stride=1, dilation=1, isRe
         in_planes, out_planes, kernel_size=kernel_size, stride=stride, dilation=dilation,
         padding=((kernel_size - 1) * dilation) // 2, bias=True)
     layer.needs_relu = isReLU
-    return
+    return layer
 
 
 def get_feature_split(channels, split):
     return int(round(channels*(1-split))), int(round(channels*split))
 
 
-def applyAndMergeLinAdd(a, base, expert, weight, relu):
+def applyAndMergeLinAdd(a, base, expert, weight):
     # merge of base and expert is applied before the non-linearity!
     r = base(a) + (weight * expert(a))
     if base.needs_relu:

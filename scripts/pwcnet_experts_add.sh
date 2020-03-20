@@ -43,7 +43,7 @@ python ../main.py \
 --training_dataset_photometric_augmentations=True \
 --training_key=total_loss \
 --training_loss=$EVAL_LOSS \
---validation_dataset=CTSKValid  \
+--validation_dataset=CTSKValid \
 --validation_dataset_photometric_augmentations=False \
 --validation_key=epe \
 --validation_loss=$EVAL_LOSS
