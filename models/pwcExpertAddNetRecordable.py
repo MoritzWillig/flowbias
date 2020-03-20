@@ -156,9 +156,9 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
             return x5, x_out
 
 
-class PWCExpertAddNet(nn.Module):
-    def __init__(self, args, num_experts, expert_weight, div_flow=0.05):
-        super(PWCExpertAddNet, self).__init__()
+class PWCExpertAddNetRecordable(nn.Module):
+    def __init__(self, interface_func, args, num_experts, expert_weight, div_flow=0.05):
+        super(PWCExpertAddNetRecordable, self).__init__()
         self.args = args
         self._num_experts = num_experts
         self._expert_weight = expert_weight
@@ -168,6 +168,8 @@ class PWCExpertAddNet(nn.Module):
         self.output_level = 4
         self.num_levels = 7
         self.leakyRELU = nn.LeakyReLU(0.1, inplace=True)
+
+        self.interface_func = interface_func
 
         self.feature_pyramid_extractor = FeatureExtractorExpertAdd(self.num_chs, num_experts, self._expert_weight)
         self.warping_layer = WarpingLayer()
@@ -231,6 +233,8 @@ class PWCExpertAddNet(nn.Module):
             out_corr = Correlation(pad_size=self.search_range, kernel_size=1, max_displacement=self.search_range, stride1=1, stride2=1, corr_multiply=1)(x1, x2_warp)
             out_corr_relu = self.leakyRELU(out_corr)
 
+            self.interface_func(out_corr_relu, x1, x2, x2_warp, flow, l)
+
             # flow estimator
             if l == 0:
                 x_intm, flow = self.flow_estimators[l](out_corr_relu, decoder_expert_id)
@@ -257,13 +261,13 @@ class PWCExpertAddNet(nn.Module):
             return output_dict_eval
 
 
-class CTSKPWCExpertNetAdd01(PWCExpertAddNet):
+class CTSKPWCExpertNetAdd01Recordable(PWCExpertAddNetRecordable):
 
-    def __init__(self, args, div_flow=0.05):
-        super().__init__(args, 4, 0.1, div_flow=div_flow)
+    def __init__(self, interface_func, args, div_flow=0.05):
+        super().__init__(interface_func, args, 4, 0.1, div_flow=div_flow)
 
 
-class CTSPWCExpertNetAdd01(PWCExpertAddNet):
+class CTSPWCExpertNetAdd01Recordable(PWCExpertAddNetRecordable):
 
-    def __init__(self, args, div_flow=0.05):
-        super().__init__(args, 3, 0.1, div_flow=div_flow)
+    def __init__(self, interface_func, args, div_flow=0.05):
+        super().__init__(interface_func, args, 3, 0.1, div_flow=div_flow)

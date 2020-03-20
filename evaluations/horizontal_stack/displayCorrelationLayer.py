@@ -9,13 +9,19 @@ from flowbias.utils.visualization.AGrid import AGrid
 
 font = ImageFont.truetype("/home/moritz/.local/share/fonts/RobotoMono-Bold.ttf", 20, encoding="unic")
 
+#models = [
+#    "/data/dataA/model_interfaces/wox1/pwcWOX1_chairs_flyingChairsSubset/",
+#    "/data/dataA/model_interfaces/wox1/pwcWOX1_things_flyingChairsSubset/",
+#    "/data/dataA/model_interfaces/wox1/pwcWOX1_sintel_flyingChairsSubset/"
+#]
+
 models = [
-    "/data/dataA/model_interfaces/wox1/pwcWOX1_chairs_flyingChairsSubset/",
-    "/data/dataA/model_interfaces/wox1/pwcWOX1_things_flyingChairsSubset/",
-    "/data/dataA/model_interfaces/wox1/pwcWOX1_sintel_flyingChairsSubset/"
+    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_CC_flyingChairsSubset/",
+    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_TT_flyingChairsSubset/",
+    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_SS_flyingChairsSubset/"
 ]
 
-model_name = ["chairs", "things", "sintel"]
+model_name = ["CTSExperts_add_chairs", "CTSExperts_add_things", "CTSExperts_add_sintel"]
 
 
 def plot(image, x, y):
@@ -76,8 +82,8 @@ for l in range(num_layers):
             p = np.percentile(ci, 50)
             mean = np.mean(ci)
             #ci /= p
-            ci -= mean
-            ci /= np.std(ci) #+ 1e-8
+            #ci -= mean
+            #ci /= np.std(ci) #+ 1e-8
             #ci += mean
             #ci += 0.5
             ci = np.clip(ci, 0, 1)

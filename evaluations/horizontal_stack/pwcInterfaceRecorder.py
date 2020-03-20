@@ -8,13 +8,19 @@ from flowbias.utils.meta_infrastructure import load_model_from_meta, get_model_m
 recordable_architectures = {
     "PWCNet": "PWCNetRecordable",
     "PWCNetWOX1Connection": "PWCNetWOX1ConnectionRecordable",
+    "CTSPWCExpertNetAdd01": "CTSPWCExpertNetAdd01Recordable"
 }
 
 #models = ["A", "I", "H", "W"]
-models = ["pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti"]
+#models = ["pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti"]
+models = [
+    "expert_CTS_add01_CC", "expert_CTS_add01_CT", "expert_CTS_add01_CS",
+    "expert_CTS_add01_TC", "expert_CTS_add01_TT", "expert_CTS_add01_TS",
+    "expert_CTS_add01_SC", "expert_CTS_add01_ST", "expert_CTS_add01_SS"]
+
 datasets = get_available_datasets(datasets="subsets", force_mode="test")
 
-base_out_path = "/data/dataA/model_interfaces/wox1/"
+base_out_path = "/data/dataB/model_interfaces/cts_experts/"
 
 for model_name in models:
     print(f"recording interface for {model_name}")

@@ -14,7 +14,9 @@ from . import pwcnetWOX1ConnectionExt
 from . import pwcnetDSEncoder
 from . import pwcExpertNet
 from . import pwcExpertAddNet
+from . import pwcExpertLinAddNet
 from . import pwcExpertNetWOX1
+from . import pwcExpertLinAddNetWOX1
 from . import pwcExpertAddNetWOX1
 from . import pwcnet_bi
 from . import pwcnet_occ
@@ -26,6 +28,7 @@ from . import pwcnet_irr_occ_bi
 from . import IRR_PWC
 from . import pwcnetRecordable
 from . import pwcnetWOX1ConnectionRecordable
+from . import pwcExpertAddNetRecordable
 
 
 FlowNet1S            = flownet1s.FlowNet1S
@@ -60,10 +63,18 @@ CTSKPWCExpertNet02   = pwcExpertNet.CTSKPWCExpertNet02
 PWCExpertAddNet      = pwcExpertAddNet.PWCExpertAddNet
 CTSKPWCExpertNetAdd01   = pwcExpertAddNet.CTSKPWCExpertNetAdd01
 CTSPWCExpertNetAdd01 = pwcExpertAddNet.CTSPWCExpertNetAdd01
+PWCExpertLinAddNet      = pwcExpertLinAddNet.PWCExpertLinAddNet
+CTSKPWCExpertNetLinAdd01   = pwcExpertLinAddNet.CTSKPWCExpertNetLinAdd01
+CTSPWCExpertNetLinAdd01 = pwcExpertLinAddNet.CTSPWCExpertNetLinAdd01
 PWCExpertAddNetWOX1      = pwcExpertAddNetWOX1.PWCExpertAddNetWOX1
-CTSKPWCExpertNetAdd01WOX1   = pwcExpertAddNetWOX1.CTSKPWCExpertNetAdd01WOX1
+CTSKPWCExpertNetWOX1Add01   = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01
+CTSPWCExpertNetWOX1Add01   = pwcExpertAddNetWOX1.CTSPWCExpertNetWOX1Add01
+PWCExpertLinAddNetWOX1      = pwcExpertLinAddNetWOX1.PWCExpertLinAddNetWOX1
+CTSKPWCExpertNetWOX1LinAdd01   = pwcExpertLinAddNetWOX1.CTSKPWCExpertNetWOX1LinAdd01
+CTSPWCExpertNetWOX1LinAdd01   = pwcExpertLinAddNetWOX1.CTSPWCExpertNetWOX1LinAdd01
 PWCExpertNetWOX1      = pwcExpertNetWOX1.PWCExpertNetWOX1
 CTSKPWCExpertNet02WOX1   = pwcExpertNetWOX1.CTSKPWCExpertNet02WOX1
+CTSPWCExpertNet02WOX1   = pwcExpertNetWOX1.CTSPWCExpertNet02WOX1
 PWCNet_bi            = pwcnet_bi.PWCNet
 PWCNet_occ           = pwcnet_occ.PWCNet
 PWCNet_occ_bi        = pwcnet_occ_bi.PWCNet
@@ -73,7 +84,9 @@ PWCNet_irr_occ       = pwcnet_irr_occ.PWCNet
 PWCNet_irr_occ_bi    = pwcnet_irr_occ_bi.PWCNet
 PWCNetRecordable     = pwcnetRecordable.PWCNetRecordable
 PWCNetWOX1ConnectionRecordable = pwcnetWOX1ConnectionRecordable.PWCNetWOX1ConnectionRecordable
-
+PWCExpertAddNetRecordable = pwcExpertAddNetRecordable.PWCExpertAddNetRecordable
+CTSKPWCExpertNetAdd01Recordable = pwcExpertAddNetRecordable.CTSKPWCExpertNetAdd01Recordable
+CTSPWCExpertNetAdd01Recordable = pwcExpertAddNetRecordable.CTSPWCExpertNetAdd01Recordable
 
 IRR_FlowNet          = IRR_FlowNet.FlowNet1S
 IRR_PWC              = IRR_PWC.PWCNet

@@ -2,30 +2,43 @@ from __future__ import absolute_import, division, print_function
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
-from .pwc_modules import upsample2d_as, initialize_msra, conv
+from .pwc_modules import upsample2d_as, initialize_msra
 from .pwc_modules import WarpingLayer
 from .correlation_package.correlation import Correlation
+
+
+def linAdd_conv(in_planes, out_planes, kernel_size=3, stride=1, dilation=1, isReLU=True):
+    layer = nn.Conv2d(
+        in_planes, out_planes, kernel_size=kernel_size, stride=stride, dilation=dilation,
+        padding=((kernel_size - 1) * dilation) // 2, bias=True)
+    layer.needs_relu = isReLU
+    return
 
 
 def get_feature_split(channels, split):
     return int(round(channels*(1-split))), int(round(channels*split))
 
 
-def applyAndMergeAdd(a, base, expert, weight):
-    return base(a) + (weight * expert(a))
-    #return torch.addcmul(base(a), weight, expert(a))
+def applyAndMergeLinAdd(a, base, expert, weight, relu):
+    # merge of base and expert is applied before the non-linearity!
+    r = base(a) + (weight * expert(a))
+    if base.needs_relu:
+        return F.leaky_relu_(r, 0.1)
+    return r
 
 
-class FeatureExtractorExpertAdd(nn.Module):
+class FeatureExtractorExpertLinAdd(nn.Module):
     def __init__(self, num_chs, num_experts, expert_weight):
         """
         :param num_chs:
         :param num_experts:
         :param expert_split: percentage of features that belong to experts
         """
-        super(FeatureExtractorExpertAdd, self).__init__()
+        super(FeatureExtractorExpertLinAdd, self).__init__()
 
+        self.lrelu = nn.LeakyReLU(0.1, inplace=True)
         self.num_chs = num_chs
         self._expert_weight = expert_weight
         self.convsBase = nn.ModuleList()
@@ -33,15 +46,15 @@ class FeatureExtractorExpertAdd(nn.Module):
 
         for l, (ch_in, ch_out) in enumerate(zip(num_chs[:-1], num_chs[1:])):
             layer_base = nn.Sequential(
-                conv(ch_in, ch_out, stride=2),
-                conv(ch_out, ch_out)
+                linAdd_conv(ch_in, ch_out, stride=2),
+                linAdd_conv(ch_out, ch_out)
             )
             self.convsBase.append(layer_base)
 
             for expert_id in range(num_experts):
                 layer_experts = nn.Sequential(
-                    conv(ch_in, ch_out, stride=2),
-                    conv(ch_out, ch_out)
+                    linAdd_conv(ch_in, ch_out, stride=2),
+                    linAdd_conv(ch_out, ch_out)
                 )
                 self.convsExperts[expert_id].append(layer_experts)
 
@@ -55,42 +68,42 @@ class FeatureExtractorExpertAdd(nn.Module):
         else:
             for conv_base, conv_expert in zip(self.convsBase, self.convsExperts[expert_id]):
                 # x = conv[1](conv[0](x))
-                x_0 = applyAndMergeAdd(x, conv_base[0], conv_expert[0], self._expert_weight)
-                x_1 = applyAndMergeAdd(x_0, conv_base[1], conv_expert[1], self._expert_weight)
+                x_0 = applyAndMergeLinAdd(x, conv_base[0], conv_expert[0], self._expert_weight)
+                x_1 = applyAndMergeLinAdd(x_0, conv_base[1], conv_expert[1], self._expert_weight)
                 feature_pyramid.append(x_1)
                 x = x_1
         return feature_pyramid[::-1]
 
 
-class ContextNetworkExpertAdd(nn.Module):
+class ContextNetworkExpertLinAdd(nn.Module):
     """
     The flow prediction from  are not split but added.
     """
 
     def __init__(self, ch_in, num_experts, expert_weight):
-        super(ContextNetworkExpertAdd, self).__init__()
+        super(ContextNetworkExpertLinAdd, self).__init__()
         self._expert_weight = expert_weight
 
         self.convs_base = nn.Sequential(
-            conv(ch_in, 128, 3, 1, 1),
-            conv(128, 128, 3, 1, 2),
-            conv(128, 128, 3, 1, 4),
-            conv(128, 96, 3, 1, 8),
-            conv(96, 64, 3, 1, 16),
-            conv(64, 32, 3, 1, 1),
-            conv(32, 2, isReLU=False)
+            linAdd_conv(ch_in, 128, 3, 1, 1),
+            linAdd_conv(128, 128, 3, 1, 2),
+            linAdd_conv(128, 128, 3, 1, 4),
+            linAdd_conv(128, 96, 3, 1, 8),
+            linAdd_conv(96, 64, 3, 1, 16),
+            linAdd_conv(64, 32, 3, 1, 1),
+            linAdd_conv(32, 2, isReLU=False)
         )
 
         convs_experts = []
         for expert_id in range(num_experts):
             convs_experts.append(nn.Sequential(
-                conv(ch_in, 128, 3, 1, 1),
-                conv(128, 128, 3, 1, 2),
-                conv(128, 128, 3, 1, 4),
-                conv(128, 96, 3, 1, 8),
-                conv(96, 64, 3, 1, 16),
-                conv(64, 32, 3, 1, 1),
-                conv(32, 2, isReLU=False)
+                linAdd_conv(ch_in, 128, 3, 1, 1),
+                linAdd_conv(128, 128, 3, 1, 2),
+                linAdd_conv(128, 128, 3, 1, 4),
+                linAdd_conv(128, 96, 3, 1, 8),
+                linAdd_conv(96, 64, 3, 1, 16),
+                linAdd_conv(64, 32, 3, 1, 1),
+                linAdd_conv(32, 2, isReLU=False)
             ))
         self.convs_experts = nn.ModuleList(convs_experts)
 
@@ -100,22 +113,22 @@ class ContextNetworkExpertAdd(nn.Module):
         else:
             conv_expert = self.convs_experts[expert_id]
             for i in range(7):
-                x = applyAndMergeAdd(x, self.convs_base[i], conv_expert[i], self._expert_weight)
+                x = applyAndMergeLinAdd(x, self.convs_base[i], conv_expert[i], self._expert_weight)
             return x
 
 
-class FlowEstimatorDenseExpertAdd(nn.Module):
+class FlowEstimatorDenseExpertLinAdd(nn.Module):
 
     def __init__(self, ch_in, num_experts, expert_weight):
-        super(FlowEstimatorDenseExpertAdd, self).__init__()
+        super(FlowEstimatorDenseExpertLinAdd, self).__init__()
         self._expert_weight = expert_weight
 
-        self.conv1_base = conv(ch_in, 128)
-        self.conv2_base = conv(ch_in + 128, 128)
-        self.conv3_base = conv(ch_in + 256, 96)
-        self.conv4_base = conv(ch_in + 352, 64)
-        self.conv5_base = conv(ch_in + 416, 32)
-        self.conv_last_base = conv(ch_in + 448, 2, isReLU=False)
+        self.conv1_base = linAdd_conv(ch_in, 128)
+        self.conv2_base = linAdd_conv(ch_in + 128, 128)
+        self.conv3_base = linAdd_conv(ch_in + 256, 96)
+        self.conv4_base = linAdd_conv(ch_in + 352, 64)
+        self.conv5_base = linAdd_conv(ch_in + 416, 32)
+        self.conv_last_base = linAdd_conv(ch_in + 448, 2, isReLU=False)
 
         conv1_expert = []
         conv2_expert = []
@@ -124,12 +137,12 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
         conv5_expert = []
         conv_last_expert = []
         for expert_id in range(num_experts):
-            conv1_expert.append(conv(ch_in, 128))
-            conv2_expert.append(conv(ch_in + 128, 128))
-            conv3_expert.append(conv(ch_in + 256, 96))
-            conv4_expert.append(conv(ch_in + 352, 64))
-            conv5_expert.append(conv(ch_in + 416, 32))
-            conv_last_expert.append(conv(ch_in + 448, 2, isReLU=False))
+            conv1_expert.append(linAdd_conv(ch_in, 128))
+            conv2_expert.append(linAdd_conv(ch_in + 128, 128))
+            conv3_expert.append(linAdd_conv(ch_in + 256, 96))
+            conv4_expert.append(linAdd_conv(ch_in + 352, 64))
+            conv5_expert.append(linAdd_conv(ch_in + 416, 32))
+            conv_last_expert.append(linAdd_conv(ch_in + 448, 2, isReLU=False))
         self.conv1_expert = nn.ModuleList(conv1_expert)
         self.conv2_expert = nn.ModuleList(conv2_expert)
         self.conv3_expert = nn.ModuleList(conv3_expert)
@@ -147,18 +160,18 @@ class FlowEstimatorDenseExpertAdd(nn.Module):
             x_out = self.conv_last_base(x5)
             return x5, x_out
         else:
-            x1 = torch.cat([applyAndMergeAdd(x, self.conv1_base, self.conv1_expert[expert_id], self._expert_weight), x], dim=1)
-            x2 = torch.cat([applyAndMergeAdd(x1, self.conv2_base, self.conv2_expert[expert_id], self._expert_weight), x1], dim=1)
-            x3 = torch.cat([applyAndMergeAdd(x2, self.conv3_base, self.conv3_expert[expert_id], self._expert_weight), x2], dim=1)
-            x4 = torch.cat([applyAndMergeAdd(x3, self.conv4_base, self.conv4_expert[expert_id], self._expert_weight), x3], dim=1)
-            x5 = torch.cat([applyAndMergeAdd(x4, self.conv5_base, self.conv5_expert[expert_id], self._expert_weight), x4], dim=1)
-            x_out = applyAndMergeAdd(x5, self.conv_last_base, self.conv_last_expert[expert_id], self._expert_weight)
+            x1 = torch.cat([applyAndMergeLinAdd(x, self.conv1_base, self.conv1_expert[expert_id], self._expert_weight), x], dim=1)
+            x2 = torch.cat([applyAndMergeLinAdd(x1, self.conv2_base, self.conv2_expert[expert_id], self._expert_weight), x1], dim=1)
+            x3 = torch.cat([applyAndMergeLinAdd(x2, self.conv3_base, self.conv3_expert[expert_id], self._expert_weight), x2], dim=1)
+            x4 = torch.cat([applyAndMergeLinAdd(x3, self.conv4_base, self.conv4_expert[expert_id], self._expert_weight), x3], dim=1)
+            x5 = torch.cat([applyAndMergeLinAdd(x4, self.conv5_base, self.conv5_expert[expert_id], self._expert_weight), x4], dim=1)
+            x_out = applyAndMergeLinAdd(x5, self.conv_last_base, self.conv_last_expert[expert_id], self._expert_weight)
             return x5, x_out
 
 
-class PWCExpertAddNet(nn.Module):
+class PWCExpertLinAddNet(nn.Module):
     def __init__(self, args, num_experts, expert_weight, div_flow=0.05):
-        super(PWCExpertAddNet, self).__init__()
+        super(PWCExpertLinAddNet, self).__init__()
         self.args = args
         self._num_experts = num_experts
         self._expert_weight = expert_weight
@@ -169,7 +182,7 @@ class PWCExpertAddNet(nn.Module):
         self.num_levels = 7
         self.leakyRELU = nn.LeakyReLU(0.1, inplace=True)
 
-        self.feature_pyramid_extractor = FeatureExtractorExpertAdd(self.num_chs, num_experts, self._expert_weight)
+        self.feature_pyramid_extractor = FeatureExtractorExpertLinAdd(self.num_chs, num_experts, self._expert_weight)
         self.warping_layer = WarpingLayer()
 
         self.flow_estimators = nn.ModuleList()
@@ -183,10 +196,10 @@ class PWCExpertAddNet(nn.Module):
             else:
                 num_ch_in = self.dim_corr + ch + 2
 
-            layer = FlowEstimatorDenseExpertAdd(num_ch_in, num_experts, self._expert_weight)
+            layer = FlowEstimatorDenseExpertLinAdd(num_ch_in, num_experts, self._expert_weight)
             self.flow_estimators.append(layer)
 
-        self.context_networks = ContextNetworkExpertAdd(self.dim_corr + 32 + 2 + 448 + 2, num_experts, self._expert_weight)
+        self.context_networks = ContextNetworkExpertLinAdd(self.dim_corr + 32 + 2 + 448 + 2, num_experts, self._expert_weight)
 
         initialize_msra(self.modules())
 
@@ -257,13 +270,13 @@ class PWCExpertAddNet(nn.Module):
             return output_dict_eval
 
 
-class CTSKPWCExpertNetAdd01(PWCExpertAddNet):
+class CTSKPWCExpertNetLinAdd01(PWCExpertLinAddNet):
 
     def __init__(self, args, div_flow=0.05):
         super().__init__(args, 4, 0.1, div_flow=div_flow)
 
 
-class CTSPWCExpertNetAdd01(PWCExpertAddNet):
+class CTSPWCExpertNetLinAdd01(PWCExpertLinAddNet):
 
     def __init__(self, args, div_flow=0.05):
         super().__init__(args, 3, 0.1, div_flow=div_flow)

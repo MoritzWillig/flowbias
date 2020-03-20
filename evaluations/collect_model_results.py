@@ -5,12 +5,13 @@ from pathlib import Path
 
 from flowbias.config import Config
 from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure, metric_eval_datasets, \
-    linear_baseline_performance, normalized_dataset_difference, mean_normalized_performance
+    linear_baseline_performance, normalized_dataset_difference, mean_normalized_performance, \
+    mean_adjusted_normalized_compensated_performance, inversed_mean_adjusted_normalized_compensated_performance
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
 include_valid_only = True
-include_cross_dataset_statistics = False
+include_cross_dataset_statistics = True
 
 result_file_path = "/data/dataB/meta/full_evals/"
 
@@ -92,7 +93,10 @@ def compute_cross_dataset_measure_linear(eval, return_fields=False):
         fields = []
         if include_cross_dataset_statistics:
             fields.extend(["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets]])
-        fields.extend(["normalized_dataset_difference", "mean_normalized_performance"])
+        fields.extend([
+            "normalized_dataset_difference", "mean_normalized_performance",
+            "inversed_mean_adjusted_normalized_compensated_performance",
+            "mean_adjusted_normalized_compensated_performance"])
         return fields
     metrics = []
 
@@ -105,6 +109,8 @@ def compute_cross_dataset_measure_linear(eval, return_fields=False):
 
     metrics.append(normalized_dataset_difference(aepes))
     metrics.append(mean_normalized_performance(aepes))
+    metrics.append(inversed_mean_adjusted_normalized_compensated_performance(aepes))
+    metrics.append(mean_adjusted_normalized_compensated_performance(aepes))
     return metrics
 
 
@@ -136,7 +142,7 @@ for eval_name, eval in evals.items():
     line = [eval_name]
     line.extend(results)
     line.extend(metrics)
-    line.extend(["None" if data is None else data for data in model_meta[eval_name]])
+    line.extend([str(data) for data in model_meta[eval_name]])
     summary[eval_name] = line
 
 #with open(Config.temp_directory+"/eval_summary.json") as file:

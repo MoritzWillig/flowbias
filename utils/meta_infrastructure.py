@@ -64,8 +64,15 @@ class NoTransformer:
         return sample
 
 
-def create_enricher(expert_id):
-    return DataTransformer({"dataset": expert_id})
+def create_enricher(encoder_expert_id, decoder_expert_id=None):
+    if decoder_expert_id is None:
+        return DataTransformer({"dataset": encoder_expert_id})
+    else:
+        return DataTransformer({
+            "encoder_expert_id": encoder_expert_id,
+            "decoder_expert_id": decoder_expert_id,
+            "context_expert_id": decoder_expert_id
+        })
 
 
 def create_no_enricher():
@@ -79,6 +86,15 @@ loaders = {
     "expert1": create_enricher(1),
     "expert2": create_enricher(2),
     "expert3": create_enricher(3),
+    "expert00": create_enricher(0, 0),
+    "expert01": create_enricher(0, 1),
+    "expert02": create_enricher(0, 2),
+    "expert10": create_enricher(1, 0),
+    "expert11": create_enricher(1, 1),
+    "expert12": create_enricher(1, 2),
+    "expert20": create_enricher(2, 0),
+    "expert21": create_enricher(2, 1),
+    "expert22": create_enricher(2, 2)
 }
 
 

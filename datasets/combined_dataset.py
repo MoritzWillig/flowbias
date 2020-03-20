@@ -61,7 +61,7 @@ class CTSKTrain(CombinedDataset):
 
 class CTSKValid(CombinedDataset):
 
-    def __init__(self, args, photometric_augmentations=True):
+    def __init__(self, args, photometric_augmentations=False):
         args_kitti = Namespace(**vars(args))
         args_kitti._batch_size = 1
         datasets = [
@@ -88,7 +88,7 @@ class CTSTrain(CombinedDataset):
 
 class CTSValid(CombinedDataset):
 
-    def __init__(self, args, photometric_augmentations=True):
+    def __init__(self, args, photometric_augmentations=False):
         args_kitti = Namespace(**vars(args))
         args_kitti._batch_size = 1
         datasets = [

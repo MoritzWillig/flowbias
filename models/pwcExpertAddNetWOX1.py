@@ -195,14 +195,22 @@ class PWCExpertAddNetWOX1(nn.Module):
 
     def forward(self, input_dict):
         # assuming each sample in the batch is from the same dataset
-        expert_id = input_dict['dataset'] if isinstance(input_dict['dataset'], int) else input_dict['dataset'][0]
+        if 'dataset' in input_dict:
+            expert_id = input_dict['dataset'] if isinstance(input_dict['dataset'], int) else input_dict['dataset'][0]
+            encoder_expert_id = expert_id
+            decoder_expert_id = expert_id
+            context_expert_id = expert_id
+        else:
+            encoder_expert_id = input_dict['encoder_expert_id'] if isinstance(input_dict['encoder_expert_id'], int) else input_dict['encoder_expert_id'][0]
+            decoder_expert_id = input_dict['decoder_expert_id'] if isinstance(input_dict['decoder_expert_id'], int) else input_dict['decoder_expert_id'][0]
+            context_expert_id = input_dict['context_expert_id'] if isinstance(input_dict['context_expert_id'], int) else input_dict['context_expert_id'][0]
         x1_raw = input_dict['input1']
         x2_raw = input_dict['input2']
         _, _, height_im, width_im = x1_raw.size()
 
         # on the bottom level are original images
-        x1_pyramid = self.feature_pyramid_extractor(x1_raw, expert_id) + [x1_raw]
-        x2_pyramid = self.feature_pyramid_extractor(x2_raw, expert_id) + [x2_raw]
+        x1_pyramid = self.feature_pyramid_extractor(x1_raw, encoder_expert_id) + [x1_raw]
+        x2_pyramid = self.feature_pyramid_extractor(x2_raw, encoder_expert_id) + [x2_raw]
 
         # outputs
         output_dict = {}
@@ -229,9 +237,9 @@ class PWCExpertAddNetWOX1(nn.Module):
 
             # flow estimator
             if l == 0:
-                x_intm, flow = self.flow_estimators[l](out_corr_relu, expert_id)
+                x_intm, flow = self.flow_estimators[l](out_corr_relu, decoder_expert_id)
             else:
-                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, flow], dim=1), expert_id)
+                x_intm, flow = self.flow_estimators[l](torch.cat([out_corr_relu, flow], dim=1), decoder_expert_id)
             # The name 'x_intm' is left unchanged for consistence with the original architecture. However, it now only
             # depends on the correlation and the predicted flow from the upper layers.
 
@@ -239,7 +247,7 @@ class PWCExpertAddNetWOX1(nn.Module):
             if l != self.output_level:
                 flows.append(flow)
             else:
-                flow_res = self.context_networks(torch.cat([x_intm, flow], dim=1), expert_id)
+                flow_res = self.context_networks(torch.cat([x_intm, flow], dim=1), context_expert_id)
                 flow = flow + flow_res
                 flows.append(flow)                
                 break
@@ -255,8 +263,13 @@ class PWCExpertAddNetWOX1(nn.Module):
             return output_dict_eval
 
 
-class CTSKPWCExpertNetAdd01WOX1(PWCExpertAddNetWOX1):
+class CTSKPWCExpertNetWOX1Add01(PWCExpertAddNetWOX1):
 
     def __init__(self, args, div_flow=0.05):
         super().__init__(args, 4, 0.1, div_flow=div_flow)
 
+
+class CTSPWCExpertNetWOX1Add01(PWCExpertAddNetWOX1):
+
+    def __init__(self, args, div_flow=0.05):
+        super().__init__(args, 3, 0.1, div_flow=div_flow)
