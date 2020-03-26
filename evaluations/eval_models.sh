@@ -208,6 +208,19 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertA
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_58.ckpt CTSKPWCExpertNet01WOX1AddKnown /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_known_iter58.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_60.ckpt CTSKPWCExpertNet01WOX1AddKnown /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_known_iter60.json
 
+#CTSK WOX1 trace
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_01.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter01.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_10.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter10.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_20.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter20.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_30.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter30.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_40.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter40.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_50.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter50.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_52.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter52.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_54.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter54.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_56.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter56.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_58.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter58.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_60.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK_iter60.json
+
 # expert models add CTS
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNet-20200210-223344/checkpoint_best.ckpt CTSPWCExpertNet01AddNoExpert /data/dataB/meta/full_evals/expert_CTS_add01_no_expert.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNet-20200210-223344/checkpoint_best.ckpt CTSPWCExpertNet01AddExpert0 /data/dataB/meta/full_evals/expert_CTS_add01_expert0.json
@@ -220,6 +233,7 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_noExpert_PWCNet-
 
 # pwcWOX1 trained on multiple datasets
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/pwc_noExperts_CTS_wox1_PWCNetWOX1Connection-20200311-213609/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTS.json
 
 # iteration inspection
 python ./evaluate_for_all_datasets.py /data/dataB/models/iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt PWCNet /data/dataB/meta/full_evals/pwc_chairs_iter_148.json

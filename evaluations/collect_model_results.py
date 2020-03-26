@@ -12,6 +12,7 @@ from flowbias.utils.meta_infrastructure import get_dataset_names
 
 include_valid_only = True
 include_cross_dataset_statistics = True
+include_dataset = ["middleburyTrain"]
 
 result_file_path = "/data/dataB/meta/full_evals/"
 
@@ -45,7 +46,7 @@ print("datasets:", next(iter(evals.values())).keys())
 
 
 def dataset_selector(name):
-    return (not include_valid_only) or (name.endswith("Valid"))
+    return (not include_valid_only) or (name.endswith("Valid") or (name in include_dataset))
 
 
 def compute_dataset_full(eval, train_name, valid_name, full_name, train_size, valid_size):

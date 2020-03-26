@@ -46,9 +46,13 @@ def do_evaluation(comp_name, dataset_name, sample_id):
     font = ImageFont.truetype("/home/moritz/.local/share/fonts/RobotoMono-Bold.ttf", 40, encoding="unic")
 
     plt_size = (num_cols, 1+int(math.ceil(len(models)/num_cols)))
+    max_shape = [
+        max(flow_wheel.shape[0], gt_flow.shape[0]),
+        max(flow_wheel.shape[1], gt_flow.shape[1])
+    ]
     grid = AGrid(
         plt_size,
-        gt_flow.shape,
+        max_shape,
         text_params={"font": font},
         title_params={"font": font})
 
@@ -79,7 +83,7 @@ def do_evaluation(comp_name, dataset_name, sample_id):
         im_max = float(torch.max(error_map).cpu().detach())
         max_errors.append(im_max)
 
-    upper_50_percentile = sorted(max_errors)[math.ceil(len(max_errors)*0.50)]
+    upper_50_percentile = sorted(max_errors)[math.ceil(min(len(max_errors)*0.50, len(max_errors)-1))]
 
     gt = sample["target1"]
     for i, (model_name, result) in enumerate(zip(models, results)):
@@ -124,13 +128,15 @@ models = [
     "WOX1Blind_kc", "WOX1Blind_kt", "WOX1Blind_ks", "pwcWOX1_kitti"
 ]
 num_cols = 4"""
-comp_name = "wox1_base_models"
+"""comp_name = "wox1_base_models"
 models = [
     "pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti_temp"
-]
+]"""
+comp_name = "chairs_on_middlebury"
+models = ["pwc_chairs", "pwcWOX1_chairs", "pwc_on_CTSK", "pwcWOX1_on_CTSK"]
 num_cols = 4
 
-
+"""
 evals = [
     {
         "dataset_name": "flyingChairsValid",
@@ -148,6 +154,13 @@ evals = [
         "dataset_name": "kitti2015Valid",
         "sample_id": 29
     }
+]
+"""
+evals = [
+    {
+        "dataset_name": "middleburyTrain",
+        "sample_id": i
+    } for i in range(8)
 ]
 
 for eval_data in evals:

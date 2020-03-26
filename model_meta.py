@@ -219,11 +219,25 @@ model_meta = {
     "expertWOX1_CTSK_add01_known_iter58":   ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add01_trace", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_058.ckpt", "error", False],
     "expertWOX1_CTSK_add01_known_iter60":   ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add01_trace", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_060.ckpt", "error", False],
 
+    # CTSK WOX1 trace
+    "pwcWOX1_on_CTSK_iter01": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_001.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter10": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_010.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter20": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_020.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter30": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_030.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter40": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_040.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter50": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_050.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter52": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_052.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter54": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_054.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter56": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_056.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter58": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_058.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter60": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_060.ckpt", None, False],
+
     # pwc trained on multiple datasets
     "pwc_on_CTSK_failedaugment": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert__noExpert_failedaugment_PWCNet-20200127-234847", None, False],
     "pwc_on_CTSK": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211", None, True],
     # pwcWOX1 trained on multiple datasets
     "pwcWOX1_on_CTSK": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241", None, True],
+    "pwcWOX1_on_CTS": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel", None, "pwc_noExperts_CTS_wox1_PWCNetWOX1Connection-20200311-213609", None, True],
 
     # pwc iteration inspection
     "pwc_chairs_iter_148": ["PWCNet", "pwc_wox1_iteration_inspection", None, "chairs", None, "iter_PWCNet-chairs_148/checkpoint_iter_148.ckpt", None, False],
@@ -405,11 +419,16 @@ model_meta_ordering = [
     "expertWOX1_CTSK_add01_known_iter52", "expertWOX1_CTSK_add01_known_iter54", "expertWOX1_CTSK_add01_known_iter56",
     "expertWOX1_CTSK_add01_known_iter58", "expertWOX1_CTSK_add01_known_iter60",
 
+    # CTSK WOX1 trace
+    "pwcWOX1_on_CTSK_iter01", "pwcWOX1_on_CTSK_iter10", "pwcWOX1_on_CTSK_iter20", "pwcWOX1_on_CTSK_iter30",
+    "pwcWOX1_on_CTSK_iter40", "pwcWOX1_on_CTSK_iter50", "pwcWOX1_on_CTSK_iter52", "pwcWOX1_on_CTSK_iter54",
+    "pwcWOX1_on_CTSK_iter56", "pwcWOX1_on_CTSK_iter58", "pwcWOX1_on_CTSK_iter60",
+
     # pwc trained on multiple datasets
     "pwc_on_CTSK_failedaugment",
     "pwc_on_CTSK",
     # pwcWOX1 trained on multiple datasets
-    "pwcWOX1_on_CTSK",
+    "pwcWOX1_on_CTSK", "pwcWOX1_on_CTS",
     # pwc iteration inspection
     "pwc_chairs_iter_148",
     # pwc down sampling encoder
@@ -455,5 +474,5 @@ model_folders = {
 
 set_diff = set(iter(model_meta.keys())).difference(model_meta_ordering)
 if len(set_diff) != 0:
-    print("model_meta and model_meta_ordering do not match:", set_diff)
+    print("model_meta and model_meta_ordering do not match. difference in datasets:", set_diff)
 assert(len(set(iter(model_meta.keys())).difference(model_meta_ordering)) == 0)

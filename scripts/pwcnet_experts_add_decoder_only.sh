@@ -5,14 +5,14 @@
 EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # model and checkpoint
-MODEL=PWCNet
+MODEL=CTSKPWCExpertNetWOX1Add01DecoderExpertsOnly
 EVAL_LOSS=MultiScaleAdaptiveEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/pwc_noExperts_CTSK_$MODEL-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/expert_decoder_only_add01_$MODEL-$TIME"
 SAVE_EVERY=1
 
 # set cuda GPU ids
@@ -27,6 +27,7 @@ python ../main.py \
 --lr_scheduler_gamma=0.5 \
 --lr_scheduler_milestones="[30, 40, 50]" \
 --model=$MODEL \
+--model_ignore_missing_experts=True \
 --num_workers=4 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \
@@ -41,7 +42,7 @@ python ../main.py \
 --training_dataset_photometric_augmentations=True \
 --training_key=total_loss \
 --training_loss=$EVAL_LOSS \
---validation_dataset=CTSKValid  \
+--validation_dataset=CTSKValid \
 --validation_dataset_photometric_augmentations=False \
 --validation_key=epe \
 --validation_loss=$EVAL_LOSS

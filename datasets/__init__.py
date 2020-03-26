@@ -7,6 +7,7 @@ from . import monkaa
 from . import pwcInterfaceDataset
 from . import subsampledDataset
 from . import combined_dataset
+from . import middlebury
 
 ## FlyingChairs
 FlyingChairsTrain = flyingchairs.FlyingChairsTrain
@@ -70,3 +71,6 @@ CTSKValid = combined_dataset.CTSKValid
 
 CTSTrain = combined_dataset.CTSTrain
 CTSValid = combined_dataset.CTSValid
+
+## MiddleburyTrainValid
+MiddleburyTrainValid = middlebury.MiddleburyTrainValid

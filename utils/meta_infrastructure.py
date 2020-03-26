@@ -15,6 +15,7 @@ from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThi
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full
 from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull
 from flowbias.datasets.sintel import SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
+from flowbias.datasets.middlebury import MiddleburyTrainValid
 from flowbias.losses import MultiScaleEPE_PWC, MultiScaleEPE_FlowNet, MultiScaleSparseEPE_PWC, MultiScaleSparseEPE_FlowNet
 from flowbias.models import PWCNet, PWCNetWOX1Connection, PWCNetWOX1ConnectionExt, PWCNetConv33Fusion, PWCExpertNet, PWCExpertAddNet, CTSKPWCExpertNetAdd01, CTSKPWCExpertNet02, PWCNetDSEncoder
 from flowbias.models import FlowNet1S
@@ -140,7 +141,8 @@ dataset_splits = [
     [ "sintelFinalFull", ["sintel", "full", "final"]],
     [ "kitti2015Train", ["kitti", "train"]],
     [ "kitti2015Valid", ["kitti", "valid"]],
-    [ "kitti2015Full", ["kitti", "full"]]
+    [ "kitti2015Full", ["kitti", "full"]],
+    [ "middleburyTrain", ["middlebury", "train"]]
 ]
 
 dataset_sets = {
@@ -178,7 +180,7 @@ def get_dataset_names(select_by_any_tag=None, exclude_by_tag=None, datasets="mai
     return [dataset[0] for dataset in dataset_set if all([selector(dataset[1]) for selector in selectors])]
 
 
-def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=None, exclude_by_tag=None, datasets="main"):
+def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=None, exclude_by_tag=None, datasets="main", run_dry=False):
     if restrict_to is not None and select_by_any_tag is not None:
         ValueError("restrict_to and select_by_tag parameters are mutually exclusive")
 
@@ -199,47 +201,96 @@ def get_available_datasets(force_mode=None, restrict_to=None, select_by_any_tag=
 
     available_datasets = {}
     if datasets == "main":
-        _get_available_main_split(available_datasets, restrict_to, params, kitti_params)
+        available_dataset_names = _get_available_main_split(restrict_to)
+        if run_dry:
+            return available_dataset_names
+
+        available_datasets = {available_dataset_name: None for available_dataset_name in available_dataset_names}
+        _load_available_main_split(available_datasets, params, kitti_params)
     else:
+        if run_dry:
+            #TODO add parameter to _get_available_sub_split
+            raise ValueError("run_dry not supported for subsplits")
         _get_available_sub_split(datasets, available_datasets, restrict_to, params, kitti_params)
     return available_datasets
 
 
-def _get_available_main_split(available_datasets, restrict_to, params, kitti_params):
+def _get_available_main_split(restrict_to):
+    available_dataset_names = []
     if os.path.isdir(Config.dataset_locations["flyingChairs"]):
         if "flyingChairsTrain" in restrict_to:
-            available_datasets["flyingChairsTrain"] = FlyingChairsTrain({}, Config.dataset_locations["flyingChairs"], **params)
+            available_dataset_names.append("flyingChairsTrain")
         if "flyingChairsValid" in restrict_to:
-            available_datasets["flyingChairsValid"] = FlyingChairsValid({}, Config.dataset_locations["flyingChairs"], **params)
+            available_dataset_names.append("flyingChairsValid")
         if "flyingChairsFull" in restrict_to:
-            available_datasets["flyingChairsFull"] = FlyingChairsFull({}, Config.dataset_locations["flyingChairs"], **params)
+            available_dataset_names.append("flyingChairsFull")
     if os.path.isdir(Config.dataset_locations["flyingThings"]):
         if "flyingThingsCleanTrain" in restrict_to:
-            available_datasets["flyingThingsCleanTrain"] = FlyingThings3dCleanTrain({}, Config.dataset_locations["flyingThings"], **params)
+            available_dataset_names.append("flyingThingsCleanTrain")
         if "flyingThingsCleanValid" in restrict_to:
-            available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], **params)
+            available_dataset_names.append("flyingThingsCleanValid")
         if "flyingThingsCleanFull" in restrict_to:
-            available_datasets["flyingThingsCleanFull"] = FlyingThings3dCleanFull({}, Config.dataset_locations["flyingThings"], **params)
+            available_dataset_names.append("flyingThingsCleanFull")
     if os.path.isdir(Config.dataset_locations["sintel"]):
         if "sintelCleanTrain" in restrict_to:
-            available_datasets["sintelCleanTrain"] = SintelTrainingCleanTrain({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelCleanTrain")
         if "sintelCleanValid" in restrict_to:
-            available_datasets["sintelCleanValid"] = SintelTrainingCleanValid({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelCleanValid")
         if "sintelCleanFull" in restrict_to:
-            available_datasets["sintelCleanFull"] = SintelTrainingCleanFull({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelCleanFull")
         if "sintelFinalTrain" in restrict_to:
-            available_datasets["sintelFinalTrain"] = SintelTrainingFinalTrain({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelFinalTrain")
         if "sintelFinalValid" in restrict_to:
-            available_datasets["sintelFinalValid"] = SintelTrainingFinalValid({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelFinalValid")
         if "sintelFinalFull" in restrict_to:
-            available_datasets["sintelFinalFull"] = SintelTrainingFinalFull({}, Config.dataset_locations["sintel"], **params)
+            available_dataset_names.append("sintelFinalFull")
     if os.path.isdir(Config.dataset_locations["kitti"]):
         if "kitti2015Train" in restrict_to:
-            available_datasets["kitti2015Train"] = KittiComb2015Train({}, Config.dataset_locations["kitti"], **kitti_params)
+            available_dataset_names.append("kitti2015Train")
         if "kitti2015Valid" in restrict_to:
-            available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
+            available_dataset_names.append("kitti2015Valid")
         if "kitti2015Full" in restrict_to:
-            available_datasets["kitti2015Full"] = KittiComb2015Full({}, Config.dataset_locations["kitti"], **kitti_params)
+            available_dataset_names.append("kitti2015Full")
+    if os.path.isdir(Config.dataset_locations["middlebury"]):
+        if "middleburyTrain" in restrict_to:
+            available_dataset_names.append("middleburyTrain")
+    return available_dataset_names
+
+
+def _load_available_main_split(available_datasets, params, kitti_params):
+    if "flyingChairsTrain" in available_datasets:
+        available_datasets["flyingChairsTrain"] = FlyingChairsTrain({}, Config.dataset_locations["flyingChairs"], **params)
+    if "flyingChairsValid" in available_datasets:
+        available_datasets["flyingChairsValid"] = FlyingChairsValid({}, Config.dataset_locations["flyingChairs"], **params)
+    if "flyingChairsFull" in available_datasets:
+        available_datasets["flyingChairsFull"] = FlyingChairsFull({}, Config.dataset_locations["flyingChairs"], **params)
+    if "flyingThingsCleanTrain" in available_datasets:
+        available_datasets["flyingThingsCleanTrain"] = FlyingThings3dCleanTrain({}, Config.dataset_locations["flyingThings"], **params)
+    if "flyingThingsCleanValid" in available_datasets:
+        available_datasets["flyingThingsCleanValid"] = FlyingThings3dCleanValid({}, Config.dataset_locations["flyingThings"], **params)
+    if "flyingThingsCleanFull" in available_datasets:
+        available_datasets["flyingThingsCleanFull"] = FlyingThings3dCleanFull({}, Config.dataset_locations["flyingThings"], **params)
+    if "sintelCleanTrain" in available_datasets:
+        available_datasets["sintelCleanTrain"] = SintelTrainingCleanTrain({}, Config.dataset_locations["sintel"], **params)
+    if "sintelCleanValid" in available_datasets:
+        available_datasets["sintelCleanValid"] = SintelTrainingCleanValid({}, Config.dataset_locations["sintel"], **params)
+    if "sintelCleanFull" in available_datasets:
+        available_datasets["sintelCleanFull"] = SintelTrainingCleanFull({}, Config.dataset_locations["sintel"], **params)
+    if "sintelFinalTrain" in available_datasets:
+        available_datasets["sintelFinalTrain"] = SintelTrainingFinalTrain({}, Config.dataset_locations["sintel"], **params)
+    if "sintelFinalValid" in available_datasets:
+        available_datasets["sintelFinalValid"] = SintelTrainingFinalValid({}, Config.dataset_locations["sintel"], **params)
+    if "sintelFinalFull" in available_datasets:
+        available_datasets["sintelFinalFull"] = SintelTrainingFinalFull({}, Config.dataset_locations["sintel"], **params)
+    if "kitti2015Train" in available_datasets:
+        available_datasets["kitti2015Train"] = KittiComb2015Train({}, Config.dataset_locations["kitti"], **kitti_params)
+    if "kitti2015Valid" in available_datasets:
+        available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
+    if "kitti2015Full" in available_datasets:
+        available_datasets["kitti2015Full"] = KittiComb2015Full({}, Config.dataset_locations["kitti"], **kitti_params)
+    if "middleburyTrain" in available_datasets:
+        x = Config.dataset_locations["middlebury"]
+        available_datasets["middleburyTrain"] = MiddleburyTrainValid({}, x, x, **params)
 
 
 def _get_available_sub_split(dataset_set, available_datasets, restrict_to, params, kitti_params):
@@ -260,7 +311,8 @@ def _get_available_sub_split(dataset_set, available_datasets, restrict_to, param
 
 
 def switch_to_train(loss):
-    return loss.eval()
+    #return loss.eval()
+    pass
 
 
 def switch_to_eval(loss):
@@ -279,7 +331,7 @@ def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
                     "@dense": MultiScaleEPE_PWC,
                     "@sparse": MultiScaleSparseEPE_PWC
                 },
-                "processor": switch_to_train
+                "processor": switch_to_eval
             },
             {
                 "models": [ FlowNet1S ],
@@ -321,11 +373,13 @@ def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
     # find category of the dataset
     dataset_categories = {
         "_default": "@dense",
-        "KITTI": "@sparse"
+        "KITTI": "@sparse",
+        "Middlebury": "@sparse"
     }
 
-    if dataset_name in dataset_categories:
-        category = dataset_categories[dataset_name]
+    dataset_category = get_dataset_category(dataset_name) #TODO
+    if dataset_category in dataset_categories:
+        category = dataset_categories[dataset_category]
     else:
         category = dataset_categories["_default"]
 
@@ -342,7 +396,7 @@ def get_loss(loss_name, model_instance, dataset_name, loss_args=None):
 
 
 def dataset_needs_batch_size_one(dataset_name, force_mode=None):
-    varying_image_sizes = []
+    varying_image_sizes = ["middleburyTrain"]
     # kitti2015Valid does only crop in train mode:
     if force_mode != "train":
         varying_image_sizes.append("kitti2015Valid")

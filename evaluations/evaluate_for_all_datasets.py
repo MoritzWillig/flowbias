@@ -10,7 +10,7 @@ from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThi
 from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val
 from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull, \
     SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
-
+from flowbias.datasets.middlebury import MiddleburyTrainValid
 from flowbias.models import PWCNet, FlowNet1S, PWCNetConv33Fusion, PWCNetX1Zero, PWCNetWOX1Connection, \
     CTSKPWCExpertNet02, CTSKPWCExpertNetAdd01, PWCNetDSEncoder, PWCNetWOX1ConnectionExt, CTSPWCExpertNetAdd01, \
     CTSKPWCExpertNet02WOX1, CTSKPWCExpertNetWOX1Add01
@@ -55,6 +55,7 @@ class CTSKDatasetDetector(DataEnricher):
         [SintelTrainingFinalFull, 2],
         [KittiComb2015Train, 3],
         [KittiComb2015Val, 3],
+        [MiddleburyTrainValid, -1]
     ]
 
     def _detect_dataset_id(self, dataset):
@@ -63,8 +64,8 @@ class CTSKDatasetDetector(DataEnricher):
             if isinstance(dataset, dataset_data[0]):
                 #print("detected ", dataset_data[0])
                 dataset_id = dataset_data[1]
-        if dataset_id == -1:
-            raise ValueError("Unknown dataset!")
+        #if dataset_id == -1:
+        #    raise ValueError("Unknown dataset!")
         return dataset_id
 
     def __init__(self, dataset, additional):
@@ -79,89 +80,89 @@ if __name__ == '__main__':
             self.batch_size = None
 
     model_classes = {
-        "PWCNet": [PWCNet, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "FlowNet1S": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_FlowNet}],
-        "PWCNetConv33Fusion": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "PWCNetX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "PWCNetWOX1Connection": [PWCNetWOX1Connection, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
-        "PWCNetWOX1ConnectionExt": [PWCNetWOX1ConnectionExt, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "PWCNet": [PWCNet, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
+        "FlowNet1S": [FlowNet1S, {"default": MultiScaleEPE_FlowNet, "kitti2015Train": MultiScaleSparseEPE_FlowNet, "kitti2015Valid": MultiScaleSparseEPE_FlowNet, "middleburyTrain":MultiScaleSparseEPE_FlowNet}],
+        "PWCNetConv33Fusion": [PWCNetConv33Fusion, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
+        "PWCNetX1Zero": [PWCNetX1Zero, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
+        "PWCNetWOX1Connection": [PWCNetWOX1Connection, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
+        "PWCNetWOX1ConnectionExt": [PWCNetWOX1ConnectionExt, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
         # CTKS expert split models
-        "CTSKPWCExpertNet02Known": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
-        "CTSKPWCExpertNet02Expert0": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
-        "CTSKPWCExpertNet02Expert1": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
-        "CTSKPWCExpertNet02Expert2": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "CTSKPWCExpertNet02Expert3": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSKPWCExpertNet02Known": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSKPWCExpertNet02Expert0": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSKPWCExpertNet02Expert1": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSKPWCExpertNet02Expert2": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "CTSKPWCExpertNet02Expert3": [CTSKPWCExpertNet02, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
         # CTKS expert add models
-        "CTSKPWCExpertNet01AddKnown": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
-        "CTSKPWCExpertNet01AddNoExpert": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
-        "CTSKPWCExpertNet01AddExpert0": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
-        "CTSKPWCExpertNet01AddExpert1": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
-        "CTSKPWCExpertNet01AddExpert2": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "CTSKPWCExpertNet01AddExpert3": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSKPWCExpertNet01AddKnown": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSKPWCExpertNet01AddNoExpert": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
+        "CTSKPWCExpertNet01AddExpert0": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSKPWCExpertNet01AddExpert1": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSKPWCExpertNet01AddExpert2": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "CTSKPWCExpertNet01AddExpert3": [CTSKPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
         # CTKS WOX1 expert split models
-        "CTSKPWCExpertNet02WOX1Known": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
-        "CTSKPWCExpertNet02WOX1Expert0": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
-        "CTSKPWCExpertNet02WOX1Expert1": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
-        "CTSKPWCExpertNet02WOX1Expert2": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "CTSKPWCExpertNet02WOX1Expert3": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSKPWCExpertNet02WOX1Known": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSKPWCExpertNet02WOX1Expert0": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSKPWCExpertNet02WOX1Expert1": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSKPWCExpertNet02WOX1Expert2": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "CTSKPWCExpertNet02WOX1Expert3": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
         # CTKS WOX1 expert add models
-        "CTSKPWCExpertNet01WOX1AddKnown": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
-        "CTSKPWCExpertNet01WOX1AddNoExpert": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert0": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
-        "CTSKPWCExpertNet01WOX1AddExpert1": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert2": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "CTSKPWCExpertNet01WOX1AddExpert3": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
+        "CTSKPWCExpertNet01WOX1AddKnown": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSKPWCExpertNet01WOX1AddNoExpert": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert0": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSKPWCExpertNet01WOX1AddExpert1": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert2": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "CTSKPWCExpertNet01WOX1AddExpert3": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 3}]],
         #CTS Expert add Models
-        "CTSPWCExpertNet01AddKnown": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
-        "CTSPWCExpertNet01AddNoExpert": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
-        "CTSPWCExpertNet01AddExpert0": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
-        "CTSPWCExpertNet01AddExpert1": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
-        "CTSPWCExpertNet01AddExpert2": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
-        "PWCNetDSEncoder": [PWCNetDSEncoder, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}],
+        "CTSPWCExpertNet01AddKnown": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [CTSKDatasetDetector, {}]],
+        "CTSPWCExpertNet01AddNoExpert": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": -1}]],
+        "CTSPWCExpertNet01AddExpert0": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 0}]],
+        "CTSPWCExpertNet01AddExpert1": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 1}]],
+        "CTSPWCExpertNet01AddExpert2": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"dataset": 2}]],
+        "PWCNetDSEncoder": [PWCNetDSEncoder, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}],
         # CTS fused expert add models
-        "CTSPWCExpertNet01AddExpert00": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSPWCExpertNet01AddExpert01": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSPWCExpertNet01AddExpert02": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSPWCExpertNet01AddExpert10": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSPWCExpertNet01AddExpert11": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSPWCExpertNet01AddExpert12": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSPWCExpertNet01AddExpert20": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSPWCExpertNet01AddExpert21": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSPWCExpertNet01AddExpert22": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSPWCExpertNet01AddExpert00": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSPWCExpertNet01AddExpert01": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSPWCExpertNet01AddExpert02": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSPWCExpertNet01AddExpert10": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSPWCExpertNet01AddExpert11": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSPWCExpertNet01AddExpert12": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSPWCExpertNet01AddExpert20": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSPWCExpertNet01AddExpert21": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSPWCExpertNet01AddExpert22": [CTSPWCExpertNetAdd01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
         #CTKS WOX1 fused expert split models
-        "CTSKPWCExpertNet02WOX1Expert00": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet02WOX1Expert01": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet02WOX1Expert02": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet02WOX1Expert03": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet02WOX1Expert10": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet02WOX1Expert11": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet02WOX1Expert12": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet02WOX1Expert13": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet02WOX1Expert20": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet02WOX1Expert21": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet02WOX1Expert22": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet02WOX1Expert23": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet02WOX1Expert30": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet02WOX1Expert31": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet02WOX1Expert32": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet02WOX1Expert33": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet02WOX1Expert00": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet02WOX1Expert01": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet02WOX1Expert02": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet02WOX1Expert03": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet02WOX1Expert10": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet02WOX1Expert11": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet02WOX1Expert12": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet02WOX1Expert13": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet02WOX1Expert20": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet02WOX1Expert21": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet02WOX1Expert22": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet02WOX1Expert23": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet02WOX1Expert30": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet02WOX1Expert31": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet02WOX1Expert32": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet02WOX1Expert33": [CTSKPWCExpertNet02WOX1, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 3, "context_expert_id": 3}]],
         #CTKS WOX1 fused expert add models
-        "CTSKPWCExpertNet01WOX1AddExpert00": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet01WOX1AddExpert01": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert02": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet01WOX1AddExpert03": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet01WOX1AddExpert10": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet01WOX1AddExpert11": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert12": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet01WOX1AddExpert13": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet01WOX1AddExpert20": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet01WOX1AddExpert21": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert22": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet01WOX1AddExpert23": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 3, "context_expert_id": 3}]],
-        "CTSKPWCExpertNet01WOX1AddExpert30": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 0, "context_expert_id": 0}]],
-        "CTSKPWCExpertNet01WOX1AddExpert31": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 1, "context_expert_id": 1}]],
-        "CTSKPWCExpertNet01WOX1AddExpert32": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 2, "context_expert_id": 2}]],
-        "CTSKPWCExpertNet01WOX1AddExpert33": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet01WOX1AddExpert00": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet01WOX1AddExpert01": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert02": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet01WOX1AddExpert03": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 0, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet01WOX1AddExpert10": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet01WOX1AddExpert11": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert12": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet01WOX1AddExpert13": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 1, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet01WOX1AddExpert20": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet01WOX1AddExpert21": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert22": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet01WOX1AddExpert23": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 2, "decoder_expert_id": 3, "context_expert_id": 3}]],
+        "CTSKPWCExpertNet01WOX1AddExpert30": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 0, "context_expert_id": 0}]],
+        "CTSKPWCExpertNet01WOX1AddExpert31": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 1, "context_expert_id": 1}]],
+        "CTSKPWCExpertNet01WOX1AddExpert32": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 2, "context_expert_id": 2}]],
+        "CTSKPWCExpertNet01WOX1AddExpert33": [CTSKPWCExpertNetWOX1Add01, {"default": MultiScaleEPE_PWC, "kitti2015Train": MultiScaleSparseEPE_PWC, "kitti2015Valid": MultiScaleSparseEPE_PWC, "middleburyTrain":MultiScaleSparseEPE_PWC}, [DataEnricher, {"encoder_expert_id": 3, "decoder_expert_id": 3, "context_expert_id": 3}]],
     }
 
     assert(len(sys.argv) == 4)
@@ -177,8 +178,6 @@ if __name__ == '__main__':
         model = model_class(ValArgs())
         load_model_parameters(model, model_path)
         model.eval().cuda()
-
-        available_datasets = get_available_datasets(force_mode="test", select_by_any_tag=["train", "valid"])
 
         rename = {
             "flyingChairs": "flyingChairsValid",
@@ -216,16 +215,21 @@ if __name__ == '__main__':
 
         # compute remaining evaluations
         #reevaluate = ["kitti2015Train", "kitti2015Valid"]  # forces datasets to be reevaluated
+        #reevaluate = ["middleburyTrain"]
         reevaluate = []
+        reevaluate_only = False
 
-        datasets = {
-            dataset_name: dataset_data
-            for dataset_name, dataset_data in available_datasets.items()
-            if (dataset_name not in existing_results_datasets) or (dataset_name in reevaluate)}
+        available_dataset_names = get_available_datasets(force_mode="test", select_by_any_tag=["train", "valid"], run_dry=True)
+        missing_dataset_names = [
+            dataset_name for dataset_name in available_dataset_names
+            if ((dataset_name not in existing_results_datasets) and (not reevaluate_only)) or (dataset_name in reevaluate)]
 
-        print("available_datasets:", list(available_datasets.keys()))
+        print("available_datasets:", list(available_dataset_names))
         print("existing results:", list(existing_results.keys()))
-        print("computing results for:", list(datasets.keys()))
+        print("computing results for:", missing_dataset_names)
+
+        datasets = get_available_datasets(force_mode="test", restrict_to=missing_dataset_names)
+
 
         if len(datasets.keys()) == 0:
             if has_old_names:

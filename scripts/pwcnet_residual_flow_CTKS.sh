@@ -5,14 +5,14 @@
 EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # model and checkpoint
-MODEL=PWCNet
+MODEL=PWCNetResidualFlow
 EVAL_LOSS=MultiScaleAdaptiveEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
 
 # save path
 TIME=$(date +"%Y%m%d-%H%M%S")
-SAVE_PATH="$EXPERIMENTS_HOME/pwc_noExperts_CTSK_$MODEL-$TIME"
+SAVE_PATH="$EXPERIMENTS_HOME/pwc_residual_flow_CTSK_$MODEL-$TIME"
 SAVE_EVERY=1
 
 # set cuda GPU ids

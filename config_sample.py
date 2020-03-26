@@ -7,9 +7,12 @@ class Config:
         "sintel": "/data/dataB/datasets/MPI-Sintel-complete/",
         "kitti": "/data/dataB/datasets/KITTI_data_scene_flow/",
 
-        "flyingChairsSample": "/data/dataB/datasets/FlyingChairs_sample402/data/",
-        "flyingThingsSample": "/data/dataB/datasets/FlyingThings3D_sample401_subset/",
+        "flyingChairsSubset": "/data/dataB/datasets/FlyingChairs_sample402/data/",
+        "flyingThingsSubset": "/data/dataB/datasets/FlyingThings3D_sample401_subset/",
         "sintelSubset": "/data/dataB/datasets/MPI-Sintel_subset400/",
+        "kittiSubset": "/data/dataB/datasets/KITTI_data_scene_flow/",
+
+        "middlebury": "/data/dataB/datasets/middlebury/"
     }
 
     temp_directory = "/data/dataB/temp/"

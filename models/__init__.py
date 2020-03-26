@@ -30,6 +30,8 @@ from . import pwcnetRecordable
 from . import pwcnetWOX1ConnectionRecordable
 from . import pwcExpertAddNetRecordable
 
+from . import pwcnet_residual_flow
+
 
 FlowNet1S            = flownet1s.FlowNet1S
 FlowNet1S_irr        = flownet1s_irr.FlowNet1S
@@ -91,3 +93,7 @@ CTSPWCExpertNetAdd01Recordable = pwcExpertAddNetRecordable.CTSPWCExpertNetAdd01R
 IRR_FlowNet          = IRR_FlowNet.FlowNet1S
 IRR_PWC              = IRR_PWC.PWCNet
 
+PWCNetResidualFlow = pwcnet_residual_flow.PWCNetResidualFlow
+
+CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly
+CTSKPWCExpertNetWOX1Add01DecoderExpertsOnly = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01DecoderExpertsOnly
