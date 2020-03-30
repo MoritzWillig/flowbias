@@ -5,6 +5,8 @@ from PIL import Image, ImageFont, ImageDraw
 class AGrid:
 
     def __init__(self, grid, image_shape, padding=5, text_height=50, title_height=70, text_params=None, title_params=None):
+        if len(image_shape) != 2:
+            raise ValueError(f"expected a two dimensional image shape, but got dim {len(image_shape)}")
         self._padding = padding
         self._text_height = text_height
         self._title_height = title_height

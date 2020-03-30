@@ -33,6 +33,13 @@ def sample_to_torch_batch(sample):
     return sample
 
 
+def stack_torch_batch(sample, expand=5):
+    for key, value in sample.items():
+        if "input" in key or "target" in key:
+            sample[key] = value.expand(expand, -1, -1, -1).cuda()
+    return sample
+
+
 def torch_batch_to_cuda(sample):
     for key, value in sample.items():
         if "input" in key or "target" in key:

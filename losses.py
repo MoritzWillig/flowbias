@@ -1,11 +1,15 @@
 from __future__ import absolute_import, division, print_function
 
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as tf
 import scipy.misc
 import os
 import numpy as np
+
+from flowbias.data_manipulation.extract_minor_flow import compute_secondary_flows
 
 
 def _elementwise_epe(input_flow, target_flow):
@@ -479,6 +483,68 @@ class MultiScaleAdaptiveEPE_PWC(nn.Module):
             return self.sparseLoss.forward(output_dict, target_dict)
 
 
+class MultiScaleEPE_SecondaryFlow_PWC(nn.Module):
+    def __init__(self,
+                 args):
+
+        super(MultiScaleEPE_SecondaryFlow_PWC, self).__init__()
+        self._args = args
+        self._batch_size = args.batch_size
+        self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
+
+        self._em_iterations = 5
+        self._sec_flow_weight = 0.6
+
+
+    def forward(self, output_dict, target_dict):
+        loss_dict = {}
+
+        if self.training:
+            outputs = output_dict['flow']
+            outputs_sec = output_dict['sec_flow']
+
+            # div_flow trick
+            target = self._args.model_div_flow * target_dict["target1"]
+            with torch.no_grad():
+                target_primary, target_secondary = compute_secondary_flows(target, self._em_iterations)
+
+            #primary flow
+            total_loss = 0
+            for ii, (output_ii, target_ii) in enumerate(zip(outputs, target_primary)):
+                #loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
+                loss_ii = _elementwise_epe(output_ii, target_ii).sum()
+                total_loss = total_loss + self._weights[ii] * loss_ii
+            loss_dict["total_loss"] = total_loss / self._batch_size
+
+            # secondary flow
+            total_loss = 0
+            for ii, (output_ii, target_ii) in enumerate(zip(outputs_sec, target_secondary)):
+                #loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
+                loss_ii = _elementwise_epe(output_ii, target_ii).sum()
+                total_loss = total_loss + self._weights[ii] * loss_ii
+            loss_dict["total_loss"] += (total_loss / self._batch_size) * self._sec_flow_weight
+
+        else:
+            epe = _elementwise_epe(output_dict["flow"], target_dict["target1"])
+            loss_dict["epe"] = epe.mean()
+
+        return loss_dict
+
+class MultiScaleAdaptiveEPE_SecondaryFlow_PWC(nn.Module):
+
+    def __init__(self, args):
+        super().__init__()
+        self.denseLoss = MultiScaleEPE_SecondaryFlow_PWC(args)
+        #FIXME implement sparse secondary flow ...
+        self.sparseLoss = MultiScaleSparseEPE_PWC(args)
+
+    def forward(self, output_dict, target_dict):
+        if target_dict["dense"][0]:
+            return self.denseLoss.forward(output_dict, target_dict)
+        else:
+            return self.sparseLoss.forward(output_dict, target_dict)
+
+
 class MultiScaleEPE_PWC_Bi(nn.Module):
     def __init__(self,
                  args):
@@ -568,7 +634,7 @@ class MultiScaleEPE_PWC_Bi_Occ(nn.Module):
 
         super(MultiScaleEPE_PWC_Bi_Occ, self).__init__()
         self._args = args
-        self._batch_size = args.batch_size        
+        self._batch_size = args.batch_size
         self._weights = [0.32, 0.08, 0.02, 0.01, 0.005]
 
         self.occ_activ = nn.Sigmoid()

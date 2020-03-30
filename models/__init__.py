@@ -31,6 +31,7 @@ from . import pwcnetWOX1ConnectionRecordable
 from . import pwcExpertAddNetRecordable
 
 from . import pwcnet_residual_flow
+from . import pwcnet_secondary_flow
 
 
 FlowNet1S            = flownet1s.FlowNet1S
@@ -97,3 +98,5 @@ PWCNetResidualFlow = pwcnet_residual_flow.PWCNetResidualFlow
 
 CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly
 CTSKPWCExpertNetWOX1Add01DecoderExpertsOnly = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01DecoderExpertsOnly
+
+PWCNetWOX1SecondaryFlow = pwcnet_secondary_flow.PWCNetWOX1SecondaryFlow

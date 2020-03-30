@@ -76,13 +76,17 @@ def flow_to_png(flow_map, max_value=None):
 
 
 
-def compute_color(u, v):
+def compute_color(u, v=None):
     """
     compute optical flow color map
     :param u: optical flow horizontal map
     :param v: optical flow vertical map
     :return: optical flow in color code
     """
+    if v is None:
+        v = u[:, :, 1]
+        u = u[:, :, 0]
+
     [h, w] = u.shape
     img = np.zeros([h, w, 3])
     nanIdx = np.isnan(u) | np.isnan(v)
