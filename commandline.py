@@ -19,6 +19,8 @@ import flowbias.optim as optim
 import logging
 
 import flowbias.datasets.samplers as samplers
+import flowbias.training.batch.collate as collate_fns
+import flowbias.training.gradients as gradient_adjustments
 
 
 def _get_type_from_arg(arg):
@@ -193,11 +195,13 @@ def _parse_arguments():
     add("--batch_size_val", type=int, default=1)
     add("--checkpoint", type=tools.str2str_or_none, default=None)
     add("--cuda", type=tools.str2bool, default=True)
+    add("--data_parallel", type=tools.str2bool, default=False)
     add("--evaluation", type=tools.str2bool, default=False)
     add("--name", default="run", type=str)
     add("--num_workers", type=int, default=4)
     add("--save", "-s", default="/tmp/work", type=str)
     add("--seed", type=int, default=1)
+    add("--loss_on_gpu", type=int, default=0)
     add("--start_epoch", type=int, default=1)
     add("--total_epochs", type=int, default=10)
     add("--save_result_path_name", default="", type=str)
@@ -244,7 +248,13 @@ def _parse_arguments():
         default_class="FlowNet1S",
         exclude_classes=["_*", "Variable"],
         exclude_params=["self","args"],
-        unknown_default_types={"num_experts": int, "expert_split": float, "expert_weight": float, "ignore_missing_experts": bool})
+        unknown_default_types={
+            "num_experts": int,
+            "expert_split": float,
+            "expert_weight": float,
+            "ignore_missing_experts": bool,
+            "split_to_gpus": tools.str2intlist
+        })
 
     # -------------------------------------------------------------------------
     # Arguments inferred from augmentations for training
@@ -290,6 +300,28 @@ def _parse_arguments():
         name="training_sampler",
         default_class=None,
         exclude_params=["self", "args", "batch_size"],
+        exclude_classes=["_*"],)
+
+    # -------------------------------------------------------------------------
+    # Arguments inferred from collate functions
+    # -------------------------------------------------------------------------
+    _add_arguments_for_module(
+        parser,
+        collate_fns,
+        name="training_collate_fn",
+        default_class=None,
+        exclude_params=["self"],
+        exclude_classes=["_*"])
+
+    # -------------------------------------------------------------------------
+    # Arguments inferred from data samplers for training
+    # -------------------------------------------------------------------------
+    _add_arguments_for_module(
+        parser,
+        gradient_adjustments,
+        name="training_gradient_adjust",
+        default_class=None,
+        exclude_params=["self", "args"],
         exclude_classes=["_*"],)
 
     # -------------------------------------------------------------------------
@@ -390,6 +422,10 @@ def postprocess_args(args):
         sampler_classes = tools.module_classes_to_dict(samplers)
         args.training_sampler_class = sampler_classes[args.training_sampler]
 
+    if args.training_collate_fn is not None:
+        training_collate_classes = tools.module_classes_to_dict(collate_fns)
+        args.training_collate_fn_class = training_collate_classes[args.training_collate_fn]
+
     if args.validation_dataset is not None:
         dataset_classes = tools.module_classes_to_dict(datasets)
         args.validation_dataset_class = dataset_classes[args.validation_dataset]
@@ -397,6 +433,10 @@ def postprocess_args(args):
     if args.training_augmentation is not None:
         augmentation_classes = tools.module_classes_to_dict(augmentations)
         args.training_augmentation_class = augmentation_classes[args.training_augmentation]
+
+    if args.training_gradient_adjust is not None:
+        training_gradient_adjust_classes = tools.module_classes_to_dict(gradient_adjustments)
+        args.training_gradient_adjust_class = training_gradient_adjust_classes[args.training_gradient_adjust]
 
     if args.validation_augmentation is not None:
         augmentation_classes = tools.module_classes_to_dict(augmentations)

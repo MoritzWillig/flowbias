@@ -32,6 +32,8 @@ def main():
     # Configure data augmentation
     training_augmentation, validation_augmentation = config.configure_runtime_augmentations(args)
 
+    training_gradient_adjust = None if args.training_gradient_adjust_class is None else args.training_augmentation_class(args)
+
     # Configure model and loss    
     model_and_loss = config.configure_model_and_loss(args)
 
@@ -44,13 +46,14 @@ def main():
         if not os.path.exists(args.save):
             os.makedirs(args.save)
 
-    # # Multi-GPU automation    
-    # with logger.LoggingBlock("Multi GPU", emph=True):
-    #     if torch.cuda.device_count() > 1:
-    #         logging.info("Let's use %d GPUs!" % torch.cuda.device_count())
-    #         model_and_loss._model = torch.nn.DataParallel(model_and_loss._model)
-    #     else:
-    #         logging.info("Let's use %d GPU!" % torch.cuda.device_count())
+    # Multi-GPU automation
+    if args.data_parallel:
+        with logger.LoggingBlock("Multi GPU", emph=True):
+            if torch.cuda.device_count() > 1:
+                logging.info("Let's use %d GPUs!" % torch.cuda.device_count())
+                model_and_loss._model = torch.nn.DataParallel(model_and_loss._model)
+            else:
+                logging.info("Let's use %d GPU!" % torch.cuda.device_count())
 
     
     # Configure optimizer    
@@ -83,6 +86,7 @@ def main():
         validation_loader=validation_loader,
         inference_loader=inference_loader,
         training_augmentation=training_augmentation,
+        training_gradient_adjust=training_gradient_adjust,
         validation_augmentation=validation_augmentation)
 
 if __name__ == "__main__":

@@ -174,6 +174,13 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertA
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert2 /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_expert2.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert3 /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_expert3.json
 
+# expert models WOX1 add CTS
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331/checkpoint_best.ckpt CTSPWCExpertNet01WOX1AddNoExpert /data/dataB/meta/full_evals/expertWOX1_CTS_add01_no_expert.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331/checkpoint_best.ckpt CTSPWCExpertNet01WOX1AddExpert0 /data/dataB/meta/full_evals/expertWOX1_CTS_add01_expert0.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331/checkpoint_best.ckpt CTSPWCExpertNet01WOX1AddExpert1 /data/dataB/meta/full_evals/expertWOX1_CTS_add01_expert1.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331/checkpoint_best.ckpt CTSPWCExpertNet01WOX1AddExpert2 /data/dataB/meta/full_evals/expertWOX1_CTS_add01_expert2.json
+
+
 # expert models add failed kitti augmentation
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddKnown /data/dataB/meta/full_evals/expert_add01_failedAug_known.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNet-20200124-174956/checkpoint_best.ckpt CTSKPWCExpertNet01AddNoExpert /data/dataB/meta/full_evals/expert_add01_failedAug_no_expert.json

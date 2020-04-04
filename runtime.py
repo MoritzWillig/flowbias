@@ -119,6 +119,7 @@ class TrainingEpoch:
                  loader,
                  optimizer,
                  augmentation=None,
+                 training_gradient_adjust=None,
                  iters_per_epoch=None,
                  add_progress_stats={},
                  desc="Training Epoch"):
@@ -129,6 +130,7 @@ class TrainingEpoch:
         self._model_and_loss = model_and_loss
         self._optimizer = optimizer
         self._augmentation = augmentation
+        self._training_gradient_adjust = training_gradient_adjust
         self._add_progress_stats = add_progress_stats
         self._iters_per_epoch = iters_per_epoch
 
@@ -179,24 +181,52 @@ class TrainingEpoch:
         # -------------------------------------------------------------
         # Run forward pass to get losses and outputs.
         # -------------------------------------------------------------
-        loss_dict, output_dict = self._model_and_loss(example_dict)
+        virtual_step = ("virtual_batch" in example_dict) and (example_dict["virtual_batch"] is True)
+        if virtual_step:
+            training_loss = None
+            if len(example_dict["virtual_batches"]) == 0:
+                raise RuntimeError("dict contains no virtual batches")
+            # perform virtual steps
+            for i, vbatch in enumerate(example_dict["virtual_batches"]):
+                vbatch_dict = dict(example_dict)
+                vbatch_dict["_vbatch_id"] = i
+                for key, value in vbatch:
+                    if key in vbatch_dict:
+                        raise RuntimeError("key {key} of vbatch already exists in example dict")
+                    vbatch_dict[key] = value
+                loss_dict, output_dict = self._model_and_loss(vbatch_dict)
 
-        # -------------------------------------------------------------
-        # Check total_loss for NaNs
-        # -------------------------------------------------------------
-        training_loss = loss_dict[self._args.training_key]
-        assert (not np.isnan(training_loss.item())), "training_loss is NaN"
+                # -------------------------------------------------------------
+                # Check total_loss for NaNs
+                # -------------------------------------------------------------
+                training_loss_vb = loss_dict[self._args.training_key]
+                assert (not np.isnan(training_loss_vb.item())), "training_loss is NaN"
+
+                if training_loss is None:
+                    training_loss = training_loss_vb
+                else:
+                    training_loss += training_loss_vb
+        else:
+            loss_dict, output_dict = self._model_and_loss(example_dict)
+
+            # -------------------------------------------------------------
+            # Check total_loss for NaNs
+            # -------------------------------------------------------------
+            training_loss = loss_dict[self._args.training_key]
+            assert (not np.isnan(training_loss.item())), "training_loss is NaN"
 
         # -------------------------------------------------------------
         # Back propagation
         # -------------------------------------------------------------
+        if self._training_gradient_adjust is not None:
+            self._training_gradient_adjust.adjust_gradients(self._model_and_loss.model)
         training_loss.backward()
         self._optimizer.step()
 
         # -------------------------------------------------------------
         # Return success flag, loss and output dictionary
         # -------------------------------------------------------------
-        return loss_dict, output_dict, batch_size
+        return loss_dict, output_dict, batch_size, virtual_step
 
     def run(self, offset=0):
         # ---------------------------------------
@@ -243,8 +273,8 @@ class TrainingEpoch:
         # ---------------------------------------
         with create_progressbar(**progressbar_args) as progress:
             for example_dict in progress:
-                # perform step
-                loss_dict_per_step, output_dict, batch_size = self._step(example_dict)
+                loss_dict_per_step, output_dict, batch_size, is_virtual_step = self._step(example_dict)
+
                 # convert
                 loss_dict_per_step = tensor2float_dict(loss_dict_per_step)
 
@@ -265,7 +295,7 @@ class TrainingEpoch:
                 # view statistics in progress bar
                 progress_stats = format_moving_averages_as_progress_dict(
                     moving_averages_dict=moving_averages_dict,
-                    moving_averages_postfix="_ema")
+                    moving_averages_postfix="_ema_vbatch" if is_virtual_step else "_ema")
 
                 progress.set_postfix(progress_stats)
 
@@ -500,6 +530,7 @@ def exec_runtime(args,
                  validation_loader,
                  inference_loader,
                  training_augmentation,
+                 training_gradient_adjust,
                  validation_augmentation):
     filename_len = int(math.log10(args.total_epochs) + 1)
 
@@ -575,6 +606,7 @@ def exec_runtime(args,
                     optimizer=optimizer,
                     loader=train_loader,
                     augmentation=training_augmentation,
+                    training_gradient_adjust=training_gradient_adjust,
                     iters_per_epoch=args.training_iters_per_epoch).run()
 
             # -------------------------------------------

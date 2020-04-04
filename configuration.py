@@ -54,14 +54,23 @@ class ModelAndLoss(nn.Module):
         # Compute losses
         # -------------------------------------
         if self.training:
+            example_dict = {key: self._move_tensors(value, self._training_loss) for key, value in example_dict.items()}
+            output_dict = {key: self._move_tensors(value, self._training_loss) for key, value in output_dict.items()}
             loss_dict = self._training_loss(output_dict, example_dict)
         else:
+            example_dict = {key: self._move_tensors(value, self._training_loss) for key, value in example_dict.items()}
+            output_dict = {key: self._move_tensors(value, self._training_loss) for key, value in output_dict.items()}
             loss_dict = self._evaluation_loss(output_dict, example_dict)
 
         # -------------------------------------
         # Return losses and outputs
         # -------------------------------------
         return loss_dict, output_dict
+
+    def _move_tensors(self, value, module):
+        if isinstance(value, torch.Tensor):
+            return value.to(module.device())
+        return value
 
 
 def configure_runtime_augmentations(args):
@@ -129,7 +138,8 @@ def configure_model_and_loss(args):
         if args.training_loss is not None:
             kwargs = tools.kwargs_from_args(args, "training_loss")
             kwargs["args"] = args
-            training_loss = tools.instance_from_kwargs(args.training_loss_class, kwargs)
+
+            training_loss = tools.instance_from_kwargs(args.training_loss_class, kwargs).to(loss_device)
 
         # ----------------------------------------------------
         # Validation loss
@@ -138,7 +148,12 @@ def configure_model_and_loss(args):
         if args.validation_loss is not None:
             kwargs = tools.kwargs_from_args(args, "validation_loss")
             kwargs["args"] = args
-            validation_loss = tools.instance_from_kwargs(args.validation_loss_class, kwargs)
+            validation_loss = tools.instance_from_kwargs(args.validation_loss_class, kwargs).to(loss_device)
+
+        if args.cuda:
+            loss_device = torch.cuda.device(args.loss_on_gpu)
+            training_loss = training_loss.to(loss_device)
+            validation_loss = validation_loss.to(loss_device)
 
         # ----------------------------------------------------
         # Model and loss
@@ -149,7 +164,11 @@ def configure_model_and_loss(args):
         # If Cuda, transfer model to Cuda and wrap with DataParallel.
         # -----------------------------------------------------------
         if args.cuda:
-            model_and_loss = model_and_loss.cuda()
+            if getattr(model_and_loss.model, "self_cuda_from_args", None) is None:
+                model_and_loss = model_and_loss.cuda()
+            else:
+                if not model_and_loss.model.self_cuda_from_args():
+                    model_and_loss = model_and_loss.cuda()
 
         # ---------------------------------------------------------------
         # Report some network statistics
@@ -443,11 +462,14 @@ def configure_data_loaders(args):
                 sampler_kwargs["batch_size"] = args.batch_size
                 sampler_kwargs["args"] = args
                 train_sampler = tools.instance_from_kwargs(args.training_sampler_class, sampler_kwargs)
-
-                #import itertools
-                #train_sampler = list(itertools.islice(train_sampler, args.training_iters_per_epoch))
             else:
                 train_sampler = None
+
+            if args.collate_fn is not None:
+                collate_fn_kwargs = tools.kwargs_from_args(args, "training_collate_fn")
+                collate_fn = tools.instance_from_kwargs(args.training_collate_fn_class, collate_fn_kwargs)
+            else:
+                collate_fn = None
 
             # ----------------------------------------------
             # Create training loader
@@ -458,6 +480,7 @@ def configure_data_loaders(args):
                 shuffle=True if train_sampler is None else False,
                 drop_last=False if train_sampler is None else None,
                 batch_sampler=train_sampler,
+                collate_fn=collate_fn,
                 **gpuargs)
 
             _log_statistics(train_dataset, prefix="Training", name=args.training_dataset)

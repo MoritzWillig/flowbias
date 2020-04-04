@@ -170,13 +170,19 @@ model_meta = {
     "expert_split02_failedAug_expert2": ["CTSKPWCExpertNet02", "pwc_expert_split_02_failed", None, "chairs,things,sintel,kitti", None, "expert_base02_PWCExpertNet_failedAugm-20200124-000701", "expert2", True],
     "expert_split02_failedAug_expert3": ["CTSKPWCExpertNet02", "pwc_expert_split_02_failed", None, "chairs,things,sintel,kitti", None, "expert_base02_PWCExpertNet_failedAugm-20200124-000701", "expert3", True],
 
-    # pwcWOX1 expert model add
+    # pwcWOX1 expert model add CTSK
     "expertWOX1_CTSK_add01_known":   ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "error", False],
     "expertWOX1_CTSK_add01_no_expert": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "noExpert", False],
     "expertWOX1_CTSK_add01_expert0": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert0", True],
     "expertWOX1_CTSK_add01_expert1": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert1", True],
     "expertWOX1_CTSK_add01_expert2": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert2", True],
     "expertWOX1_CTSK_add01_expert3": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert3", True],
+
+    # pwcWOX1 expert model add CTS
+    "expertWOX1_CTS_add01_no_expert": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "noExpert", False],
+    "expertWOX1_CTS_add01_expert0": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "expert0", True],
+    "expertWOX1_CTS_add01_expert1": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "expert1", True],
+    "expertWOX1_CTS_add01_expert2": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "expert2", True],
 
     # pwc expert model add failed kitti augmentation
     "expert_add01_failedAug_known":   ["CTSKPWCExpertNetAdd01_failed", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNet-20200124-174956", "error", False],
@@ -404,6 +410,9 @@ model_meta_ordering = [
     "expertWOX1_CTSK_add01_known", "expertWOX1_CTSK_add01_no_expert",
     "expertWOX1_CTSK_add01_expert0", "expertWOX1_CTSK_add01_expert1", "expertWOX1_CTSK_add01_expert2",
     "expertWOX1_CTSK_add01_expert3",
+    # pwc expert model add wox1 CTS
+    "expertWOX1_CTS_add01_no_expert",
+    "expertWOX1_CTS_add01_expert0", "expertWOX1_CTS_add01_expert1", "expertWOX1_CTS_add01_expert2",
     # pwc expert model CTS add
     "expert_CTS_add01_no_expert",
     "expert_CTS_add01_expert0", "expert_CTS_add01_expert1", "expert_CTS_add01_expert2",

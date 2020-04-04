@@ -165,7 +165,8 @@ class PWCExpertAddNetWOX1(nn.Module):
     def __init__(
             self, args, num_experts, expert_weight, div_flow=0.05, adjust_decover_conv_layers=True,
             has_encoder_experts=True, has_decoder_experts=True,
-            has_context_experts=None, ignore_missing_experts=False):
+            has_context_experts=None, ignore_missing_experts=False,
+            split_to_gpus=None):
         super(PWCExpertAddNetWOX1, self).__init__()
         self.args = args
         self._num_experts = num_experts
@@ -176,6 +177,25 @@ class PWCExpertAddNetWOX1(nn.Module):
         self.output_level = 4
         self.num_levels = 7
         self.leakyRELU = nn.LeakyReLU(0.1, inplace=True)
+
+        self._cuda_self_configurated = False
+
+        if args.cuda:
+            if split_to_gpus is not None:
+                if len(split_to_gpus) == 1:
+                    gpu_split0 = torch.cuda.device(split_to_gpus[0])
+                    gpu_split1 = torch.cuda.device(split_to_gpus[0])
+                elif len(split_to_gpus) == 2:
+                    gpu_split0 = torch.cuda.device(split_to_gpus[0])
+                    gpu_split1 = torch.cuda.device(split_to_gpus[1])
+                else:
+                    raise ValueError("model splits other than {1,2} are not implemented")
+                self._cuda_self_configurated = True
+        else:
+            if split_to_gpus is not None:
+                raise ValueError("passed split_to_gpus parameter, but cuda was False")
+            gpu_split0 = None
+            gpu_split1 = None
 
         if has_context_experts is None:
             has_context_experts = has_decoder_experts
@@ -189,10 +209,10 @@ class PWCExpertAddNetWOX1(nn.Module):
         flow_estimator_weight = self._expert_weight if has_decoder_experts else 0
         context_network_weight = self._expert_weight if has_context_experts else 0
 
-        self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, feature_extractor_weight)
-        self.warping_layer = WarpingLayer()
+        self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, feature_extractor_weight).to(gpu_split0)
+        self.warping_layer = WarpingLayer().to(gpu_split0)
 
-        self.flow_estimators = nn.ModuleList()
+        self.flow_estimators = nn.ModuleList().to(gpu_split1)
         self.dim_corr = (self.search_range * 2 + 1) ** 2
         for l, ch in enumerate(self.num_chs[::-1]):
             if l > self.output_level:
@@ -204,13 +224,20 @@ class PWCExpertAddNetWOX1(nn.Module):
             else:
                 num_ch_in = self.dim_corr + 2
 
-            layer = FlowEstimatorDenseExpertAddWOX1(num_ch_in, num_experts, flow_estimator_weight, 0 if adjust_decover_conv_layers else ch)
+            layer = FlowEstimatorDenseExpertAddWOX1(num_ch_in, num_experts, flow_estimator_weight, 0 if adjust_decover_conv_layers else ch).to(gpu_split1)
             self.flow_estimators.append(layer)
 
         self.context_networks = ContextNetworkExpertAddWOX1(
-            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[-(self.output_level+1)], num_experts, context_network_weight)
+            self.dim_corr + 32 + 2 + 448 + 2 - self.num_chs[-(self.output_level+1)], num_experts, context_network_weight).to(gpu_split1)
 
         initialize_msra(self.modules())
+
+    def self_cuda_from_args(self):
+        """
+        indicates if the modules are already moved to the gpus
+        :return:
+        """
+        return self._cuda_self_configurated
 
     def forward(self, input_dict):
         # assuming each sample in the batch is from the same dataset
@@ -258,6 +285,10 @@ class PWCExpertAddNetWOX1(nn.Module):
             # correlation
             out_corr = Correlation(pad_size=self.search_range, kernel_size=1, max_displacement=self.search_range, stride1=1, stride2=1, corr_multiply=1)(x1, x2_warp)
             out_corr_relu = self.leakyRELU(out_corr)
+
+            # move tensors if the model split between gpus
+            out_corr_relu = out_corr_relu.to(self.flow_estimators[l].device(), non_blocking=True)
+            flow = flow.to(self.flow_estimators[l].device(), non_blocking=True)
 
             # flow estimator
             if l == 0:
