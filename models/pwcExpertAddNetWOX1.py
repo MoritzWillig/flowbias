@@ -248,9 +248,9 @@ class PWCExpertAddNetWOX1(nn.Module):
         # assuming each sample in the batch is from the same dataset
         if 'dataset' in input_dict:
             expert_id = input_dict['dataset'] if isinstance(input_dict['dataset'], int) else input_dict['dataset'][0]
-            encoder_expert_id = expert_id
-            decoder_expert_id = expert_id
-            context_expert_id = expert_id
+            encoder_expert_id = expert_id if self.has_encoder_experts else -1
+            decoder_expert_id = expert_id if self.has_decoder_experts else -1
+            context_expert_id = expert_id if self.has_context_experts else -1
         else:
             encoder_expert_id = input_dict['encoder_expert_id'] if isinstance(input_dict['encoder_expert_id'], int) else input_dict['encoder_expert_id'][0]
             decoder_expert_id = input_dict['decoder_expert_id'] if isinstance(input_dict['decoder_expert_id'], int) else input_dict['decoder_expert_id'][0]
@@ -292,8 +292,8 @@ class PWCExpertAddNetWOX1(nn.Module):
             out_corr_relu = self.leakyRELU(out_corr)
 
             # move tensors if the model split between gpus
-            out_corr_relu = out_corr_relu.to(self.flow_estimators[l].device(), non_blocking=True)
-            flow = flow.to(self.flow_estimators[l].device(), non_blocking=True)
+            #out_corr_relu = out_corr_relu.to(self.flow_estimators[l].device(), non_blocking=True)
+            #flow = flow.to(self.flow_estimators[l].device(), non_blocking=True)
 
             # flow estimator
             if l == 0:

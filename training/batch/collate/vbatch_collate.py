@@ -14,7 +14,7 @@ class VBatchGroupingCollator:
         vbatches = {}
         for sample in samples:
             vbatch_key = sample[self._vbatch_key]
-            if vbatch_key in vbatches:
+            if vbatch_key not in vbatches:
                 vbatches[vbatch_key] = []
             vbatches[vbatch_key].append(sample)
 

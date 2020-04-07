@@ -156,7 +156,7 @@ model_meta = {
     "WOX1Blind_kt": ["PWCNetWOX1Connection", "without_x1_connection_blind_fused", "pwcWOX1_kitti,pwcWOX1_things", "kitti,things", None, "WOX1Blind@kt", None, False],
     "WOX1Blind_ks": ["PWCNetWOX1Connection", "without_x1_connection_blind_fused", "pwcWOX1_kitti,pwcWOX1_sintel", "kitti,sintel", None, "WOX1Blind@ks", None, False],
 
-    # pwcWOX1 expert model split
+    # pwcWOX1 expert model split CTSK
     "expertWOX1_CTSK_split02_known": ["CTSKPWCExpertNet02WOX1", "pwc_expert_split_02", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926", "error", False],
     "expertWOX1_CTSK_split02_expert0": ["CTSKPWCExpertNet02WOX1", "pwc_expert_split_02", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926", "expert0", True],
     "expertWOX1_CTSK_split02_expert1": ["CTSKPWCExpertNet02WOX1", "pwc_expert_split_02", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926", "expert1", True],
@@ -178,6 +178,14 @@ model_meta = {
     "expertWOX1_CTSK_add01_expert2": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert2", True],
     "expertWOX1_CTSK_add01_expert3": ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add_01", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert3", True],
 
+    # pwcWOX1 expert model linAdd CTSK
+    "expertWOX1_CTSK_linAdd01_known":   ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "error", False],
+    "expertWOX1_CTSK_linAdd01_no_expert": ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "noExpert", False],
+    "expertWOX1_CTSK_linAdd01_expert0": ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert0", True],
+    "expertWOX1_CTSK_linAdd01_expert1": ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert1", True],
+    "expertWOX1_CTSK_linAdd01_expert2": ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert2", True],
+    "expertWOX1_CTSK_linAdd01_expert3": ["CTSKPWCExpertNetWOX1LinAdd01", "pwc_expert_linadd_01", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert3", True],
+
     # pwcWOX1 expert model add CTS
     "expertWOX1_CTS_add01_no_expert": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "noExpert", False],
     "expertWOX1_CTS_add01_expert0": ["CTSPWCExpertNetWOX1Add01", "pwc_expert_add_01_CTS", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNetWOX1-20200315-002331", "expert0", True],
@@ -198,6 +206,14 @@ model_meta = {
     "expert_CTS_add01_expert0": ["CTSPWCExpertNetAdd01", "pwc_expert_CTS_add_01", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNet-20200210-223344", "expert0", True],
     "expert_CTS_add01_expert1": ["CTSPWCExpertNetAdd01", "pwc_expert_CTS_add_01", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNet-20200210-223344", "expert1", True],
     "expert_CTS_add01_expert2": ["CTSPWCExpertNetAdd01", "pwc_expert_CTS_add_01", None, "chairs,things,sintel", None, "expert_add01_CTS_PWCExpertAddNet-20200210-223344", "expert2", True],
+
+    # pwcWOX1 expert model add encoder only CTSK
+    "expertWOX1_encoder_only_CTSK_add01_known":   ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "error", False],
+    "expertWOX1_encoder_only_CTSK_add01_no_expert": ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "noExpert", False],
+    "expertWOX1_encoder_only_CTSK_add01_expert0": ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "expert0", True],
+    "expertWOX1_encoder_only_CTSK_add01_expert1": ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "expert1", True],
+    "expertWOX1_encoder_only_CTSK_add01_expert2": ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "expert2", True],
+    "expertWOX1_encoder_only_CTSK_add01_expert3": ["CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly", "pwc_expert_add_01_encoder_only", None, "chairs,things,sintel,kitti", None, "expert_encoder_only_add01_CTSKPWCExpertNetWOX1Add01EncoderExpertsOnly-20200326-132437", "expert3", True],
 
     # pwcWOX1 expert model split trace
     "expertWOX1_CTSK_split02_known_iter01": ["CTSKPWCExpertNet02WOX1", "pwc_expert_split02_trace", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926/checkpoint_iter_001.ckpt", "error", False],
@@ -250,6 +266,9 @@ model_meta = {
 
     # pwc down sampling encoder
     "pwcDSEncoder_chairs": ["PWCNetDSEncoder", "pwc_ds_encoder", None, "chairs", None, "PWC_DSEncoder_PWCNetDSEncoder-onChairs-20200209-190403", None, True],
+
+    # pwc residual flow
+    "pwc_residual_flow_CTSK": ["PWCNetResidualFlow", "pwc_residual_flow", None, "chairs,things,sintel,kitti", None, "pwc_residual_flow_CTSK_PWCNetResidualFlow-20200326-131601", None, True],
 
     # pwc every chairs
     "pwc_every_chairs_001": ["PWCNet", "pwc_progress_tracing", None, "chairs", None, "PWC_EVERY_PWCNet-onChairs-20200203-022421/checkpoint_iter_001.ckpt", None, False],
@@ -410,12 +429,20 @@ model_meta_ordering = [
     "expertWOX1_CTSK_add01_known", "expertWOX1_CTSK_add01_no_expert",
     "expertWOX1_CTSK_add01_expert0", "expertWOX1_CTSK_add01_expert1", "expertWOX1_CTSK_add01_expert2",
     "expertWOX1_CTSK_add01_expert3",
+    # pwc expert model linAdd wox1
+    "expertWOX1_CTSK_linAdd01_known", "expertWOX1_CTSK_linAdd01_no_expert",
+    "expertWOX1_CTSK_linAdd01_expert0", "expertWOX1_CTSK_linAdd01_expert1", "expertWOX1_CTSK_linAdd01_expert2",
+    "expertWOX1_CTSK_linAdd01_expert3",
     # pwc expert model add wox1 CTS
     "expertWOX1_CTS_add01_no_expert",
     "expertWOX1_CTS_add01_expert0", "expertWOX1_CTS_add01_expert1", "expertWOX1_CTS_add01_expert2",
     # pwc expert model CTS add
     "expert_CTS_add01_no_expert",
     "expert_CTS_add01_expert0", "expert_CTS_add01_expert1", "expert_CTS_add01_expert2",
+    # pwcWOX1 expert model add encoder only CTSK
+    "expertWOX1_encoder_only_CTSK_add01_known", "expertWOX1_encoder_only_CTSK_add01_no_expert",
+    "expertWOX1_encoder_only_CTSK_add01_expert0", "expertWOX1_encoder_only_CTSK_add01_expert1",
+    "expertWOX1_encoder_only_CTSK_add01_expert2", "expertWOX1_encoder_only_CTSK_add01_expert3",
     # pwcWOX1 expert model split trace
     "expertWOX1_CTSK_split02_known_iter01", "expertWOX1_CTSK_split02_known_iter10", "expertWOX1_CTSK_split02_known_iter20",
     "expertWOX1_CTSK_split02_known_iter30", "expertWOX1_CTSK_split02_known_iter40", "expertWOX1_CTSK_split02_known_iter50",
@@ -442,6 +469,9 @@ model_meta_ordering = [
     "pwc_chairs_iter_148",
     # pwc down sampling encoder
     "pwcDSEncoder_chairs",
+    # pwc residual flow
+    "pwc_residual_flow_CTSK",
+
     # pwc every chairs
     "pwc_every_chairs_001", "pwc_every_chairs_011", "pwc_every_chairs_021", "pwc_every_chairs_031",
     "pwc_every_chairs_041", "pwc_every_chairs_051", "pwc_every_chairs_061", "pwc_every_chairs_071",

@@ -71,6 +71,9 @@ class MultiScaleEPE_FlowNet(nn.Module):
     def forward(self, output_dict, target_dict):
         loss_dict = {}
 
+        b, _, _, _ = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
+
         if self.training:
             outputs = [output_dict[key] for key in ["flow2", "flow3", "flow4", "flow5", "flow6"]]
 
@@ -81,7 +84,7 @@ class MultiScaleEPE_FlowNet(nn.Module):
             for i, output_i in enumerate(outputs):
                 target_i = _downsample2d_as(target, output_i)
                 epe_i = _elementwise_epe(output_i, target_i)
-                total_loss = total_loss + self._weights[i] * epe_i.sum() / self._batch_size
+                total_loss = total_loss + self._weights[i] * epe_i.sum() / bs_full
                 loss_dict["epe%i" % (i + 2)] = epe_i.mean()
             loss_dict["total_loss"] = total_loss
         else:
@@ -110,6 +113,7 @@ class MultiScaleSparseEPE_FlowNet(nn.Module):
 
         valid_masks = target_dict["input_valid"]
         b, _, h, w = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
 
         if self.training:
             outputs = [output_dict[key] for key in ["flow2", "flow3", "flow4", "flow5", "flow6"]]
@@ -123,14 +127,14 @@ class MultiScaleSparseEPE_FlowNet(nn.Module):
                 masked_epe = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii))[valid_mask != 0]
                 norm_const = (h * w) / (valid_mask[ii, ...].sum())
 
-                total_loss += self._weights[ii] * (masked_epe.sum() * norm_const) / self._batch_size
+                total_loss += self._weights[ii] * (masked_epe.sum() * norm_const) / bs_full
                 loss_dict["epe%i" % (ii + 2)] = (masked_epe.mean() * norm_const)
             loss_dict["total_loss"] = total_loss
         else:
             output = output_dict["flow1"]
             target = target_dict["target1"]
             epe = _elementwise_epe(output, target)
-            loss_dict["epe"] = epe.mean() * (b / self._batch_size)
+            loss_dict["epe"] = epe.mean() * (b / bs_full)
 
         return loss_dict
 
@@ -146,6 +150,9 @@ class MultiScaleEPE_PWC(nn.Module):
     def forward(self, output_dict, target_dict):
         loss_dict = {}
 
+        b, _, _, _ = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
+
         if self.training:
             outputs = output_dict['flow']
 
@@ -156,7 +163,7 @@ class MultiScaleEPE_PWC(nn.Module):
             for ii, output_ii in enumerate(outputs):
                 loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
                 total_loss = total_loss + self._weights[ii] * loss_ii
-            loss_dict["total_loss"] = total_loss / self._batch_size
+            loss_dict["total_loss"] = total_loss / bs_full
         else:
             epe = _elementwise_epe(output_dict["flow"], target_dict["target1"])
             # FIXME multipy by (local_batch_size / batch_size) to account for virtual batch size
@@ -181,6 +188,7 @@ class MultiScaleSparseEPE_PWC(nn.Module):
 
         valid_masks = target_dict["input_valid"]
         b, _, h, w = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
 
         if self.training:
             output_flo = output_dict['flow']
@@ -201,11 +209,11 @@ class MultiScaleSparseEPE_PWC(nn.Module):
                 for bb in range(b):
                     masked_epe_bb = dense_epe[bb, :, :, :][valid_masks[bb, :, :, :] != 0]
                     total_loss += self._up_weights[ii] * masked_epe_bb.sum() * norm_const[bb]
-            loss_dict["total_loss"] = total_loss / self._batch_size
+            loss_dict["total_loss"] = total_loss / bs_full
         else:
             flow_epe = _elementwise_epe(output_dict["flow"], target_dict["target1"]) * valid_masks
             epe_per_image = (flow_epe.view(b, -1).sum(1)) / (valid_masks.view(b, -1).sum(1))
-            loss_dict["epe"] = epe_per_image.mean() * (b/self._batch_size)
+            loss_dict["epe"] = epe_per_image.mean() * (b/bs_full)
 
         return loss_dict
 
@@ -240,6 +248,9 @@ class MultiScaleEPE_SecondaryFlow_PWC(nn.Module):
     def forward(self, output_dict, target_dict):
         loss_dict = {}
 
+        b, _, _, _ = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
+
         if self.training:
             outputs = output_dict['flow']
             outputs_sec = output_dict['sec_flow']
@@ -255,7 +266,7 @@ class MultiScaleEPE_SecondaryFlow_PWC(nn.Module):
                 #loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
                 loss_ii = _elementwise_epe(output_ii, target_ii).sum()
                 total_loss = total_loss + self._weights[ii] * loss_ii
-            loss_dict["total_loss"] = total_loss / self._batch_size
+            loss_dict["total_loss"] = total_loss / bs_full
 
             # secondary flow
             total_loss = 0
@@ -263,7 +274,7 @@ class MultiScaleEPE_SecondaryFlow_PWC(nn.Module):
                 #loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
                 loss_ii = _elementwise_epe(output_ii, target_ii).sum()
                 total_loss = total_loss + self._weights[ii] * loss_ii
-            loss_dict["total_loss"] += (total_loss / self._batch_size) * self._sec_flow_weight
+            loss_dict["total_loss"] += (total_loss / bs_full) * self._sec_flow_weight
 
         else:
             epe = _elementwise_epe(output_dict["flow"], target_dict["target1"])
@@ -309,6 +320,9 @@ class MultiScaleEPE_PWCDelta(nn.Module):
 
         target_delta = self.flow_gradient(target_dict["target1"])[:, :, :-1, :-1]
 
+        b, _, _, _ = target_dict["target1"].size()
+        bs_full = self._batch_size if self._batch_size is not None else b
+
         if self.training:
             outputs = output_dict['flow']
 
@@ -319,7 +333,7 @@ class MultiScaleEPE_PWCDelta(nn.Module):
             for ii, output_ii in enumerate(outputs):
                 loss_ii = _elementwise_epe(output_ii, _downsample2d_as(target, output_ii)).sum()
                 total_loss = total_loss + self._weights[ii] * loss_ii
-            loss_dict["total_loss"] = total_loss / self._batch_size
+            loss_dict["total_loss"] = total_loss / bs_full
 
         else:
             epe = _elementwise_epe(output_dict["flow"][:, :, :-1, :-1], target_delta)

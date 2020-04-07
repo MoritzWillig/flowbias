@@ -12,6 +12,7 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
         :param dataset_sequence_mode: any of "cycle", "weighted_random"
 
         'cycle': switch the dataset for each batch (dataset indices itself is randomized)
+        'mixed': creates a batch out of samples from every dataset
         'weighted_random': draws batches from the datasets so that every sample has the same percentage of being drawn
         'equal_bias': draws batches from the datasets so that the dataset induced bias is equal for every dataset TODO
         """
@@ -22,6 +23,13 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
 
         if self._dataset_sequence_mode == "cycle":
             self._current_dataset = 0
+        elif self._dataset_sequence_mode == "mixed":
+            # same batch size for all datasets
+            assert(all([bs == self._batch_sizes[0] for bs in self._batch_sizes]))
+            # make sure every we can draw the same number of samples from every dataset
+            assert(self._batch_sizes[0] % len(self._dataset_sizes) == 0)
+            self._num_dataset_samples = self._batch_sizes[0] // len(self._dataset_sizes)
+            self._batch_sizes = [self._num_dataset_samples for _ in self._batch_sizes]
         elif self._dataset_sequence_mode == "weighted_random":
             total_samples = sum(self._dataset_sizes)
             self._dataset_probabilities = [dataset_size / total_samples for dataset_size in self._dataset_sizes]
@@ -56,19 +64,25 @@ class CombinedDatasetBatchSampler(torch.utils.data.Sampler):
         return batch
 
     def _generate_batch(self):
-        dataset_id = None
-        batch = None
         if self._dataset_sequence_mode == "cycle":
             dataset_id = self._current_dataset
             batch = self._batch_from_dataset(dataset_id)
             self._current_dataset = (self._current_dataset + 1) % len(self._dataset_sizes)
+            return list(zip([dataset_id] * len(batch), batch))
+        elif self._dataset_sequence_mode == "mixed":
+            batch = []
+            for dataset_id in range(len(self._dataset_sizes)):
+                dataset_samples = self._batch_from_dataset(dataset_id)
+                batch.extend(list(zip([dataset_id]*self._batch_sizes[dataset_id], dataset_samples)))
+            return batch
         elif self._dataset_sequence_mode == "weighted_random":
             dataset_id = np.random.choice(len(self._dataset_sizes), p=self._dataset_probabilities)
             batch = self._batch_from_dataset(dataset_id)
+            return list(zip([dataset_id] * len(batch), batch))
         elif self._dataset_sequence_mode == "equal_bias":
             raise NotImplementedError()
-
-        return list(zip([dataset_id]*len(batch), batch))
+        else:
+            raise RuntimeError("unknown dataset sequence mode")
 
     def __iter__(self):
         while True:

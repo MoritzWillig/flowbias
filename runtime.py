@@ -139,39 +139,72 @@ class TrainingEpoch:
         # -------------------------------------------------------------
         # Get input and target tensor keys
         # -------------------------------------------------------------
-        input_keys = list(filter(lambda x: "input" in x, example_dict.keys()))
-        target_keys = list(filter(lambda x: "target" in x, example_dict.keys()))
-        tensor_keys = input_keys + target_keys
+        virtual_step = ("virtual_batch" in example_dict) and (example_dict["virtual_batch"] is True)
+        if virtual_step:
+            input_keys = set()
+            target_keys = set()
+            for virtual_batch in example_dict["virtual_batches"]:
+                input_keys.update(list(filter(lambda x: "input" in x, virtual_batch.keys())))
+                target_keys.update(list(filter(lambda x: "target" in x, virtual_batch.keys())))
+            tensor_keys = list(input_keys) + list(target_keys)
+        else:
+            input_keys = list(filter(lambda x: "input" in x, example_dict.keys()))
+            target_keys = list(filter(lambda x: "target" in x, example_dict.keys()))
+            tensor_keys = input_keys + target_keys
 
         # -------------------------------------------------------------
         # Possibly transfer to Cuda
         # -------------------------------------------------------------
         if self._args.cuda:
-            for key, value in example_dict.items():
-                if key in tensor_keys:
-                    example_dict[key] = value.cuda(non_blocking=False)
+            if virtual_step:
+                for vbatch in example_dict["virtual_batches"]:
+                    for key, value in vbatch.items():
+                        if key in tensor_keys:
+                            vbatch[key] = value.cuda(non_blocking=False)
+            else:
+                for key, value in example_dict.items():
+                    if key in tensor_keys:
+                        example_dict[key] = value.cuda(non_blocking=False)
 
         # -------------------------------------------------------------
         # Optionally perform augmentations
         # -------------------------------------------------------------
         if self._augmentation is not None:
             with torch.no_grad():
-                example_dict = self._augmentation(example_dict)
+                if virtual_step:
+                    # augment virtual steps
+                    for i, vbatch in enumerate(example_dict["virtual_batches"]):
+                        example_dict["virtual_batches"][i] = self._augmentation(vbatch)
+                else:
+                    example_dict = self._augmentation(example_dict)
 
         # -------------------------------------------------------------
         # Convert inputs/targets to variables that require gradients
         # -------------------------------------------------------------
-        for key, tensor in example_dict.items():
-            if key in input_keys:
-                example_dict[key] = tensor.requires_grad_(True)
-            elif key in target_keys:
-                example_dict[key] = tensor.requires_grad_(False)
+        if virtual_step:
+            for vbatch in example_dict["virtual_batches"]:
+                for key, tensor in example_dict.items():
+                    if key in input_keys:
+                        vbatch[key] = tensor.requires_grad_(True)
+                    elif key in target_keys:
+                        vbatch[key] = tensor.requires_grad_(False)
+        else:
+            for key, tensor in example_dict.items():
+                if key in input_keys:
+                    example_dict[key] = tensor.requires_grad_(True)
+                elif key in target_keys:
+                    example_dict[key] = tensor.requires_grad_(False)
 
         # -------------------------------------------------------------
         # Extract batch size from first input
         # -------------------------------------------------------------
-        example_input_key = next(input_key for input_key in example_dict.keys() if "input" in input_key)
-        batch_size = example_dict[example_input_key].size()[0]
+        if virtual_step:
+            vbatch = example_dict["virtual_batches"][0]
+            example_input_key = next(input_key for input_key in vbatch.keys() if "input" in input_key)
+            batch_size = vbatch[example_input_key].size()[0]
+        else:
+            example_input_key = next(input_key for input_key in example_dict.keys() if "input" in input_key)
+            batch_size = example_dict[example_input_key].size()[0]
 
         # -------------------------------------------------------------
         # Reset gradients
@@ -181,7 +214,6 @@ class TrainingEpoch:
         # -------------------------------------------------------------
         # Run forward pass to get losses and outputs.
         # -------------------------------------------------------------
-        virtual_step = ("virtual_batch" in example_dict) and (example_dict["virtual_batch"] is True)
         if virtual_step:
             training_loss = None
             if len(example_dict["virtual_batches"]) == 0:
@@ -190,7 +222,7 @@ class TrainingEpoch:
             for i, vbatch in enumerate(example_dict["virtual_batches"]):
                 vbatch_dict = dict(example_dict)
                 vbatch_dict["_vbatch_id"] = i
-                for key, value in vbatch:
+                for key, value in vbatch.items():
                     if key in vbatch_dict:
                         raise RuntimeError("key {key} of vbatch already exists in example dict")
                     vbatch_dict[key] = value
