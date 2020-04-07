@@ -180,6 +180,8 @@ class PWCExpertAddNetWOX1(nn.Module):
 
         self._cuda_self_configurated = False
 
+        gpu_split0 = None
+        gpu_split1 = None
         if args.cuda:
             if split_to_gpus is not None:
                 if len(split_to_gpus) == 1:
@@ -194,8 +196,6 @@ class PWCExpertAddNetWOX1(nn.Module):
         else:
             if split_to_gpus is not None:
                 raise ValueError("passed split_to_gpus parameter, but cuda was False")
-            gpu_split0 = None
-            gpu_split1 = None
 
         if has_context_experts is None:
             has_context_experts = has_decoder_experts
@@ -209,10 +209,15 @@ class PWCExpertAddNetWOX1(nn.Module):
         flow_estimator_weight = self._expert_weight if has_decoder_experts else 0
         context_network_weight = self._expert_weight if has_context_experts else 0
 
-        self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, feature_extractor_weight).to(gpu_split0)
-        self.warping_layer = WarpingLayer().to(gpu_split0)
+        if gpu_split0 is not None:
+            raise RuntimeError("not implemented")
+        #self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, feature_extractor_weight).to(gpu_split0)
+        self.feature_pyramid_extractor = FeatureExtractorExpertAddWOX1(self.num_chs, num_experts, feature_extractor_weight)
+        #self.warping_layer = WarpingLayer().to(gpu_split0)
+        self.warping_layer = WarpingLayer()
 
-        self.flow_estimators = nn.ModuleList().to(gpu_split1)
+        #self.flow_estimators = nn.ModuleList().to(gpu_split1)
+        self.flow_estimators = nn.ModuleList()
         self.dim_corr = (self.search_range * 2 + 1) ** 2
         for l, ch in enumerate(self.num_chs[::-1]):
             if l > self.output_level:
