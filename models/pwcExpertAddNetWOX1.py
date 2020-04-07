@@ -189,7 +189,7 @@ class PWCExpertAddNetWOX1(nn.Module):
                     gpu_split0 = torch.cuda.device(split_to_gpus[0])
                     gpu_split1 = torch.cuda.device(split_to_gpus[1])
                 else:
-                    raise ValueError("model splits other than {1,2} are not implemented")
+                    raise ValueError("model splits other than {0,1} are not implemented")
                 self._cuda_self_configurated = True
         else:
             if split_to_gpus is not None:

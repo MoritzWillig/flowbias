@@ -13,6 +13,7 @@ import logging
 import shutil
 import random
 import fnmatch
+import inspect
 
 from flowbias.config import Config
 
@@ -68,8 +69,8 @@ class ModelAndLoss(nn.Module):
         return loss_dict, output_dict
 
     def _move_tensors(self, value, module):
-        if isinstance(value, torch.Tensor):
-            return value.to(module.device())
+        #if isinstance(value, torch.Tensor):
+        #    return value.to(next(module.parameters()).device)
         return value
 
 
@@ -139,7 +140,7 @@ def configure_model_and_loss(args):
             kwargs = tools.kwargs_from_args(args, "training_loss")
             kwargs["args"] = args
 
-            training_loss = tools.instance_from_kwargs(args.training_loss_class, kwargs).to(loss_device)
+            training_loss = tools.instance_from_kwargs(args.training_loss_class, kwargs)
 
         # ----------------------------------------------------
         # Validation loss
@@ -148,12 +149,12 @@ def configure_model_and_loss(args):
         if args.validation_loss is not None:
             kwargs = tools.kwargs_from_args(args, "validation_loss")
             kwargs["args"] = args
-            validation_loss = tools.instance_from_kwargs(args.validation_loss_class, kwargs).to(loss_device)
+            validation_loss = tools.instance_from_kwargs(args.validation_loss_class, kwargs)
 
-        if args.cuda:
-            loss_device = torch.cuda.device(args.loss_on_gpu)
-            training_loss = training_loss.to(loss_device)
-            validation_loss = validation_loss.to(loss_device)
+        #if args.cuda:
+        #    loss_device = torch.cuda.device(args.loss_on_gpu)
+        #    training_loss = training_loss.device(loss_device)
+        #    validation_loss = validation_loss.device(loss_device)
 
         # ----------------------------------------------------
         # Model and loss
@@ -164,11 +165,12 @@ def configure_model_and_loss(args):
         # If Cuda, transfer model to Cuda and wrap with DataParallel.
         # -----------------------------------------------------------
         if args.cuda:
-            if getattr(model_and_loss.model, "self_cuda_from_args", None) is None:
-                model_and_loss = model_and_loss.cuda()
-            else:
-                if not model_and_loss.model.self_cuda_from_args():
-                    model_and_loss = model_and_loss.cuda()
+            model_and_loss = model_and_loss.cuda()
+            #if getattr(model_and_loss.model, "self_cuda_from_args", None) is None:
+            #    model_and_loss = model_and_loss.cuda()
+            #else:
+            #    if not model_and_loss.model.self_cuda_from_args():
+            #        model_and_loss = model_and_loss.cuda()
 
         # ---------------------------------------------------------------
         # Report some network statistics
@@ -465,7 +467,7 @@ def configure_data_loaders(args):
             else:
                 train_sampler = None
 
-            if args.collate_fn is not None:
+            if args.training_collate_fn is not None:
                 collate_fn_kwargs = tools.kwargs_from_args(args, "training_collate_fn")
                 collate_fn = tools.instance_from_kwargs(args.training_collate_fn_class, collate_fn_kwargs)
             else:
@@ -480,7 +482,7 @@ def configure_data_loaders(args):
                 shuffle=True if train_sampler is None else False,
                 drop_last=False if train_sampler is None else None,
                 batch_sampler=train_sampler,
-                collate_fn=collate_fn,
+                collate_fn=inspect.signature(DataLoader).parameters["collate_fn"].default if collate_fn is None else collate_fn,
                 **gpuargs)
 
             _log_statistics(train_dataset, prefix="Training", name=args.training_dataset)

@@ -13,8 +13,9 @@ The second value is the upper median of the pwc and pwcWOX1 baselines.
 """
 dataset_performances = {
     "flyingChairsValid": (1.8598, 3.728),
-    "flyingThingsCleanValid": (7.3425, 13.7999),
-    "sintelFinalValid": (4.6918, 5.8508),
+    "flyingThingsCleanValid": (7.432, 13.7999),
+    #"sintelFinalValid": (4.6918, 5.8508), <- best is a finetuning result ...
+    "sintelFinalValid": (4.9328, 5.8508),
     "kitti2015Valid": (8.1512, 16.3024)
 }
 

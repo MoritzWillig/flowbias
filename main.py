@@ -32,7 +32,7 @@ def main():
     # Configure data augmentation
     training_augmentation, validation_augmentation = config.configure_runtime_augmentations(args)
 
-    training_gradient_adjust = None if args.training_gradient_adjust_class is None else args.training_augmentation_class(args)
+    training_gradient_adjust = None if args.training_gradient_adjust is None else args.training_augmentation_class(args)
 
     # Configure model and loss    
     model_and_loss = config.configure_model_and_loss(args)

@@ -15,20 +15,20 @@ from flowbias.utils.meta_infrastructure import get_eval_summary
 #results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_split02_..$", key)}  # CTSK
 results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_split02_[CTS][CTS]$", key)}  # CTS(K)
 
-#metric_on_X = "normalized_dataset_difference"
-#metric_on_Y = "mean_normalized_performance"
-#X_title = "normalized_dataset_difference"
-#Y_title = "mean_normalized_performance"
+metric_on_X = "normalized_dataset_difference"
+metric_on_Y = "mean_normalized_performance"
+X_title = "normalized_dataset_difference"
+Y_title = "mean_normalized_performance"
 
 #metric_on_X = "middleburyTrain"
 #metric_on_Y = "mean_normalized_performance"
 #X_title = "middleburyTrain [AEPE]"
 #Y_title = "mean_normalized_performance"
 
-metric_on_X = "middleburyTrain"
-metric_on_Y = "normalized_dataset_difference"
-X_title = "middleburyTrain [AEPE]"
-Y_title = "normalized_dataset_difference"
+#metric_on_X = "middleburyTrain"
+#metric_on_Y = "normalized_dataset_difference"
+#X_title = "middleburyTrain [AEPE]"
+#Y_title = "normalized_dataset_difference"
 
 
 show_iso_lines = False
