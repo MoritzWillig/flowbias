@@ -8,6 +8,7 @@ from . import pwcInterfaceDataset
 from . import subsampledDataset
 from . import combined_dataset
 from . import middlebury
+from . import flowOnlyNpDataset
 
 ## FlyingChairs
 FlyingChairsTrain = flyingchairs.FlyingChairsTrain
@@ -74,3 +75,6 @@ CTSValid = combined_dataset.CTSValid
 
 ## MiddleburyTrainValid
 MiddleburyTrainValid = middlebury.MiddleburyTrainValid
+
+## FlowOnlyDataset
+FlowOnlyNpDataset = flowOnlyNpDataset.FlowOnlyNpDataset

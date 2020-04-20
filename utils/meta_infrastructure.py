@@ -12,7 +12,7 @@ from flowbias.config import Config
 from flowbias.datasets.flyingchairs import FlyingChairsTrain, FlyingChairsValid, FlyingChairsFull
 from flowbias.datasets.flyingThings3D import FlyingThings3dCleanTrain, FlyingThings3dCleanValid, \
     FlyingThings3dCleanFull, FlyingThings3d
-from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full
+from flowbias.datasets.kitti_combined import KittiComb2015Train, KittiComb2015Val, KittiComb2015Full, KittiComb2015Test
 from flowbias.datasets.sintel import SintelTrainingCleanTrain, SintelTrainingCleanValid, SintelTrainingCleanFull
 from flowbias.datasets.sintel import SintelTrainingFinalTrain, SintelTrainingFinalValid, SintelTrainingFinalFull
 from flowbias.datasets.middlebury import MiddleburyTrainValid
@@ -103,7 +103,6 @@ def load_model_from_meta(name, args=None, force_architecture=None, load_latest=F
     meta = get_model_meta(name)
     model_path = assemble_meta_path(meta.folder_name, load_latest=load_latest)
 
-    transformer = None
     if meta.loader_ is not None:
         transformer = loaders[meta.loader_]
     else:
@@ -142,6 +141,7 @@ dataset_splits = [
     [ "kitti2015Train", ["kitti", "train"]],
     [ "kitti2015Valid", ["kitti", "valid"]],
     [ "kitti2015Full", ["kitti", "full"]],
+    [ "kitti2015Test", ["kitti", "test"]],
     [ "middleburyTrain", ["middlebury", "train"]]
 ]
 
@@ -251,6 +251,8 @@ def _get_available_main_split(restrict_to):
             available_dataset_names.append("kitti2015Valid")
         if "kitti2015Full" in restrict_to:
             available_dataset_names.append("kitti2015Full")
+        if "kitti2015Test" in restrict_to:
+            available_dataset_names.append("kitti2015Test")
     if os.path.isdir(Config.dataset_locations["middlebury"]):
         if "middleburyTrain" in restrict_to:
             available_dataset_names.append("middleburyTrain")
@@ -288,6 +290,8 @@ def _load_available_main_split(available_datasets, params, kitti_params):
         available_datasets["kitti2015Valid"] = KittiComb2015Val({}, Config.dataset_locations["kitti"], **kitti_params)
     if "kitti2015Full" in available_datasets:
         available_datasets["kitti2015Full"] = KittiComb2015Full({}, Config.dataset_locations["kitti"], **kitti_params)
+    if "kitti2015Test" in available_datasets:
+        available_datasets["kitti2015Test"] = KittiComb2015Test({}, Config.dataset_locations["kitti"], **kitti_params)
     if "middleburyTrain" in available_datasets:
         x = Config.dataset_locations["middlebury"]
         available_datasets["middleburyTrain"] = MiddleburyTrainValid({}, x, x, **params)
@@ -405,6 +409,7 @@ def dataset_needs_batch_size_one(dataset_name, force_mode=None):
     if force_mode == "test":
         varying_image_sizes.append("kitti2015Train")
         varying_image_sizes.append("kitti2015Full")
+        varying_image_sizes.append("kitti2015Test")
 
     return dataset_name in varying_image_sizes
 

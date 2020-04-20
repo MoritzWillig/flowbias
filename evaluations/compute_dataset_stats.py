@@ -3,10 +3,9 @@ import psutil
 import sys
 import time
 
-from .log_transforms import log_index_fwd, log_index_reverse
-
 # using threads on a ryzen 1900x is faster by a factor of 3
 use_threading = True
+force_recompute = True
 
 if use_threading:
     # 8 processors -> 4 workers with 2 threads
@@ -22,6 +21,9 @@ import math
 import numpy as np
 import numpy.ma as ma
 
+from flowbias.datasets import FlowOnlyNpDataset
+from flowbias.evaluations.log_transforms import log_index_fwd, log_index_reverse
+
 from flowbias.utils.meta_infrastructure import get_available_datasets
 from flowbias.utils.localstorage import LocalStorage
 from multiprocessing import Pool
@@ -32,8 +34,17 @@ twopi = 2 * np.pi
 assert (len(sys.argv) == 2)
 dataset_name = sys.argv[1]
 #dataset_name = "kitti2015Valid"  # "flyingChairsFull"
+#dataset_name = "@/data/dataB/temp/predictedFlows/pwcWOX1_on_CTSK_flyingChairsValid"
 
-datasets = get_available_datasets(force_mode="test", restrict_to=[dataset_name])
+if dataset_name[0] != "@":
+    datasets = get_available_datasets(force_mode="test", restrict_to=[dataset_name])
+else:
+    flow_dataset = FlowOnlyNpDataset({}, dataset_name[1:])
+    dataset_name = os.path.basename(dataset_name[1:])
+    datasets = {
+        dataset_name: flow_dataset
+    }
+
 assert(len(datasets) == 1)
 
 field_extend = 1500
@@ -113,7 +124,7 @@ def compute_matrices(id_range):
 
 if __name__ == '__main__':
     print(f"computing dataset stats: {dataset_name}")
-    if not LocalStorage.contains("field_"+dataset_name):
+    if (not LocalStorage.contains("field_"+dataset_name)) or force_recompute:
         dataset = datasets[dataset_name]
 
         start = time.time()
@@ -146,7 +157,7 @@ if __name__ == '__main__':
             field, logField, rstat, logstat, ahisto = compute_matrices([0, len(dataset)])
 
         end = time.time()
-        print(f"computing dataset stats for {dataset_name} with {len(dataset)} took {end - start}")
+        print(f"computing dataset stats for {dataset_name} with {len(dataset)} took {end - start}s")
 
         LocalStorage.set("field_"+dataset_name, field)
         LocalStorage.set("logfield_"+dataset_name, logField)

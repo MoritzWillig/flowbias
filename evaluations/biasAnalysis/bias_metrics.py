@@ -11,7 +11,7 @@ metric_eval_datasets = [
 The first values are the best value observed over all pwc or pwcWOX1 baselines.
 The second value is the upper median of the pwc and pwcWOX1 baselines.
 """
-dataset_performances = {
+dataset_performances_median = {
     "flyingChairsValid": (1.8598, 3.728),
     "flyingThingsCleanValid": (7.432, 13.7999),
     #"sintelFinalValid": (4.6918, 5.8508), <- best is a finetuning result ...
@@ -19,8 +19,26 @@ dataset_performances = {
     "kitti2015Valid": (8.1512, 16.3024)
 }
 
+# average value is the mean (exclusive outliers)
+dataset_performances_outlier_mean = {
+    "flyingChairsValid": (1.8598, 3.5161),
+    "flyingThingsCleanValid": (7.432, 13.1005),
+    "sintelFinalValid": (4.9328, 5.8868),
+    "kitti2015Valid": (8.1512, 16.2335)
+}
 
-def linear_baseline_performance(aepe, dataset_name):
+# average value is the middle of the span (exclusive outliers)
+dataset_performances_outlier_span = {
+    "flyingChairsValid": (1.8598, 3.5882),
+    "flyingThingsCleanValid": (7.432, 12.9504),
+    "sintelFinalValid": (4.9328, 5.9353),
+    "kitti2015Valid": (8.1512, 15.7538)
+}
+
+standard_lbm = dataset_performances_outlier_mean
+
+
+def linear_baseline_performance(aepe, dataset_name, normalization_values = dataset_performances_outlier_mean):
     """
     higher is better:
     1.0: best performance of a baseline
@@ -29,7 +47,7 @@ def linear_baseline_performance(aepe, dataset_name):
     :param dataset_name:
     :return:
     """
-    ref_best, ref_median = dataset_performances[dataset_name]
+    ref_best, ref_median = normalization_values[dataset_name]
     delta = (ref_median - ref_best)
     return 1.0 - ((aepe - ref_best) / (2*delta))
 

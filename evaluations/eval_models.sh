@@ -249,12 +249,13 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExp
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNet-20200210-223344/checkpoint_best.ckpt CTSPWCExpertNet01AddExpert1 /data/dataB/meta/full_evals/expert_CTS_add01_expert1.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_CTS_PWCExpertAddNet-20200210-223344/checkpoint_best.ckpt CTSPWCExpertNet01AddExpert2 /data/dataB/meta/full_evals/expert_CTS_add01_expert2.json
 
-# pwc trained on multiple datasets
+# pwc trained on CTSK
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_noExpert_failedaugment_PWCNet-20200127-234847/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwc_on_CTSK_failedaugment.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_noExpert_PWCNet-20200225-093211/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwc_on_CTSK.json
 
 # pwcWOX1 trained on multiple datasets
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTSK.json
+python ./evaluate_for_all_datasets.py /data/dataB/models/pwcWOX1_mixed_batch_CTSK_PWCNetWOX1Connection-20200407-220817/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_mixed_batch_on_CTSK.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/pwc_noExperts_CTS_wox1_PWCNetWOX1Connection-20200311-213609/checkpoint_best.ckpt PWCNetWOX1Connection /data/dataB/meta/full_evals/pwcWOX1_on_CTS.json
 
 # iteration inspection
@@ -265,6 +266,9 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/PWC_DSEncoder_PWCNetDSE
 
 # pwc residual flow
 python ./evaluate_for_all_datasets.py /data/dataB/models/pwc_residual_flow_CTSK_PWCNetResidualFlow-20200326-131601/checkpoint_best.ckpt PWCNetResidualFlow /data/dataB/meta/full_evals/pwc_residual_flow_CTSK.json
+
+# pwc secondary flow
+python ./evaluate_for_all_datasets.py /data/dataB/models/pwcWOX1_CTSK_secondary_flow_PWCNetWOX1SecondaryFlow-20200330-082846/checkpoint_best.ckpt PWCNetWOX1SecondaryFlow /data/dataB/meta/full_evals/pwcWOX1_secondary_flow_CTSK.json
 
 # pwc delta target
 python ./evaluate_for_all_datasets.py /data/dataB/models/PWC_delta_PWCNet-onChairs-20200220-122429/checkpoint_best.ckpt PWCNet /data/dataB/meta/full_evals/pwcDelta_chairs.json
@@ -365,4 +369,8 @@ python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertA
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert31 /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_KT.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert32 /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_KS.json
 python ./evaluate_for_all_datasets.py /data/dataB/models/expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert33 /data/dataB/meta/full_evals/expertWOX1_CTSK_add01_KK.json
+
+python ./evaluate_for_all_datasets.py /data/dataB/unifiedModelsExpert/unified_avg_expertWOX1_CTSK_add01_expert/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert0 /data/dataB/meta/full_evals/unified_avg_expertWOX1_CTSK_add01_expert.json
+python ./evaluate_for_all_datasets.py /data/dataB/unifiedModelsExpert/unifiedCTS_avg_expertWOX1_CTSK_add01_expert/checkpoint_best.ckpt CTSKPWCExpertNet01WOX1AddExpert0 /data/dataB/meta/full_evals/unifiedCTS_avg_expertWOX1_CTSK_add01_expert.json
+
 

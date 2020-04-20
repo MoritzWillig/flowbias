@@ -49,7 +49,7 @@ def load_dataset_stats(dataset_name):
         dataset_stats[dataset_name] = (field, logField, rstat, logstat, ahisto)
 
 
-def compute_for_dataset(dataset_name):
+def compute_for_dataset(dataset_name, prefix):
     if dataset_name not in dataset_stats:
         print(f"skipping {dataset_name}")
         return
@@ -58,12 +58,17 @@ def compute_for_dataset(dataset_name):
 
     sz = (field.shape[0] - 1) // 2
 
+    #field[sz-4:sz+5, sz-4:sz+5] = 0
     field = field.astype(np.float)
     logField = logField.astype(np.float)
 
     field /= pct(field, 90)
-    #logField /= np.percentile(logField, 90)
     logField /= pct(logField, 90)
+    #print("$$>>", field.max(), field.sum())
+    #field /= field.sum()
+    #logField /= logField.sum()
+    #print("$$>>", field.max(), field.sum())
+    #logField /= np.percentile(logField, 90)
     #field = np.array(field, dtype=float) / np.mean(field)
     #field = np.clip(np.array(field, dtype=float) / 100, 0.0, 1.0)
     #field = np.array(field, dtype=float) / 100
@@ -79,6 +84,7 @@ def compute_for_dataset(dataset_name):
         window = 500
         field = field[sz-window:sz+window, sz-window:sz+window]
         mark_x_axis(field)
+        #field /= field.max()
         print(field.shape)
         plt.figure()
         plt.title(dataset_name)
@@ -89,7 +95,7 @@ def compute_for_dataset(dataset_name):
         plt.yticks(img_rng, ltrns)
         plt.ylim(0, 2 * window)
         plt.xlim(0, 2 * window)
-        plt.savefig(Config.temp_directory+f"dataset_stats/{dataset_name}_flow_abs.png", dpi=800, bbox_inches="tight")
+        plt.savefig(Config.temp_directory+f"dataset_stats/{prefix}{dataset_name}_flow_abs.png", dpi=800, bbox_inches="tight")
         #plt.show()
 
         p = (10 + np.log10(1)) * 100
@@ -115,7 +121,7 @@ def compute_for_dataset(dataset_name):
         plt.yticks(img_rng + sz, labels)
         plt.ylim(0, 2*sz)
         plt.xlim(0, 2*sz)
-        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_flow_log.png", dpi=800, bbox_inches="tight")
+        plt.savefig(Config.temp_directory + f"dataset_stats/{prefix}{dataset_name}_flow_log.png", dpi=800, bbox_inches="tight")
         #plt.show()
 
         plt.figure()
@@ -124,7 +130,7 @@ def compute_for_dataset(dataset_name):
         #plt.xlim(0, len(rstat))
         plt.xlim(-10, 100)
         #plt.ylim(0, 500)
-        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_rstat.png", bbox_inches="tight")
+        plt.savefig(Config.temp_directory + f"dataset_stats/{prefix}{dataset_name}_rstat.png", bbox_inches="tight")
         #plt.show()
         print("mode", np.argmax(rstat), rstat[np.argmax(rstat)], rstat[600])
         print("!!", rstat[0], logstat[0])
@@ -154,7 +160,7 @@ def compute_for_dataset(dataset_name):
         plt.xticks(img_rng, labels)
         plt.xlim(0, img_rng[-1])
 
-        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_log_stat.png", dpi=400, bbox_inches="tight")
+        plt.savefig(Config.temp_directory + f"dataset_stats/{prefix}{dataset_name}_log_stat.png", dpi=400, bbox_inches="tight")
         #plt.show()
 
 
@@ -166,7 +172,7 @@ def compute_for_dataset(dataset_name):
         plt.plot(range(len(cs)), cs)
         plt.xlim(0, 250)
         #plt.ylim(0.8, 1)
-        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_cumsum.png", bbox_inches="tight")
+        plt.savefig(Config.temp_directory + f"dataset_stats/{prefix}{dataset_name}_cumsum.png", bbox_inches="tight")
         #plt.show()
 
         ahisto = ahisto.astype(np.float) / np.sum(ahisto)
@@ -175,7 +181,7 @@ def compute_for_dataset(dataset_name):
         plt.plot(range(len(ahisto)), ahisto)
         plt.xlim(0, 628)
         plt.xticks([0, 157, 314, 471, 628], [r"$-\pi$", r"$-\pi/2$", 0, r"$\pi/2$", r"$\pi$"])
-        plt.savefig(Config.temp_directory + f"dataset_stats/{dataset_name}_ahisto.png")
+        plt.savefig(Config.temp_directory + f"dataset_stats/{prefix}{dataset_name}_ahisto.png")
         # plt.show()
 
         plt.close('all')
@@ -184,11 +190,26 @@ def compute_for_dataset(dataset_name):
 if not do_plot:
     print("plotting disabled")
 
-dataset_names = get_dataset_names()
+#dataset_names = get_dataset_names()
+#prefix = ""
+dataset_names = [
+    "H_flyingChairsValid", "H_flyingThingsCleanValid", "H_kitti2015Valid", "H_sintelCleanValid", "H_sintelFinalValid",
+    "I_flyingChairsValid", "I_flyingThingsCleanValid", "I_kitti2015Valid", "I_sintelCleanValid", "I_sintelFinalValid",
+    "pwc_chairs_flyingChairsValid", "pwc_chairs_flyingThingsCleanValid", "pwc_chairs_kitti2015Valid", "pwc_chairs_sintelCleanValid", "pwc_chairs_sintelFinalValid",
+    "pwc_kitti_flyingChairsValid", "pwc_kitti_flyingThingsCleanValid", "pwc_kitti_kitti2015Valid", "pwc_kitti_sintelCleanValid", "pwc_kitti_sintelFinalValid",
+    "pwcWOX1_chairs_flyingChairsValid", "pwcWOX1_chairs_flyingThingsCleanValid", "pwcWOX1_chairs_kitti2015Valid", "pwcWOX1_chairs_sintelCleanValid", "pwcWOX1_chairs_sintelFinalValid",
+    "pwcWOX1_kitti_flyingChairsValid", "pwcWOX1_kitti_flyingThingsCleanValid", "pwcWOX1_kitti_kitti2015Valid", "pwcWOX1_kitti_sintelCleanValid", "pwcWOX1_kitti_sintelFinalValid",
+    "pwcWOX1_on_CTSK_flyingChairsValid", "pwcWOX1_on_CTSK_flyingThingsCleanValid", "pwcWOX1_on_CTSK_kitti2015Valid", "pwcWOX1_on_CTSK_sintelCleanValid", "pwcWOX1_on_CTSK_sintelFinalValid",
+    "pwcWOX1_sintel_flyingChairsValid", "pwcWOX1_sintel_flyingThingsCleanValid", "pwcWOX1_sintel_kitti2015Valid", "pwcWOX1_sintel_sintelCleanValid", "pwcWOX1_sintel_sintelFinalValid",
+    "pwcWOX1_things_flyingChairsValid", "pwcWOX1_things_flyingThingsCleanValid", "pwcWOX1_things_kitti2015Valid", "pwcWOX1_things_sintelCleanValid", "pwcWOX1_things_sintelFinalValid"
+]
+
+
 for dataset_name in dataset_names:
     load_dataset_stats(dataset_name)
 
 for dataset_name in dataset_names:
-    compute_for_dataset(dataset_name)
+    prefix = "models/"
+    compute_for_dataset(dataset_name, prefix)
 
 print("done")

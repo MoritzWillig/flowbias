@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image, ImageFont, ImageDraw
-
+import imageio
+import matplotlib.cm
 
 class AGrid:
 
@@ -22,7 +23,14 @@ class AGrid:
 
         self._a = np.full((self._title_height + grid[1]*self._cell_shape[0], grid[0]*self._cell_shape[1], 3), 1.0)
 
-    def _put(self, xx, yy, image):
+    def _put(self, xx, yy, image, colormap=None):
+        if colormap is not None:
+            if (len(image.shape) == 2) or ((len(image.shape) == 3) and (image.shape[2] == 1)):
+                mappable = matplotlib.cm.ScalarMappable(cmap=colormap)
+                image = mappable.to_rgba(image)[:, :, :3]
+            else:
+                raise ValueError("color map is only allowed for 1 dim images")
+
         if len(image.shape) != 3:
             if len(image.shape) == 2:
                 image = np.repeat(image[:,:,np.newaxis], 3, axis=2)
@@ -54,11 +62,11 @@ class AGrid:
         xx = x * self._cell_shape[1]
         return xx, yy
 
-    def place(self, x, y, image, label=None):
+    def place(self, x, y, image, label=None, colormap=None):
         xx, yy = self._cell_pos(x, y)
         yy += self._padding + self._text_height
         xx += self._padding
-        self._put(xx, yy, image)
+        self._put(xx, yy, image, colormap=colormap)
 
         if label is not None:
             self.label(x,y,label)
@@ -85,3 +93,6 @@ class AGrid:
 
     def get_image(self):
         return self._a
+
+    def save_image(self, file_path):
+        imageio.imwrite(file_path, self.get_image())

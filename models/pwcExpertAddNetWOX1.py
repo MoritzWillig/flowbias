@@ -182,7 +182,7 @@ class PWCExpertAddNetWOX1(nn.Module):
 
         gpu_split0 = None
         gpu_split1 = None
-        if args.cuda:
+        if "cuda" in args and args.cuda:
             if split_to_gpus is not None:
                 if len(split_to_gpus) == 1:
                     gpu_split0 = torch.cuda.device(split_to_gpus[0])

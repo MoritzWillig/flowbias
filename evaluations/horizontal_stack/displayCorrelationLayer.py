@@ -9,19 +9,22 @@ from flowbias.utils.visualization.AGrid import AGrid
 
 font = ImageFont.truetype("/home/moritz/.local/share/fonts/RobotoMono-Bold.ttf", 20, encoding="unic")
 
-#models = [
-#    "/data/dataA/model_interfaces/wox1/pwcWOX1_chairs_flyingChairsSubset/",
-#    "/data/dataA/model_interfaces/wox1/pwcWOX1_things_flyingChairsSubset/",
-#    "/data/dataA/model_interfaces/wox1/pwcWOX1_sintel_flyingChairsSubset/"
-#]
+plot_statistics = False
 
 models = [
-    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_CC_flyingChairsSubset/",
-    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_TT_flyingChairsSubset/",
-    "/data/dataB/model_interfaces/cts_experts/expert_CTS_add01_SS_flyingChairsSubset/"
+    "/data/dataA/model_interfaces/wox1/pwcWOX1_chairs_flyingChairsSubset/",
+    "/data/dataA/model_interfaces/wox1/pwcWOX1_things_flyingChairsSubset/",
+    "/data/dataA/model_interfaces/wox1/pwcWOX1_sintel_flyingChairsSubset/"
 ]
 
-model_name = ["CTSExperts_add_chairs", "CTSExperts_add_things", "CTSExperts_add_sintel"]
+#models = [
+#    "/data/dataA/model_interfaces/cts_experts/expert_CTS_add01_CC_flyingChairsSubset/",
+#    "/data/dataA/model_interfaces/cts_experts/expert_CTS_add01_TT_flyingChairsSubset/",
+#    "/data/dataA/model_interfaces/cts_experts/expert_CTS_add01_SS_flyingChairsSubset/"
+#]
+
+model_name = ["PWCWOX1<Chairs>", "PWCWOX1<Things>", "PWCWOX1<Sintel>"]
+#model_name = ["CTSExperts_add_chairs", "CTSExperts_add_things", "CTSExperts_add_sintel"]
 
 
 def plot(image, x, y):
@@ -81,11 +84,14 @@ for l in range(num_layers):
 
             p = np.percentile(ci, 50)
             mean = np.mean(ci)
-            #ci /= p
-            #ci -= mean
-            #ci /= np.std(ci) #+ 1e-8
-            #ci += mean
-            #ci += 0.5
+
+            if True:
+                #ci /= p
+                ci -= mean
+                ci /= np.std(ci) #+ 1e-8
+                ci += mean
+                #ci += 0.5
+
             ci = np.clip(ci, 0, 1)
             print("!>", m, l, "|", np.mean(ci), np.std(ci), np.max(ci))
             #print(np.max(ci))

@@ -259,6 +259,7 @@ model_meta = {
     "pwc_on_CTSK": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211", None, True],
     # pwcWOX1 trained on multiple datasets
     "pwcWOX1_on_CTSK": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241", None, True],
+    "pwcWOX1_mixed_batch_on_CTSK": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "pwcWOX1_mixed_batch_CTSK_PWCNetWOX1Connection-20200407-220817", None, True],
     "pwcWOX1_on_CTS": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel", None, "pwc_noExperts_CTS_wox1_PWCNetWOX1Connection-20200311-213609", None, True],
 
     # pwc iteration inspection
@@ -269,6 +270,9 @@ model_meta = {
 
     # pwc residual flow
     "pwc_residual_flow_CTSK": ["PWCNetResidualFlow", "pwc_residual_flow", None, "chairs,things,sintel,kitti", None, "pwc_residual_flow_CTSK_PWCNetResidualFlow-20200326-131601", None, True],
+
+    # pwc secondary flow
+    "pwcWOX1_secondary_flow_CTSK": ["PWCNetWOX1SecondaryFlow", "pwc_secondary_flow", None, "chairs,things,sintel,kitti", None, "pwcWOX1_CTSK_secondary_flow_PWCNetWOX1SecondaryFlow-20200330-082846", None, True],
 
     # pwc every chairs
     "pwc_every_chairs_001": ["PWCNet", "pwc_progress_tracing", None, "chairs", None, "PWC_EVERY_PWCNet-onChairs-20200203-022421/checkpoint_iter_001.ckpt", None, False],
@@ -364,6 +368,10 @@ model_meta = {
     "expertWOX1_CTSK_add01_KT": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert31", False],
     "expertWOX1_CTSK_add01_KS": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert32", False],
     "expertWOX1_CTSK_add01_KK": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert33", True],
+
+    # CTKS WOX1 fused expert split models
+    "unified_avg_expertWOX1_CTSK_add01_expert": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_unified", None, "chairs,things,sintel,kitti", None, "unifiedExperts@unified_avg_expertWOX1_CTSK_add01_expert", "expert0", False],
+    "unifiedCTS_avg_expertWOX1_CTSK_add01_expert": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_unified", None, "chairs,things,sintel,kitti", None, "unifiedExperts@unifiedCTS_avg_expertWOX1_CTSK_add01_expert", "expert0", False]
 }
 
 model_meta_ordering = [
@@ -464,13 +472,15 @@ model_meta_ordering = [
     "pwc_on_CTSK_failedaugment",
     "pwc_on_CTSK",
     # pwcWOX1 trained on multiple datasets
-    "pwcWOX1_on_CTSK", "pwcWOX1_on_CTS",
+    "pwcWOX1_on_CTSK", "pwcWOX1_mixed_batch_on_CTSK", "pwcWOX1_on_CTS",
     # pwc iteration inspection
     "pwc_chairs_iter_148",
     # pwc down sampling encoder
     "pwcDSEncoder_chairs",
     # pwc residual flow
     "pwc_residual_flow_CTSK",
+    # pwc secondary flow
+    "pwcWOX1_secondary_flow_CTSK",
 
     # pwc every chairs
     "pwc_every_chairs_001", "pwc_every_chairs_011", "pwc_every_chairs_021", "pwc_every_chairs_031",
@@ -501,14 +511,19 @@ model_meta_ordering = [
     "expertWOX1_CTSK_add01_CC", "expertWOX1_CTSK_add01_CT", "expertWOX1_CTSK_add01_CS", "expertWOX1_CTSK_add01_CK",
     "expertWOX1_CTSK_add01_TC", "expertWOX1_CTSK_add01_TT", "expertWOX1_CTSK_add01_TS", "expertWOX1_CTSK_add01_TK",
     "expertWOX1_CTSK_add01_SC", "expertWOX1_CTSK_add01_ST", "expertWOX1_CTSK_add01_SS", "expertWOX1_CTSK_add01_SK",
-    "expertWOX1_CTSK_add01_KC", "expertWOX1_CTSK_add01_KT", "expertWOX1_CTSK_add01_KS", "expertWOX1_CTSK_add01_KK"
+    "expertWOX1_CTSK_add01_KC", "expertWOX1_CTSK_add01_KT", "expertWOX1_CTSK_add01_KS", "expertWOX1_CTSK_add01_KK",
+
+    # CTKS WOX1 fused expert split models
+    "unified_avg_expertWOX1_CTSK_add01_expert",
+    "unifiedCTS_avg_expertWOX1_CTSK_add01_expert"
 ]
 
 model_folders = {
     "_default": "/data/dataB/models/",
     "blind": "/data/dataB/fusedModels_blind/",
     "convBlind": "/data/dataB/fusedModelsConv33/",
-    "WOX1Blind": "/data/dataB/fusedModelsWOX1Conn_blind/"
+    "WOX1Blind": "/data/dataB/fusedModelsWOX1Conn_blind/",
+    "unifiedExperts": "/data/dataB/unifiedModelsExpert/"
 }
 
 set_diff = set(iter(model_meta.keys())).difference(model_meta_ordering)

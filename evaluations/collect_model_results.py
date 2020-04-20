@@ -6,7 +6,8 @@ from pathlib import Path
 from flowbias.config import Config
 from flowbias.evaluations.biasAnalysis.bias_metrics import cross_dataset_measure, metric_eval_datasets, \
     linear_baseline_performance, normalized_dataset_difference, mean_normalized_performance, \
-    mean_adjusted_normalized_compensated_performance, inversed_mean_adjusted_normalized_compensated_performance
+    mean_adjusted_normalized_compensated_performance, inversed_mean_adjusted_normalized_compensated_performance, \
+    dataset_performances_outlier_mean, dataset_performances_outlier_span, dataset_performances_median
 from flowbias.model_meta import model_meta, model_meta_fields, model_meta_ordering
 from flowbias.utils.meta_infrastructure import get_dataset_names
 
@@ -93,7 +94,14 @@ def compute_cross_dataset_measure_linear(eval, return_fields=False):
     if return_fields:
         fields = []
         if include_cross_dataset_statistics:
-            fields.extend(["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets]])
+            #fields.extend(["cross_dataset_measure_linear", *[med+"_lbp" for med in metric_eval_datasets]])
+            fields.extend([
+                *[med+"_lbp" for med in metric_eval_datasets],
+                *[med + "_outlier_median_lbp" for med in metric_eval_datasets],
+                *[med + "_outlier_mean_lbp" for med in metric_eval_datasets],
+                *[med + "_outlier_span_lbp" for med in metric_eval_datasets]
+
+            ])
         fields.extend([
             "normalized_dataset_difference", "mean_normalized_performance",
             "inversed_mean_adjusted_normalized_compensated_performance",
@@ -104,9 +112,16 @@ def compute_cross_dataset_measure_linear(eval, return_fields=False):
     aepes = [eval[dataset_name]['epe']['average'] for dataset_name in metric_eval_datasets]
 
     if include_cross_dataset_statistics:
-        metrics.append(cross_dataset_measure(aepes))
+        # for this thesis we are using the lbm_{mean}
         for aepe, dataset_name in zip(aepes, metric_eval_datasets):
             metrics.append(linear_baseline_performance(aepe, dataset_name))
+        # different lbm metrics
+        for aepe, dataset_name in zip(aepes, metric_eval_datasets):
+            metrics.append(linear_baseline_performance(aepe, dataset_name, normalization_values=dataset_performances_median))
+        for aepe, dataset_name in zip(aepes, metric_eval_datasets):
+            metrics.append(linear_baseline_performance(aepe, dataset_name, normalization_values=dataset_performances_outlier_mean))
+        for aepe, dataset_name in zip(aepes, metric_eval_datasets):
+            metrics.append(linear_baseline_performance(aepe, dataset_name, normalization_values=dataset_performances_outlier_span))
 
     metrics.append(normalized_dataset_difference(aepes))
     metrics.append(mean_normalized_performance(aepes))
