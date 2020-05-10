@@ -241,18 +241,31 @@ model_meta = {
     "expertWOX1_CTSK_add01_known_iter58":   ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add01_trace", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_058.ckpt", "error", False],
     "expertWOX1_CTSK_add01_known_iter60":   ["CTSKPWCExpertNetWOX1Add01", "pwc_expert_add01_trace", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322/checkpoint_iter_060.ckpt", "error", False],
 
+    # PWCNet CTSK trace
+    "pwc_on_CTSK_iter01": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_001.ckpt", None, False],
+    "pwc_on_CTSK_iter10": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_010.ckpt", None, False],
+    "pwc_on_CTSK_iter20": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_020.ckpt", None, False],
+    "pwc_on_CTSK_iter30": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_030.ckpt", None, False],
+    "pwc_on_CTSK_iter40": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_040.ckpt", None, False],
+    "pwc_on_CTSK_iter50": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_050.ckpt", None, False],
+    "pwc_on_CTSK_iter52": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_052.ckpt", None, False],
+    "pwc_on_CTSK_iter54": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_054.ckpt", None, False],
+    "pwc_on_CTSK_iter56": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_056.ckpt", None, False],
+    "pwc_on_CTSK_iter58": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_058.ckpt", None, False],
+    "pwc_on_CTSK_iter60": ["PWCNet", "pwc_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_noExpert_PWCNet-20200225-093211/checkpoint_iter_060.ckpt", None, False],
+
     # CTSK WOX1 trace
-    "pwcWOX1_on_CTSK_iter01": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_001.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter10": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_010.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter20": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_020.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter30": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_030.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter40": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_040.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter50": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_050.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter52": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_052.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter54": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_054.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter56": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_056.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter58": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_058.ckpt", None, False],
-    "pwcWOX1_on_CTSK_iter60": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_060.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter01": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_001.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter10": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_010.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter20": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_020.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter30": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_030.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter40": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_040.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter50": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_050.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter52": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_052.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter54": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_054.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter56": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_056.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter58": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_058.ckpt", None, False],
+    "pwcWOX1_on_CTSK_iter60": ["PWCNetWOX1Connection", "pwcWOX1_on_multiple_trace", None, "chairs,things,sintel,kitti", None, "expert_base_wox1_PWCNetWOX1Connection-20200309-153241/checkpoint_iter_060.ckpt", None, False],
 
     # pwc trained on multiple datasets
     "pwc_on_CTSK_failedaugment": ["PWCNet", "pwc_on_multiple", None, "chairs,things,sintel,kitti", None, "expert__noExpert_failedaugment_PWCNet-20200127-234847", None, False],
@@ -351,7 +364,7 @@ model_meta = {
     "expertWOX1_CTSK_split02_KS": ["CTSKPWCExpertNet02WOX1", "pwc_expert_CTSK_split_02_merged", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926", "expert32", False],
     "expertWOX1_CTSK_split02_KK": ["CTSKPWCExpertNet02WOX1", "pwc_expert_CTSK_split_02_merged", None, "chairs,things,sintel,kitti", None, "expert_base_PWCExpertNetWOX1-20200227-012926", "expert33", True],
 
-    # CTKS WOX1 fused expert split models
+    # CTKS WOX1 fused expert add models
     "expertWOX1_CTSK_add01_CC": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert00", True],
     "expertWOX1_CTSK_add01_CT": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert01", False],
     "expertWOX1_CTSK_add01_CS": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert02", False],
@@ -368,6 +381,24 @@ model_meta = {
     "expertWOX1_CTSK_add01_KT": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert31", False],
     "expertWOX1_CTSK_add01_KS": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert32", False],
     "expertWOX1_CTSK_add01_KK": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_merged", None, "chairs,things,sintel,kitti", None, "expert_add01_PWCExpertAddNetWOX1-20200227-013322", "expert33", True],
+
+    # CTKS WOX1 fused expert linAdd models
+    "expertWOX1_CTSK_linAdd01_CC": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert00", True],
+    "expertWOX1_CTSK_linAdd01_CT": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert01", False],
+    "expertWOX1_CTSK_linAdd01_CS": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert02", False],
+    "expertWOX1_CTSK_linAdd01_CK": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert03", False],
+    "expertWOX1_CTSK_linAdd01_TC": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert10", False],
+    "expertWOX1_CTSK_linAdd01_TT": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert11", True],
+    "expertWOX1_CTSK_linAdd01_TS": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert12", False],
+    "expertWOX1_CTSK_linAdd01_TK": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert13", False],
+    "expertWOX1_CTSK_linAdd01_SC": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert20", False],
+    "expertWOX1_CTSK_linAdd01_ST": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert21", False],
+    "expertWOX1_CTSK_linAdd01_SS": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert22", True],
+    "expertWOX1_CTSK_linAdd01_SK": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert23", False],
+    "expertWOX1_CTSK_linAdd01_KC": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert30", False],
+    "expertWOX1_CTSK_linAdd01_KT": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert31", False],
+    "expertWOX1_CTSK_linAdd01_KS": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert32", False],
+    "expertWOX1_CTSK_linAdd01_KK": ["CTSKPWCExpertNet01WOX1LinAdd", "pwc_expert_CTSK_linAdd_01_merged", None, "chairs,things,sintel,kitti", None, "expert_linAdd01_CTKS_PWCExpertLinAddNetWOX1-20200321-035307", "expert33", True],
 
     # CTKS WOX1 fused expert split models
     "unified_avg_expertWOX1_CTSK_add01_expert": ["CTSKPWCExpertNet01WOX1Add", "pwc_expert_CTSK_add_01_unified", None, "chairs,things,sintel,kitti", None, "unifiedExperts@unified_avg_expertWOX1_CTSK_add01_expert", "expert0", False],
@@ -463,6 +494,11 @@ model_meta_ordering = [
     "expertWOX1_CTSK_add01_known_iter52", "expertWOX1_CTSK_add01_known_iter54", "expertWOX1_CTSK_add01_known_iter56",
     "expertWOX1_CTSK_add01_known_iter58", "expertWOX1_CTSK_add01_known_iter60",
 
+    # PWCNet CTSK trace
+    "pwc_on_CTSK_iter01", "pwc_on_CTSK_iter10", "pwc_on_CTSK_iter20", "pwc_on_CTSK_iter30",
+    "pwc_on_CTSK_iter40", "pwc_on_CTSK_iter50", "pwc_on_CTSK_iter52", "pwc_on_CTSK_iter54",
+    "pwc_on_CTSK_iter56", "pwc_on_CTSK_iter58", "pwc_on_CTSK_iter60",
+
     # CTSK WOX1 trace
     "pwcWOX1_on_CTSK_iter01", "pwcWOX1_on_CTSK_iter10", "pwcWOX1_on_CTSK_iter20", "pwcWOX1_on_CTSK_iter30",
     "pwcWOX1_on_CTSK_iter40", "pwcWOX1_on_CTSK_iter50", "pwcWOX1_on_CTSK_iter52", "pwcWOX1_on_CTSK_iter54",
@@ -507,11 +543,17 @@ model_meta_ordering = [
     "expertWOX1_CTSK_split02_SC", "expertWOX1_CTSK_split02_ST", "expertWOX1_CTSK_split02_SS", "expertWOX1_CTSK_split02_SK",
     "expertWOX1_CTSK_split02_KC", "expertWOX1_CTSK_split02_KT", "expertWOX1_CTSK_split02_KS", "expertWOX1_CTSK_split02_KK",
 
-    # CTKS WOX1 fused expert split models
+    # CTKS WOX1 fused expert add models
     "expertWOX1_CTSK_add01_CC", "expertWOX1_CTSK_add01_CT", "expertWOX1_CTSK_add01_CS", "expertWOX1_CTSK_add01_CK",
     "expertWOX1_CTSK_add01_TC", "expertWOX1_CTSK_add01_TT", "expertWOX1_CTSK_add01_TS", "expertWOX1_CTSK_add01_TK",
     "expertWOX1_CTSK_add01_SC", "expertWOX1_CTSK_add01_ST", "expertWOX1_CTSK_add01_SS", "expertWOX1_CTSK_add01_SK",
     "expertWOX1_CTSK_add01_KC", "expertWOX1_CTSK_add01_KT", "expertWOX1_CTSK_add01_KS", "expertWOX1_CTSK_add01_KK",
+
+    # CTKS WOX1 fused expert linAdd models
+    "expertWOX1_CTSK_linAdd01_CC", "expertWOX1_CTSK_linAdd01_CT", "expertWOX1_CTSK_linAdd01_CS", "expertWOX1_CTSK_linAdd01_CK",
+    "expertWOX1_CTSK_linAdd01_TC", "expertWOX1_CTSK_linAdd01_TT", "expertWOX1_CTSK_linAdd01_TS", "expertWOX1_CTSK_linAdd01_TK",
+    "expertWOX1_CTSK_linAdd01_SC", "expertWOX1_CTSK_linAdd01_ST", "expertWOX1_CTSK_linAdd01_SS", "expertWOX1_CTSK_linAdd01_SK",
+    "expertWOX1_CTSK_linAdd01_KC", "expertWOX1_CTSK_linAdd01_KT", "expertWOX1_CTSK_linAdd01_KS", "expertWOX1_CTSK_linAdd01_KK",
 
     # CTKS WOX1 fused expert split models
     "unified_avg_expertWOX1_CTSK_add01_expert",

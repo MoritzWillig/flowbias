@@ -5,10 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 
-rootA = "/data/dataA/model_interfaces/A_chairs/"
-rootB = "/data/dataA/model_interfaces/H_chairs/"
+rootA = "/data/dataA/model_interfaces/pwc/A_chairs/"
+rootB = "/data/dataA/model_interfaces/pwc/H_chairs/"
 #connector_path = "/data/dataB/models/0_connectors13/PWCTrainableConvConnector13-AH_13_chairs-20200101-160051/checkpoint_best.ckpt"
-connector_path = "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-AH_33_chairs-20200102-042433/checkpoint_best.ckpt"
+connector_path = "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-AH_33_chairs-20200104-025720/checkpoint_best.ckpt"
+#connector_path = "/data/dataB/models/0_connectors33/PWCTrainableConvConnector33-AH_33_sintel-20200104-034310/checkpoint_best.ckpt"
 
 
 def shift(a, vmin, vmax):
@@ -29,6 +30,7 @@ connector.cuda()
 
 dataset = PWCInterfaceDatasetValid({}, rootA, rootB)
 
+
 sample = sample_to_torch_batch(dataset[0])
 print(sample.keys())
 
@@ -36,9 +38,9 @@ results = []
 expected = []
 inputs = []
 for l in range(5):
-    results.append(connector.forward(sample[f"input_x1_{4-l}"], l).cpu().detach().numpy())
-    expected.append(sample[f"target_x1_{4-l}"].cpu().detach().numpy())
-    inputs.append(sample[f"input_x1_{4 - l}"].cpu().detach().numpy())
+    results.append(connector.forward(sample[f"input_x1_{l}"], l).cpu().detach().numpy())
+    expected.append(sample[f"target_x1_{l}"].cpu().detach().numpy())
+    inputs.append(sample[f"input_x1_{l}"].cpu().detach().numpy())
 
 print(results[4].shape)
 print(np.min(results[4]), np.max(results[4]))
@@ -66,6 +68,7 @@ for l in range(5):
     plt.gca().set_axis_off()
     plt.subplots_adjust(wspace=None, hspace=None)
 
+    #plt.show()
     plt.savefig(
         f"/data/dataB/temp/connector_output_{l}.png",
         transparent=True,

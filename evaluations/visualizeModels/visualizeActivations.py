@@ -120,31 +120,44 @@ def do_evaluation(model, dataset_name, sample_id, dir_name):
         act = activations[tr_name]
 
         activation_container = unravel(act)
+        min_w = min([a[1].shape[0] for a in activation_container])
         max_w = max([a[1].shape[0] for a in activation_container])
+        min_h = min([a[1].shape[1] for a in activation_container])
         max_h = max([a[1].shape[1] for a in activation_container])
 
         ct = len(activation_container)
-        grid_w = int(math.ceil(math.sqrt(ct)))
-        grid_h = int(math.ceil(ct / grid_w))
-        print(">>",activation_container[0][1].shape)
-        grid = AGrid((grid_w, grid_h), (max_w, max_h), text_height=0, title_height=20)
-        grid.title(tr_name)
+        if save_activations_img:
+            grid_w = int(math.ceil(math.sqrt(ct)))
+            grid_h = int(math.ceil(ct / grid_w))
+            print(">>",activation_container[0][1].shape)
+            grid = AGrid((grid_w, grid_h), (max_w, max_h), text_height=0, title_height=20)
+            grid.title(tr_name)
 
-        mn = +1000000
-        mx = -1000000
-        for (_, im) in activation_container:
-            mn = min(torch.min(im), mn)
-            mx = max(torch.max(im), mx)
+            mn = +1000000
+            mx = -1000000
+            for (_, im) in activation_container:
+                mn = min(torch.min(im), mn)
+                mx = max(torch.max(im), mx)
 
-        print(mn, mx)
+            print(mn, mx)
 
-        for idx, (name, im) in enumerate(activation_container):
-            #mn = torch.min(im)
-            #mx = torch.max(im)
-            im = (im - mn) / (mx-mn)
-            grid.place(idx % grid_w, idx // grid_w, im)
+            for idx, (name, im) in enumerate(activation_container):
+                #mn = torch.min(im)
+                #mx = torch.max(im)
+                im_x = (im - mn) / (mx-mn)
+                grid.place(idx % grid_w, idx // grid_w, im_x)
 
-        imageio.imwrite(dir_name+str(tr_id)+"_"+tr_name+".png", grid.get_image())
+            imageio.imwrite(dir_name+str(tr_id)+"_"+tr_name+".png", grid.get_image())
+
+
+        if save_activations_np:
+            if (min_w != max_w) or (min_h != max_h):
+                continue
+
+            stacked_activations = np.zeros((ct, max_w, max_h))
+            for idx, (name, im) in enumerate(activation_container):
+                stacked_activations[idx, :, :] = im
+            np.save(dir_name + "numpy/" + str(tr_id) + ".npy", stacked_activations)
 
 
 def do_filters(model, dir_name):
@@ -188,10 +201,12 @@ filters_dir = "/data/dataA/temp/filters/"
 #model_name = ["pwc_chairs", "pwcWOX1_chairs", "pwc_on_CTSK", "pwcWOX1_on_CTSK"]
 #model_name = "pwc_on_CTSK"
 #model_name = "pwcWOX1_on_CTSK"
-model_name = "expertWOX1_CTSK_add01_expert3"
+model_name = "expertWOX1_CTSK_linAdd01_expert3"
 
-save_activations = False
-save_filters = True
+save_activations_img = True
+save_activations_np = True
+save_activations = save_activations_img or save_activations_np
+save_filters = False
 
 evals = [
     {
@@ -208,6 +223,8 @@ if save_activations:
         activations_dir_name = activations_dir + model_name + "_" + eval_data["dataset_name"] + "_" + str(eval_data["sample_id"]) + "/"
 
         os.makedirs(activations_dir_name, exist_ok=True)
+        if save_activations_np:
+            os.makedirs(activations_dir_name + "numpy/", exist_ok=True)
         do_evaluation(model, eval_data["dataset_name"], eval_data["sample_id"], activations_dir_name)
 
 if save_filters:

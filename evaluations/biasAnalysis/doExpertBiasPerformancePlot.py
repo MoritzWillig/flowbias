@@ -8,12 +8,15 @@ from flowbias.utils.meta_infrastructure import get_eval_summary
 #results = {key: value for key, value in get_eval_summary().items()}
 #results = {key: value for key, value in get_eval_summary().items() if re.match("expert_CTS_add01_..$", key)}
 #results = {key: value for key, value in get_eval_summary().items() if key in ["pwc_chairs", "I", "H", "pwc_kitti"]}
+#results = {key: value for key, value in get_eval_summary().items() if key in ["000", "001", "002", "003", "004", "005"]} #blind fine
 #results = {key: value for key, value in get_eval_summary().items() if key in ["pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti"]}
 #results = {key: value for key, value in get_eval_summary().items() if key in ["pwcWOX1_chairs", "pwcWOX1_things", "pwcWOX1_sintel", "pwcWOX1_kitti", "pwc_chairs", "I", "H", "pwc_kitti", "pwc_on_CTSK"]}
-#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_add01_..$", key)}  # CTSK
-#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_add01_[CTS][CTS]$", key)}  # CTS(K)
 #results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_split02_..$", key)}  # CTSK
 results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_split02_[CTS][CTS]$", key)}  # CTS(K)
+#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_add01_..$", key)}  # CTSK
+#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_add01_[CTS][CTS]$", key)}  # CTS(K)
+#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_linAdd01_..$", key)}  # CTSK
+#results = {key: value for key, value in get_eval_summary().items() if re.match("expertWOX1_CTSK_linAdd01_[CTS][CTS]$", key)}  # CTS(K)
 
 metric_on_X = "normalized_dataset_difference"
 metric_on_Y = "mean_normalized_performance"
@@ -32,9 +35,11 @@ Y_title = "mean_normalized_performance"
 
 
 show_iso_lines = False
-cut_prefix = True
+cut_prefix = False
+#title = "Expert models WOX1 CTSK Split02"
 #title = "Expert models WOX1 CTSK Add01"
-title = "Expert models WOX1 CTSK Split02"
+#title = "Expert models WOX1 CTSK LinAdd01"
+title = "Baselines"
 
 plt.figure()
 plt.title(title)

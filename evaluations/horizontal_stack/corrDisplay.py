@@ -19,6 +19,9 @@ for i in range(num_levels):
     mean = np.load(mean_file)
     std_dev = np.load(std_dev_file)
 
+    d0 = corr.shape[0]
+    d1 = corr.shape[1]
+
     print("has NaN: ", np.isnan(corr).any())
 
     # set the main diagonal to some other value,
@@ -34,7 +37,8 @@ for i in range(num_levels):
     ax.title.set_text(f"interface {i}")
     plt.imshow(np.abs(corr), cmap="gray")
 
-    imageio.imwrite(f"{corr_dir}/interface_{i}.png", np.clip(np.abs(corr), 0.0, 1.0))
+    #imageio.imwrite(f"{corr_dir}/interface_{i}.png", np.clip(np.abs(corr), 0.0, 1.0))
+    imageio.imwrite(f"{corr_dir}/interface_corr_only_{i}.png", np.clip(np.abs(corr[:d0//2, d1//2:]), 0.0, 1.0))
 
 plt.tight_layout()
 plt.show()

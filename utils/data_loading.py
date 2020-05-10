@@ -1,18 +1,25 @@
 import numpy as np
 
 
-def load_sample(filename):
+def load_sample(filename, no_x2=False):
     npzfile = np.load(filename)
-    num_levels = len(npzfile.files) // 6
+    if not no_x2:
+        num_levels = len(npzfile.files) // 6
+    else:
+        num_levels = len(npzfile.files) // 4
 
     out_corr_relu = [npzfile["out_corr_relu_"+str(i)] for i in range(num_levels)]
     x1 = [npzfile["x1_"+str(i)] for i in range(num_levels)]
-    x2 = [npzfile["x2_"+str(i)] for i in range(num_levels)]
-    x2_warp = [npzfile["x2_warp_"+str(i)] for i in range(num_levels)]
+    if not no_x2:
+        x2 = [npzfile["x2_" + str(i)] for i in range(num_levels)]
+        x2_warp = [npzfile["x2_warp_"+str(i)] for i in range(num_levels)]
     flow = [npzfile["flow_"+str(i)] for i in range(num_levels)]
     l = [npzfile["l_"+str(i)] for i in range(num_levels)]
 
-    return out_corr_relu, x1, x2, x2_warp, flow, l
+    if not no_x2:
+        return out_corr_relu, x1, x2, x2_warp, flow, l
+    else:
+        return out_corr_relu, x1, flow, l
 
 
 def load_sample_level(filename, level):

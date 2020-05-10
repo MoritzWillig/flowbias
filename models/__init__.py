@@ -71,6 +71,7 @@ CTSKPWCExpertNetLinAdd01   = pwcExpertLinAddNet.CTSKPWCExpertNetLinAdd01
 CTSPWCExpertNetLinAdd01 = pwcExpertLinAddNet.CTSPWCExpertNetLinAdd01
 PWCExpertAddNetWOX1      = pwcExpertAddNetWOX1.PWCExpertAddNetWOX1
 CTSKPWCExpertNetWOX1Add01   = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01
+CTSKPWCExpertNet01WOX1Add   = pwcExpertAddNetWOX1.CTSKPWCExpertNetWOX1Add01
 CTSPWCExpertNetWOX1Add01   = pwcExpertAddNetWOX1.CTSPWCExpertNetWOX1Add01
 PWCExpertLinAddNetWOX1      = pwcExpertLinAddNetWOX1.PWCExpertLinAddNetWOX1
 CTSKPWCExpertNetWOX1LinAdd01   = pwcExpertLinAddNetWOX1.CTSKPWCExpertNetWOX1LinAdd01

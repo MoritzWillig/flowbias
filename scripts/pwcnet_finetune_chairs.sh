@@ -34,7 +34,7 @@ python ../main.py \
 --optimizer_lr=1e-5 \
 --optimizer_weight_decay=4e-4 \
 --save=$SAVE_PATH \
---total_epochs=174 \
+--total_epochs=180 \
 --training_augmentation=RandomAffineFlow \
 --training_dataset=FlyingChairsTrain \
 --training_dataset_photometric_augmentations=True \
