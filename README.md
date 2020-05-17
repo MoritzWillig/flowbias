@@ -1,7 +1,7 @@
 # Analysing and overcoming the dataset bias for optical flow backbone networks
 
 This repository contains the source code for training and evaluating models of the
-master's thesis [Analysing and overcoming the dataset bias for optical flow backbone networks](https://moritz-willig.de/projects/flowBias.html).
+master's thesis [Analysing and overcoming the dataset bias for optical flow backbone networks](https://moritz-willig.de/projects/flowbias.html).
 
 ## Getting started
 This code has been developed under Anaconda(Python 3.6), Pytorch 1.1 and CUDA > 9.0 on Ubuntu 18.04.
