@@ -2,7 +2,10 @@ import re
 import os
 import numpy as np
 
-os.environ['PATH'] += os.pathsep + "/usr/local/texlive/2019/bin/x86_64-linux/"
+from flowbias.config import Config
+
+if Config.add_tex_to_path:
+    os.environ['PATH'] += os.pathsep + Config.tex_directory
 
 import matplotlib.pyplot as plt
 plt.rc('text', usetex=True)

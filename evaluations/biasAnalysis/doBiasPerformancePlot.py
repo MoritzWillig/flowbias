@@ -29,9 +29,9 @@ for x, y, label in zip(xs, ys, [value["model_id"] for value in results.values()]
                  xytext=(0,10),
                  ha='center')
 
-plt.xlabel("normalized_dataset_difference")
+plt.xlabel("average drop")
 #plt.xlim(-0.25, 0.0)
-plt.ylabel("mean_normalized_performance")
+plt.ylabel("mean normalized performance")
 #plt.ylim(0.75, 1.0)
 
 

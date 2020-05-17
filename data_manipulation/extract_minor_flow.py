@@ -1,5 +1,3 @@
-import math
-
 import torch
 import numpy as np
 
@@ -7,7 +5,7 @@ import numpy as np
 def compute_secondary_flows(target, num_iterations):
     """
     Computes a mixture model of two gaussians, to get hold of the primary and secondary flow
-    directions.
+    directions. (gaussians are axis aligned - no xy correlation)
     :param target:
     :param num_iterations:
     :return:

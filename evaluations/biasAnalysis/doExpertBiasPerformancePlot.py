@@ -20,8 +20,8 @@ results = {key: value for key, value in get_eval_summary().items() if re.match("
 
 metric_on_X = "normalized_dataset_difference"
 metric_on_Y = "mean_normalized_performance"
-X_title = "normalized_dataset_difference"
-Y_title = "mean_normalized_performance"
+X_title = "average drop"
+Y_title = "mean normalized performance"
 
 #metric_on_X = "middleburyTrain"
 #metric_on_Y = "mean_normalized_performance"

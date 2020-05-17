@@ -5,9 +5,6 @@ import torch
 import numpy as np
 import torch.utils.data as data
 
-from . import common
-
-
 class FlowOnlyNpDataset(data.Dataset):
 
     def __init__(self, args, root):

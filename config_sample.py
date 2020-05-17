@@ -19,3 +19,6 @@ class Config:
     eval_summary_path = temp_directory + "eval_summary.csv"
 
     model_directory = "/data/dataB/models/"
+
+    add_tex_to_path = True
+    tex_directory = "/usr/local/texlive/2019/bin/x86_64-linux/"
