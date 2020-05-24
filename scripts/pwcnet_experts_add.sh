@@ -5,7 +5,7 @@ EXPERIMENTS_HOME=/data/dataA/experiments
 #EXPERIMENTS_HOME=/data/vimb01/experiments
 
 # model and checkpoint
-MODEL=PWCExpertAddNet
+MODEL=CTSKPWCExpertNetAdd01
 EVAL_LOSS=MultiScaleAdaptiveEPE_PWC
 CHECKPOINT=None
 SIZE_OF_BATCH=8
@@ -27,8 +27,6 @@ python ../main.py \
 --lr_scheduler_gamma=0.5 \
 --lr_scheduler_milestones="[30, 40, 50]" \
 --model=$MODEL \
---model_num_experts=4 \
---model_expert_weight=0.1 \
 --num_workers=4 \
 --optimizer=Adam \
 --optimizer_lr=1e-4 \

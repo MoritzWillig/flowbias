@@ -15,7 +15,6 @@ import png
 VALIDATE_INDICES_2015 = [10, 11, 12, 25, 26, 30, 31, 40, 41, 42, 46, 52, 53, 72, 73, 74, 75, 76, 80, 81, 85, 86, 95, 96, 97, 98, 104, 116, 117, 120, 121, 126, 127, 153, 172, 175, 183, 184, 190, 199]
 VALIDATE_INDICES_2012 = [0, 12, 15, 16, 17, 18, 24, 30, 38, 39, 42, 50, 54, 59, 60, 61, 77, 78, 81, 89, 97, 101, 107, 121, 124, 142, 145, 146, 152, 154, 155, 158, 159, 160, 164, 182, 183, 184, 190]
 
-
 def read_png_flow(flow_file):
     flow_object = png.Reader(filename=flow_file)
     flow_direct = flow_object.asDirect()
@@ -27,6 +26,7 @@ def read_png_flow(flow_file):
         flow[i, :, 1] = flow_data[i][1::3]
         flow[i, :, 2] = flow_data[i][2::3]
 
+    #detect invalid values
     invalid_idx = (flow[:, :, 2] == 0)
     flow[:, :, 0:2] = (flow[:, :, 0:2] - 2 ** 15) / 64.0
     flow[invalid_idx, 0] = 0

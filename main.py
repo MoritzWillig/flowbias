@@ -12,6 +12,8 @@ import torch
 
 
 def main():
+    # Comment this in to disable the log level sanity check. Needed for torch.utils.bottleneck profiler.
+    tools._profile_mode = True
 
     # Change working directory    
     os.chdir(os.path.dirname(os.path.realpath(__file__)))

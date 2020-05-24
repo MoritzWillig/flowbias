@@ -16,24 +16,30 @@ def _bhwc2bchw(tensor):
 
 
 class Meshgrid(nn.Module):
+
     def __init__(self):
         super(Meshgrid, self).__init__()
-        self.width = 0
-        self.height = 0
+        self.width = 1
+        self.height = 1
         self.register_buffer("xx", torch.zeros(1,1))
         self.register_buffer("yy", torch.zeros(1,1))
+
         self.register_buffer("rangex", torch.zeros(1,1))
         self.register_buffer("rangey", torch.zeros(1,1))
+        #self.xx = torch.zeros(1,1)
+        #self.yy = torch.zeros(1,1)
 
     def _compute_meshgrid(self, width, height):
-        torch.arange(0, width, out=self.rangex)
-        torch.arange(0, height, out=self.rangey)
+        self.rangex.resize_(width)
+        self.rangey.resize_(height)
+        torch.arange(width, out=self.rangex)
+        torch.arange(height, out=self.rangey)
         self.xx = self.rangex.repeat(height, 1).contiguous()
         self.yy = self.rangey.repeat(width, 1).t().contiguous()
 
     def forward(self, width, height):
         if self.width != width or self.height != height:
-            self._compute_meshgrid(width=width, height=height)
+            self._compute_meshgrid(width, height)
             self.width = width
             self.height = height
         return self.xx, self.yy
@@ -241,7 +247,7 @@ class Interp2MaskBinary(nn.Module):
             invalid = ((xq < 0) | (xq >= width) | (yq < 0) | (yq >= height) | invalid_mask.squeeze(dim=1)).unsqueeze(dim=1).float()
             transformed = invalid * torch.zeros_like(values) + (1.0 - invalid) * values
 
-        return transformed, (1 - invalid_mask).float()
+        return transformed, (1.0 - invalid_mask.float())
 
 
 def resize2D(inputs, size_targets, mode="bilinear"):

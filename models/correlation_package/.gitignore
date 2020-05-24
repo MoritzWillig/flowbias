@@ -1,1 +1,3 @@
-*
+build/
+correlation_cuda.egg-info/
+dist/

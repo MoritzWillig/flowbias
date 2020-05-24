@@ -603,17 +603,15 @@ def exec_runtime(args,
     # --------------------------------------------------------
     # Remember validation loss
     # --------------------------------------------------------
-    best_validation_loss = float("inf") if args.validation_key_minimize else -float("inf")
+    if "validation_key_minimize" in args:
+        run_validation = True
+        best_validation_loss = float("inf") if args.validation_key_minimize else -float("inf")
+    else:
+        run_validation = False
 
     for epoch in range(args.start_epoch, args.total_epochs + 1):
         with logger.LoggingBlock("Epoch %i/%i" % (epoch, args.total_epochs), emph=True):
             store_as_best = False
-
-            # --------------------------------------------------------
-            # Update standard learning scheduler
-            # --------------------------------------------------------
-            if lr_scheduler is not None and not validation_scheduler:
-                lr_scheduler.step(epoch)
 
             # --------------------------------------------------------
             # Always report learning rate
@@ -622,7 +620,7 @@ def exec_runtime(args,
                 logging.info("lr: %s" % format_learning_rate(args.optimizer_lr))
             else:
                 if not validation_scheduler:
-                    logging.info("lr: %s" % format_learning_rate(lr_scheduler.get_lr()))
+                    logging.info("lr: %s" % format_learning_rate(lr_scheduler.get_last_lr()))
                 else:
                     # ReduceLROnPlateau has no get_lr() function - read lr directly from optimizer ...
                     logging.info("lr: %s" % format_learning_rate([param_group['lr'] for param_group in optimizer.param_groups]))
@@ -659,27 +657,38 @@ def exec_runtime(args,
                 # ----------------------------------------------------------------
                 # Evaluate whether this is the best validation_loss
                 # ----------------------------------------------------------------
-                validation_loss = avg_loss_dict[args.validation_key]
-                if args.validation_key_minimize:
-                    store_as_best = validation_loss < best_validation_loss
-                else:
-                    store_as_best = validation_loss > best_validation_loss
-                if store_as_best:
-                    best_validation_loss = validation_loss
+                if run_validation:
+                    validation_loss = avg_loss_dict[args.validation_key]
+                    if args.validation_key_minimize:
+                        store_as_best = validation_loss < best_validation_loss
+                    else:
+                        store_as_best = validation_loss > best_validation_loss
+                    if store_as_best:
+                        best_validation_loss = validation_loss
 
-                # ----------------------------------------------------------------
-                # Update validation scheduler, if one is in place
-                # ----------------------------------------------------------------
-                if lr_scheduler is not None and validation_scheduler:
-                    lr_scheduler.step(validation_loss, epoch=epoch)
+                # --------------------------------------------------------
+                # Update standard learning scheduler
+                # or Update validation scheduler, if one is in place
+                # --------------------------------------------------------
+                if lr_scheduler is not None:
+                    if not validation_scheduler:
+                        lr_scheduler.step()
+                    else:
+                        lr_scheduler.step(validation_loss, epoch=epoch)
 
             # ----------------------------------------------------------------
             # Also show best loss on total_progress
             # ----------------------------------------------------------------
-            total_progress_stats = {
-                "best_" + args.validation_key + "_avg": "%1.4f" % best_validation_loss
-            }
+            if run_validation:
+                total_progress_stats = {
+                    "best_" + args.validation_key + "_avg": "%1.4f" % best_validation_loss
+                }
+            else:
+                total_progress_stats = {
+                    "validation": "skipped"
+                }
             total_progress.set_postfix(total_progress_stats)
+
 
             # ----------------------------------------------------------------
             # Bump total progress

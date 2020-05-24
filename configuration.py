@@ -478,7 +478,7 @@ def configure_data_loaders(args):
             # ----------------------------------------------
             train_loader = DataLoader(
                 train_dataset,
-                batch_size=args.batch_size if train_sampler is None else 0,
+                batch_size=args.batch_size if train_sampler is None else 1,
                 shuffle=True if train_sampler is None else False,
                 drop_last=False if train_sampler is None else None,
                 batch_sampler=train_sampler,

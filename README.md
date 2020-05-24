@@ -4,9 +4,9 @@ This repository contains the source code for training and evaluating models of t
 master's thesis [Analysing and overcoming the dataset bias for optical flow backbone networks](https://moritz-willig.de/projects/flowbias.html).
 
 ## Getting started
-This code has been developed under Anaconda(Python 3.6), Pytorch 1.1 and CUDA > 9.0 on Ubuntu 18.04.
+This code has been developed under Anaconda(Python 3.6), Pytorch 1.5 and CUDA > 10.2 on Ubuntu 18.04.
 
-1. pytorch and tqdm (`conda install -c conda-forge tqdm`)
+1. pytorch and tqdm (`conda install -c conda-forge tqdm==4.43.0`)
 
 2. Install the correlation package:
    - Depending on your system, configure `-gencode`, `-ccbin`, `cuda-path` in `models/correlation_package/setup.py` accordingly

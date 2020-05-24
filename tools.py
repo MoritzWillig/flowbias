@@ -28,6 +28,13 @@ def x2module(module_or_data_parallel):
     else:
         return module_or_data_parallel
 
+# -------------
+# The torch.utils.bottleneck profiler runs the application twice.
+# This flag disables the sanity check for already registered log levels.
+# TODO do not use the logging module for saving registered log levels ...
+# -------------
+_profile_mode = False
+
 
 # ----------------------------------------------------------------------------------------
 # Comprehensively adds a new logging level to the `logging` module and the
@@ -37,12 +44,13 @@ def x2module(module_or_data_parallel):
 def addLoggingLevel(level_name, level_num, method_name=None):
     if not method_name:
         method_name = level_name.lower()
-    if hasattr(logging, level_name):
-        raise AttributeError('{} already defined in logging module'.format(level_name))
-    if hasattr(logging, method_name):
-        raise AttributeError('{} already defined in logging module'.format(method_name))
-    if hasattr(logging.getLoggerClass(), method_name):
-        raise AttributeError('{} already defined in logger class'.format(method_name))
+    if not _profile_mode:
+        if hasattr(logging, level_name):
+            raise AttributeError('{} already defined in logging module'.format(level_name))
+        if hasattr(logging, method_name):
+            raise AttributeError('{} already defined in logging module'.format(method_name))
+        if hasattr(logging.getLoggerClass(), method_name):
+            raise AttributeError('{} already defined in logger class'.format(method_name))
 
     # This method was inspired by the answers to Stack Overflow post
     # http://stackoverflow.com/q/2183233/2988730, especially
@@ -341,6 +349,10 @@ class TqdmToLogger(tqdm.tqdm):
                  logging_on_close=True,
                  logging_on_update=False):
 
+        self._logging_on_close = logging_on_close
+        self._logging_on_update = logging_on_update
+        self._closed = False
+
         super(TqdmToLogger, self).__init__(
             iterable=iterable, desc=desc, total=total, leave=leave,
             file=file, ncols=ncols, mininterval=mininterval,
@@ -349,9 +361,7 @@ class TqdmToLogger(tqdm.tqdm):
             smoothing=smoothing, bar_format=bar_format, initial=initial, position=position,
             postfix=postfix)
 
-        self._logging_on_close = logging_on_close
-        self._logging_on_update = logging_on_update
-        self._closed = False
+
 
     @staticmethod
     def format_meter(n, total, elapsed, ncols=None, prefix='', ascii=False,
